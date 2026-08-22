@@ -55,6 +55,15 @@ jobs:
     permissions:
       contents: write
 
+    # Job level, not step level, and deliberately so: a step-level `if` is
+    # evaluated before that step's own `env:` block exists, so guarding on a
+    # token defined in the same step silently never matches. `secrets` is not
+    # available in a step `if` either. Job-level env is the one form that works.
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -118,10 +127,6 @@ jobs:
       # run just verified rather than whatever the default branch holds by the
       # time a webhook fires.
       - name: Deploy the refreshed snapshot
-        if: ${{ env.VERCEL_TOKEN != '' }}
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        if: env.VERCEL_TOKEN != ''
         run: npx vercel deploy --prod --yes --token "$VERCEL_TOKEN"
         continue-on-error: true
