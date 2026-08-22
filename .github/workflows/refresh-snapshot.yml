@@ -1,0 +1,106 @@
+# Scheduled cache refresh - base PRD FR2.
+#
+# FR2: "Cache refresh runs on a schedule (e.g., every 15-30 min) or manually
+# before a demo; a timestamped fallback snapshot is always committed to the
+# repo so the app works with zero live network dependency during judging."
+#
+# Why a GitHub Actions cron and not a Vercel cron: the requirement is that the
+# refreshed snapshot ends up COMMITTED. A Vercel cron runs on a read-only
+# filesystem and cannot write to the repo, so it could only refresh an
+# ephemeral in-memory copy - which would satisfy the word "schedule" and miss
+# the point of the requirement. This workflow refreshes the data, commits it,
+# and the commit triggers a redeploy. The committed snapshot stays the source
+# of truth, exactly as the architecture assumes.
+#
+# SETUP: add FORTYGUARD_API_KEY as a repository secret. Without it the workflow
+# still runs and regenerates everything it can (relief network, routes), and
+# the heat field stays a modelled stand-in - which the app then banners.
+
+name: Refresh data snapshot
+
+on:
+  schedule:
+    # Every 30 minutes during Arizona daylight hours (13:00-04:00 UTC covers
+    # roughly 06:00-21:00 MST). Overnight refreshes would spend credits on a
+    # field nobody is working in.
+    - cron: '*/30 13-23,0-4 * * *'
+  workflow_dispatch:
+    inputs:
+      region:
+        description: 'Region id to refresh, or blank for all'
+        required: false
+        default: ''
+      force:
+        description: 'Re-request even cached (area, time) pairs'
+        type: boolean
+        required: false
+        default: false
+
+concurrency:
+  # A slow ingest must never overlap the next scheduled run and double-spend
+  # credits on the same tiles.
+  group: refresh-snapshot
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build region argument
+        id: args
+        run: |
+          if [ -n "${{ inputs.region }}" ]; then
+            echo "region=-- --region=${{ inputs.region }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "region=" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Relief networks change through the season as sites open and close, so
+      # this is refreshed alongside the heat field rather than pinned.
+      - name: Refresh relief network
+        run: npm run data:stations ${{ steps.args.outputs.region }}
+        continue-on-error: true
+
+      - name: Refresh heat field
+        env:
+          FORTYGUARD_API_KEY: ${{ secrets.FORTYGUARD_API_KEY }}
+        run: |
+          npm run data:ingest ${{ steps.args.outputs.region }} ${{ inputs.force && '-- --force' || '' }}
+
+      # Only meaningful with a key; the script exits non-zero without one,
+      # which must not fail the whole refresh.
+      - name: Refresh point temperatures at relief sites
+        env:
+          FORTYGUARD_API_KEY: ${{ secrets.FORTYGUARD_API_KEY }}
+        run: npm run data:site-temps ${{ steps.args.outputs.region }}
+        continue-on-error: true
+
+      - name: Verify the snapshot still loads
+        run: |
+          npm run typecheck
+          npm run verify:coverage
+
+      - name: Commit refreshed snapshot
+        run: |
+          git config user.name  "coolroute-bot"
+          git config user.email "coolroute-bot@users.noreply.github.com"
+          git add data/
+          if git diff --staged --quiet; then
+            echo "No snapshot changes - nothing to commit."
+            exit 0
+          fi
+          LIVE=$(node -e "const m=require('./data/phoenix/cache/manifest.json');console.log(m.liveApiUsed)")
+          git commit -m "data: refresh snapshot (liveApiUsed=$LIVE)"
+          git push

@@ -1,0 +1,39 @@
+{
+  "name": "coolroute-network-planner",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Heat intelligence for the outdoor mobile workforce - FortyGuard Hackathon '26",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "data:stations": "tsx scripts/fetch-heat-relief.ts",
+    "data:osm": "tsx scripts/fetch-osm.ts",
+    "data:routes": "tsx scripts/generate-routes.ts",
+    "data:credit-probe": "tsx scripts/credit-probe.ts",
+    "data:ingest": "tsx scripts/ingest-fortyguard.ts",
+    "data:all": "npm run data:stations && npm run data:osm && npm run data:routes && npm run data:ingest",
+    "verify:coverage": "tsx scripts/verify-coverage.ts",
+    "data:site-temps": "tsx scripts/fetch-site-temps.ts"
+  },
+  "dependencies": {
+    "leaflet": "^1.9.4",
+    "next": "^15.5.23",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/leaflet": "^1.9.22",
+    "@types/node": "^26.2.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "dotenv": "^17.4.2",
+    "postcss": "^8.5.26",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.12",
+    "typescript": "^5.9.3"
+  }
+}

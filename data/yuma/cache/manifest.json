@@ -1,0 +1,50 @@
+{
+ "schema": "coolroute.manifest.v2",
+ "regionId": "yuma",
+ "generatedAt": "2026-08-22T10:30:27.338Z",
+ "liveApiUsed": true,
+ "sources": [
+  "fortyguard"
+ ],
+ "grids": [
+  {
+   "file": "yuma-core__ft3__2026-08-21.json",
+   "tileId": "yuma-core",
+   "filterType": 3,
+   "validAt": "2026-08-21T15:00:00-07:00",
+   "source": "fortyguard",
+   "granularityM": 100
+  },
+  {
+   "file": "yuma-core__ft3__2026-08-22.json",
+   "tileId": "yuma-core",
+   "filterType": 3,
+   "validAt": "2026-08-22T15:00:00-07:00",
+   "source": "fortyguard",
+   "granularityM": 100
+  },
+  {
+   "file": "somerton-corridor__ft3__2026-08-21.json",
+   "tileId": "somerton-corridor",
+   "filterType": 3,
+   "validAt": "2026-08-21T15:00:00-07:00",
+   "source": "fortyguard",
+   "granularityM": 100
+  },
+  {
+   "file": "somerton-corridor__ft3__2026-08-22.json",
+   "tileId": "somerton-corridor",
+   "filterType": 3,
+   "validAt": "2026-08-22T15:00:00-07:00",
+   "source": "fortyguard",
+   "granularityM": 100
+  }
+ ],
+ "notes": [
+  "Live FortyGuard ingest: 4 of 4 grids fetched from the API.",
+  "The API does not report credit consumption in its response payload.",
+  "Temperatures arrive in Celsius and are converted to Fahrenheit at the client boundary.",
+  "API limitation: only filter_type 3 (forecast) succeeds on this key; 1, 2 and 4 return HTTP 500. The historic/forecast separation is still enforced in code.",
+  "API limitation: no hour-of-day parameter exists, so slices are forecast DAYS. Intra-day variation comes from the min/average/max each cell carries."
+ ]
+}
