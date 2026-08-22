@@ -7,6 +7,7 @@
  * from the band table served by the API, rather than hand-written CSS. A
  * legend that can drift from the pixels it describes is worse than no legend.
  */
+import { useState } from 'react';
 import { tempColor } from '@/lib/grid';
 import { INTERVENTIONS, THRESHOLDS } from '@/lib/assumptions';
 import type { MapLayers } from './MapCanvas';
@@ -46,6 +47,8 @@ export default function Legend({
   ];
 
   const drawingCorridor = placing !== null && placing !== 'cooling_station';
+  // Open on desktop, closed on a phone where it would cover the map.
+  const [open, setOpen] = useState(true);
 
   return (
     <>
@@ -88,7 +91,19 @@ export default function Legend({
         </div>
       ) : null}
 
-      <div className="absolute bottom-4 left-4 z-[1000] panel px-3.5 py-3 w-[236px] bg-[var(--color-void)]/92 backdrop-blur-sm">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="lg:hidden absolute bottom-4 left-4 z-[1001] btn"
+        aria-expanded={open}
+      >
+        {open ? 'Hide legend' : 'Legend'}
+      </button>
+
+      <div
+        className={`legend-panel absolute bottom-4 left-4 z-[1000] panel px-3.5 py-3 w-[236px] bg-[var(--color-void)]/92 backdrop-blur-sm ${
+          open ? '' : 'hidden'
+        } max-lg:bottom-[68px]`}
+      >
         {layers.risk ? (
           <>
             <div className="label mb-2">Cell risk classification</div>

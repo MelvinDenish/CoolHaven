@@ -117,6 +117,15 @@ Two things replaced it, both real:
 The Worker view shows both and says which is which: one is a chart at a point,
 the other moves every number on screen.
 
+**`/v1/heat_intelligence` is not available on this key.** Addendum A2 lists it
+as a Medium/bonus "richer multi-dimensional report", and the contract does
+exist — `{latitude, longitude, temperature, date, analysis:[...]}` where
+`analysis` accepts `geographic`, `environmental`, `urban`, `events`,
+`anthropogenic`. Submissions are accepted and return an `activity_id`, but the
+activity then polls straight to **`Failed`**, with one dimension or five. A2
+flagged it as Premium-gated and that appears to be exactly what it is. Not
+implemented rather than half-implemented.
+
 **The forecast horizon is about one day.** Snapshot-date + 2 returned HTTP 500
 for every tile in both regions, so the snapshot carries two days, not three.
 

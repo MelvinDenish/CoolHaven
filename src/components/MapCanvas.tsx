@@ -138,7 +138,17 @@ export default function MapCanvas({
     // that is still settling; one deferred invalidate fixes the grey band.
     setTimeout(() => map.invalidateSize(), 60);
 
+    // And it mis-measures again every time the container is hidden and shown -
+    // which is exactly what the narrow-screen Map/Panel switch does. Watching
+    // the element covers that, orientation changes and window resizes in one
+    // mechanism, instead of threading a "visible" prop through the tree.
+    const ro = new ResizeObserver(() => {
+      if (hostRef.current && hostRef.current.clientWidth > 0) map.invalidateSize();
+    });
+    ro.observe(hostRef.current);
+
     return () => {
+      ro.disconnect();
       map.remove();
       mapRef.current = null;
     };

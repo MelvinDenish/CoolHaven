@@ -17,9 +17,8 @@ npm run build && npm start        # http://localhost:3000
 > season, so expect small differences. The *shapes* - which route is worst,
 > which hour is coolest, which rows move - are what to check.
 
-Use `npm run dev` if you want to edit while testing. A wide window (≥1400 px)
-is expected — this is a desktop tool and the mobile layout is deliberately not
-built yet.
+Use `npm run dev` if you want to edit while testing. Works from about 360 px
+upward; below 900 px it switches to a single-column phone layout (section 8).
 
 ---
 
@@ -347,9 +346,6 @@ run can outrank a short brutal one, which is usually the right call.
 
 **Do:** click **Worker**.
 
-> Note: this view is desktop-only for now. It is designed around a 2-second
-> glance and really wants a phone layout; that rebuild is deliberately deferred.
-
 ### 4.1 The glance
 
 **Expect:** one big peak temperature, a risk band, one instruction, and the
@@ -378,6 +374,14 @@ like *"Running this at 06:00 instead of 13:00 is 21 degF less apparent heat."*
 but `/v1/env_params` returns **24 hourly values per point** — and it is
 *apparent* temperature, what a body actually experiences, not the dry-bulb grid
 value. Regenerate it any time with `npm run data:hourly`.
+
+**Also in this section:** **Wet bulb at the worst hour** and **Air quality at
+the worst hour**, both from the same call. Wet bulb is the one that actually
+kills — above roughly 88 °F the body cannot shed heat by sweating at all, no
+matter how much shade you provide, so it is the number that tells a planner
+when shade has stopped being the answer. Phoenix reads 76 °F here, well clear.
+Air quality is worth a glance too: ozone climbs through the afternoon, so the
+hottest hour is often the dirtiest air as well.
 
 If `data/<region>/hourly.json` is absent the section simply does not render and
 the day-part comparison below still works.
@@ -478,12 +482,41 @@ because you cannot even ask for a mixture.
 
 ---
 
+## 8 · Phone layout
+
+**Do:** narrow the window below 900 px, or open DevTools device mode at 390×844.
+
+**Expect:**
+
+| | |
+|---|---|
+| Layout | One column. Header wraps, the focus-area block hides |
+| Bottom bar | A sticky **READOUT / MAP** switch appears |
+| Worker glance | The peak temperature jumps to 76 px — readable at arm's length |
+| Legend | Collapses to a **Legend** button so it stops covering the map |
+| Tap targets | Buttons and inputs go to a 44 px minimum |
+| Inputs | 16 px font, so iOS does not zoom the page on focus |
+
+**Do:** tap **MAP**, then **READOUT**, then **MAP** again.
+
+**Expect:** the map renders correctly every time — no grey band, no half-drawn
+tiles. Leaflet mis-measures itself whenever its container is hidden and shown,
+so the map watches its own element with a `ResizeObserver` and re-measures.
+That also covers rotating the phone.
+
+**Why the switch rather than a split:** a stacked map-plus-panel on a phone
+gives you two unusable halves. FR18's "two-second glance" screen is the
+readout, so that is what opens first.
+
+---
+
 ## What is deliberately not built
 
-- **Mobile / responsive layout** — the Worker view needs a phone-first rebuild;
-  deferred by choice.
 - **Historic data (`filter_type` 1)** — the API returns HTTP 500 on this key.
   The code path exists and is enforced; it activates when the service serves it.
+- **`/v1/heat_intelligence`** — the contract was found and the call is
+  accepted, but the activity polls to `Failed` every time. Premium-gated, as
+  Addendum A2 warned. Documented rather than stubbed.
 - **Accounts, real-time GPS, 3D twin** — out of scope per the PRD, with the
   reasoning recorded in the README.
 

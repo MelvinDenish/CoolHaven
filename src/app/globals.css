@@ -56,7 +56,18 @@ body {
   font-size: 14px;
   line-height: 1.45;
   -webkit-font-smoothing: antialiased;
+  /* Locked on desktop, where the app owns the viewport and the panel scrolls
+     inside itself. Released below the breakpoint so a phone can scroll the
+     page normally - a fixed-height body on mobile traps content people
+     cannot reach. */
   overflow: hidden;
+}
+
+@media (max-width: 899px) {
+  body {
+    overflow: auto;
+    font-size: 15px;
+  }
 }
 
 /* A faint warm grain over the whole shell. It is the one purely atmospheric
@@ -361,4 +372,74 @@ input[type='range']::-moz-range-thumb {
    without needing a paid dark tile provider. */
 .basemap-tiles {
   filter: invert(1) hue-rotate(185deg) brightness(0.78) contrast(1.24) saturate(0.42);
+}
+
+/* --------------------------------------------------------------------------
+   Narrow screens
+   --------------------------------------------------------------------------
+   FR18 asks for a view usable in a two-second glance by someone standing next
+   to a van, which is a phone. The desktop layout is a three-pane instrument;
+   below 900px it becomes one column with an explicit Map/Panel switch, which
+   is how every mapping app on a phone works and avoids a split where neither
+   half is usable.
+
+   Touch targets are raised to the 44px Apple/WCAG floor. The desktop values
+   are deliberately dense - this is a tool people read numbers off - but dense
+   and thumb-driven do not mix. */
+
+@media (max-width: 899px) {
+  .btn {
+    padding: 12px 14px;
+    font-size: 12px;
+    min-height: 44px;
+  }
+
+  .tool {
+    padding: 13px 12px;
+  }
+
+  input[type='text'],
+  input[type='number'],
+  select {
+    font-size: 16px; /* iOS zooms the page for anything smaller on focus */
+    padding: 11px 10px;
+    min-height: 44px;
+  }
+
+  /* The legend is a desktop affordance. On a phone it eats the map, so it
+     collapses to a corner chip the user opens deliberately. */
+  .legend-panel {
+    max-height: 46vh;
+    overflow-y: auto;
+    width: calc(100vw - 32px);
+    max-width: 300px;
+  }
+
+  /* Give the glance card real presence - this is the FR18 screen. */
+  .glance-temp {
+    font-size: 76px !important;
+  }
+}
+
+/* The map must never be a sliver; on very short screens it gets a floor. */
+.map-pane {
+  min-height: 260px;
+}
+
+@media print {
+  /* Print is for the scenario report, not the instrument. */
+  body {
+    overflow: visible;
+    background: #fff;
+    color: #111;
+  }
+  .no-print,
+  .leaflet-control-container {
+    display: none !important;
+  }
+  aside {
+    width: 100% !important;
+    border: 0 !important;
+    overflow: visible !important;
+  }
 }

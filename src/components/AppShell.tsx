@@ -184,6 +184,25 @@ export default function AppShell() {
     interventions: true,
   });
 
+  /**
+   * Narrow-screen handling.
+   *
+   * Below 900px the three-pane instrument becomes one column with an explicit
+   * Map/Panel switch. A split view on a phone gives you two unusable halves;
+   * every mapping app resolves this the same way, and FR18's "two-second
+   * glance" screen is the panel, not the map.
+   */
+  const [isNarrow, setIsNarrow] = useState(false);
+  const [mobileTab, setMobileTab] = useState<'map' | 'panel'>('panel');
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 899px)');
+    const apply = () => setIsNarrow(mq.matches);
+    apply();
+    mq.addEventListener('change', apply);
+    return () => mq.removeEventListener('change', apply);
+  }, []);
+
   const restored = useRef(false);
 
   /* ------------------------------------------------- restore a shared link */
@@ -595,9 +614,9 @@ export default function AppShell() {
   ];
 
   return (
-    <main className="h-screen flex flex-col">
+    <main className="min-h-[100dvh] lg:h-screen flex flex-col">
       {/* ------------------------------------------------------------- top */}
-      <header className="flex items-stretch border-b border-[var(--color-hairline)] bg-[var(--color-surface)] shrink-0">
+      <header className="flex items-stretch flex-wrap border-b border-[var(--color-hairline)] bg-[var(--color-surface)] shrink-0 no-print">
         <div className="px-4 py-2.5 border-r border-[var(--color-hairline)] flex items-center">
           <div>
             <div className="headline text-[15px] leading-none">
@@ -632,7 +651,7 @@ export default function AppShell() {
           ))}
         </nav>
 
-        <div className="flex-1 flex items-center justify-end gap-4 px-4">
+        <div className="flex-1 flex items-center justify-end gap-4 px-3 py-2 lg:py-0 min-w-[240px]">
           <label className="flex items-center gap-2">
             <span className="label">Region</span>
             <select
@@ -648,7 +667,7 @@ export default function AppShell() {
               ))}
             </select>
           </label>
-          <div className="text-right">
+          <div className="text-right hidden lg:block">
             <div className="label">Focus area</div>
             <div className="num text-[11px] text-[var(--color-muted)]">
               {boot.tiles.length} tiles &middot;{' '}
@@ -673,8 +692,12 @@ export default function AppShell() {
       ) : null}
 
       {/* ------------------------------------------------------------ body */}
-      <div className="flex-1 flex min-h-0">
-        <section className="relative flex-1 min-w-0">
+      <div className="flex-1 flex flex-col lg:flex-row min-h-0">
+        <section
+          className={`relative flex-1 min-w-0 map-pane h-[70dvh] lg:h-auto ${
+            isNarrow && mobileTab !== 'map' ? 'hidden' : ''
+          }`}
+        >
           {grids ? (
             <MapCanvas
               grids={scenarioField?.grids ?? grids}
@@ -716,7 +739,11 @@ export default function AppShell() {
           />
         </section>
 
-        <aside className="w-[404px] shrink-0 border-l border-[var(--color-hairline)] bg-[var(--color-surface)] overflow-y-auto scroll-thin">
+        <aside
+          className={`w-full lg:w-[404px] shrink-0 border-t lg:border-t-0 lg:border-l border-[var(--color-hairline)] bg-[var(--color-surface)] lg:overflow-y-auto scroll-thin ${
+            isNarrow && mobileTab !== 'panel' ? 'hidden' : ''
+          }`}
+        >
           {view === 'planner' && baseField && scenarioField ? (
             <PlannerPanel
               boot={boot}
@@ -782,6 +809,32 @@ export default function AppShell() {
           ) : null}
         </aside>
       </div>
+
+      {/* Map / Panel switch - only exists on narrow screens. */}
+      {isNarrow ? (
+        <nav
+          className="sticky bottom-0 z-[1200] flex border-t border-[var(--color-hairline)] bg-[var(--color-surface)] shrink-0 no-print"
+          aria-label="Map or panel"
+        >
+          {(['panel', 'map'] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setMobileTab(tab)}
+              aria-pressed={mobileTab === tab}
+              className="flex-1 py-3 text-[12px] font-semibold uppercase tracking-[0.12em]"
+              style={{
+                color: mobileTab === tab ? 'var(--color-ember)' : 'var(--color-muted)',
+                background:
+                  mobileTab === tab ? 'var(--color-surface-3)' : 'transparent',
+                boxShadow:
+                  mobileTab === tab ? 'inset 0 2px 0 var(--color-ember)' : 'none',
+              }}
+            >
+              {tab === 'panel' ? 'Readout' : 'Map'}
+            </button>
+          ))}
+        </nav>
+      ) : null}
     </main>
   );
 }

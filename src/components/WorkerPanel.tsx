@@ -244,7 +244,7 @@ export default function WorkerPanel({
         </div>
 
         <div className="flex items-end gap-3 mb-1">
-          <span className="num text-[58px] leading-[0.85]" style={{ color: meta.color }}>
+          <span className="glance-temp num text-[58px] leading-[0.85]" style={{ color: meta.color }}>
             {primaryScore.peakTempF.toFixed(0)}
           </span>
           <span className="pb-2">
@@ -480,6 +480,36 @@ export default function WorkerPanel({
             </span>{' '}
             less apparent heat.
           </p>
+
+          <div className="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-[var(--color-hairline)]">
+            <Metric
+              label="Wet bulb at the worst hour"
+              value={(hourly.point.wetBulbF?.[hourly.hottest.h] ?? 0).toFixed(0)}
+              unit="degF"
+              size="sm"
+              tone={
+                (hourly.point.wetBulbF?.[hourly.hottest.h] ?? 0) >= 88 ? 'bad' : 'default'
+              }
+              hint="Above ~88 degF the body cannot shed heat by sweating at all, whatever the shade."
+            />
+            <Metric
+              label="Air quality at the worst hour"
+              value={Math.round(hourly.point.airQualityIdx?.[hourly.hottest.h] ?? 0)}
+              size="sm"
+              tone={
+                (hourly.point.airQualityIdx?.[hourly.hottest.h] ?? 0) >= 100
+                  ? 'bad'
+                  : (hourly.point.airQualityIdx?.[hourly.hottest.h] ?? 0) >= 75
+                    ? 'ember'
+                    : 'default'
+              }
+              hint={
+                'Index at ' +
+                String(hourly.hottest.h).padStart(2, '0') +
+                ':00. Ozone climbs through the afternoon, so the hottest hour is often the dirtiest air too.'
+              }
+            />
+          </div>
 
           <p className="text-[10.5px] text-[var(--color-faint)] leading-relaxed mt-2">
             Real hourly data from <span className="num">POST /v1/env_params</span> at the
