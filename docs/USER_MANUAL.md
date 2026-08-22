@@ -361,16 +361,33 @@ reporting a saving of zero.
 
 **Do:** click **show on map** — the alternative draws as a dashed cyan line.
 
-### 4.3 Go at a different time of day — FR17
+### 4.3 What it feels like, hour by hour — FR17, real hours **[KEY]**
 
-**Expect:** three rows (day low / average / peak), each with its own exposure
-index, peak temperature and band, and a line naming the lowest-exposure option.
+**Expect:** a 24-bar chart from 05:00 to 20:00, cool green rising to dark red
+mid-afternoon, plus **Coolest working hour** and **Worst hour** tiles and a line
+like *"Running this at 06:00 instead of 13:00 is 21 degF less apparent heat."*
 
-**Why this satisfies FR17 honestly:** the PRD says cut this rather than fake it
-if the snapshots aren't there. Hourly snapshots genuinely are not available —
-so this uses the min/average/max the API really returns.
+**Hover any bar** for its hour and apparent temperature.
 
-### 4.4 Score a different trip — FR14
+**Why this is the strongest FR17 answer:** `/v1/heatmap` has no hour parameter,
+but `/v1/env_params` returns **24 hourly values per point** — and it is
+*apparent* temperature, what a body actually experiences, not the dry-bulb grid
+value. Regenerate it any time with `npm run data:hourly`.
+
+If `data/<region>/hourly.json` is absent the section simply does not render and
+the day-part comparison below still works.
+
+### 4.4 Re-score the whole run — the field-wide version
+
+**Expect:** three rows (Low / Average / Peak) with exposure index, peak
+temperature and band, and a line naming the lowest-exposure option. On the
+snapshot day: Low **120**, Average **368**, Peak **625** (Moderate).
+
+**Why both sections exist:** the chart above is *one point*. This re-scores the
+**entire route** against the min/average/max field the API returns per cell —
+so the map and every number move with it.
+
+### 4.5 Score a different trip — FR14
 
 **Do:** enter From `33.4197, -112.0664`, To `33.5090, -112.0691`, leave the
 waypoint blank. Click **Route and score**.

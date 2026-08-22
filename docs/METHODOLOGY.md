@@ -370,15 +370,30 @@ GIS. **Not a certified Forma integration.**
 
 ---
 
-## 10. Point-accurate site temperatures (`env_params`)
+## 10. Hourly profiles (`env_params`)
 
-`npm run data:site-temps` queries `POST /v1/env_params` at every in-focus relief
-site and commits the answers to `data/<region>/site-temps.json`.
+`npm run data:hourly` queries `POST /v1/env_params` and commits the answers to
+`data/<region>/hourly.json`.
 
-The grid is 100 m cells — the right resolution for a district-wide field, the
-wrong one for "how hot is it at the door of this cooling centre". A site under
-mature canopy on the shaded side of a building can differ from its cell average
-by more than the entire modelled effect of any intervention in the studio.
+**This endpoint is not what its name suggests.** It does not return the
+temperature at a point. It takes a dry-bulb temperature as *input* — the value
+we already hold from the heatmap grid — and returns a derived environmental
+profile for that location as **24 hourly series**: apparent temperature, heat
+index, wet-bulb temperature, relative humidity, cloud cover and air quality.
+
+That makes it the only hour-of-day resolution the API exposes, since
+`/v1/heatmap` has no hour parameter at all. It is per-point rather than
+per-grid, which is the right shape for FR17: "should this run go at 6 AM or
+3 PM" is a question about one route.
+
+Measured on the snapshot day in downtown Phoenix: apparent temperature runs
+93.7 °F at 06:00, peaks at 114.4 °F at 13:00, and eases to 103.8 °F by 20:00.
+Wet bulb stays between 71 and 76 °F. Air quality index roughly doubles in the
+evening (55 → 86), which is a second reason not to schedule a late run.
+
+The sample set is deliberately small — each tile centroid plus the demo route's
+endpoints — because this samples the diurnal shape rather than rebuilding the
+field.
 
 **There is no modelled fallback for this file, on purpose.** Its whole value is
 being more accurate than the grid; a synthetic version would be less accurate

@@ -81,10 +81,10 @@ jobs:
 
       # Only meaningful with a key; the script exits non-zero without one,
       # which must not fail the whole refresh.
-      - name: Refresh point temperatures at relief sites
+      - name: Refresh hourly environmental profiles
         env:
           FORTYGUARD_API_KEY: ${{ secrets.FORTYGUARD_API_KEY }}
-        run: npm run data:site-temps ${{ steps.args.outputs.region }}
+        run: npm run data:hourly ${{ steps.args.outputs.region }}
         continue-on-error: true
 
       - name: Verify the snapshot still loads

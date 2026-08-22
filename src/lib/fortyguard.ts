@@ -276,40 +276,125 @@ export class FortyGuardClient {
   }
 
   /**
-   * Point query (Addendum A2, priority High).
+   * Point query (Addendum A2, priority High) - and the most surprising
+   * endpoint in the API.
    *
-   * Kept deliberately defensive: unlike /v1/heatmap this endpoint's exact
-   * contract has not been verified against the live API, so a failure here is
-   * reported rather than allowed to take a whole ingest down.
+   * It is NOT "give me the temperature here". It takes a temperature as INPUT
+   * (the dry-bulb value we already hold from the heatmap grid) and returns a
+   * derived environmental profile for that point: heat index, apparent
+   * temperature, humidity, wet bulb, cloud cover and air quality.
+   *
+   * The important part: those come back as **24 hourly values**. The heatmap
+   * endpoint has no hour parameter at all, so this is the only place in the
+   * API where real intra-day resolution exists. It is per-point rather than
+   * per-grid, which is exactly the shape base PRD FR17 needs - "should I run
+   * this at 6 AM or 3 PM" is a question about one route, not about a field.
+   *
+   * Like /v1/heatmap it is asynchronous: submit, then poll the same
+   * /v1/status/{activity_id} endpoint.
    */
-  async fetchEnvParams(
-    points: Array<{ lon: number; lat: number }>,
-    filterType: FilterType,
-    date: string,
-  ): Promise<Array<{ lon: number; lat: number; tempF: number | null }>> {
+  async envParamsHourly(
+    req: { lat: number; lon: number; temperatureC: number; date: string; filterType: FilterType },
+    onTick?: (attempt: number, state: string) => void,
+  ): Promise<HourlyProfile> {
     const res = await fetch(`${this.cfg.baseUrl}/v1/env_params`, {
       method: 'POST',
       headers: this.headers(),
       body: JSON.stringify({
-        points: points.map((p) => ({ lat: p.lat, lon: p.lon })),
-        date_time: { start_date: date, filter_type: filterType },
+        latitude: req.lat,
+        longitude: req.lon,
+        temperature: req.temperatureC,
+        date_time: { start_date: req.date, filter_type: req.filterType },
       }),
     });
     const text = await res.text();
     if (!res.ok) {
       throw new FortyGuardError(
-        `env_params failed (${res.status})`,
+        `env_params submit failed (${res.status})`,
         res.status,
-        text.slice(0, 500),
+        text.slice(0, 400),
       );
     }
-    const flat = extractCells(safeJson(text));
-    return points.map((p, i) => ({
-      lon: p.lon,
-      lat: p.lat,
-      tempF: flat[i]?.tempF ?? null,
-    }));
+
+    const activityId = pick<string>(safeJson(text), ['data.activity_id', 'activity_id']);
+    if (!activityId) throw new FortyGuardError('env_params returned no activity_id');
+
+    const json = await this.pollRaw(activityId, onTick);
+    const loc = pick<Record<string, unknown>>(json, ['data.result.locations.0']);
+    const timestamps =
+      pick<string[]>(json, ['data.result.metadata.timestamps']) ?? [];
+    const params = (loc?.parameters ?? {}) as Record<string, number[]>;
+
+    const toF = (arr?: number[]) => (arr ?? []).map(cToF).map((v) => Math.round(v * 10) / 10);
+
+    return {
+      activityId,
+      lat: req.lat,
+      lon: req.lon,
+      elevationM: typeof loc?.elevation === 'number' ? loc.elevation : null,
+      inputTempC: req.temperatureC,
+      timestamps,
+      apparentTempF: toF(params.apparent_temperature_celsius),
+      heatIndexF: toF(params.heat_index_celsius),
+      wetBulbF: toF(params.wet_bulb_temperature_celsius),
+      humidityPct: params.relative_humidity_percent ?? [],
+      cloudCoverOctas: params.cloud_cover_octas ?? [],
+      airQualityIdx: params['air_quality:idx'] ?? [],
+    };
   }
+
+  /** Poll to completion and hand back the raw payload. */
+  private async pollRaw(
+    activityId: string,
+    onTick?: (attempt: number, state: string) => void,
+  ): Promise<unknown> {
+    const started = Date.now();
+    let delay = 1_000;
+    for (let attempt = 1; ; attempt++) {
+      if (Date.now() - started > this.cfg.pollTimeoutMs) {
+        throw new FortyGuardError(`activity ${activityId} timed out`);
+      }
+      const res = await fetch(`${this.cfg.baseUrl}/v1/status/${activityId}`, {
+        headers: this.headers(),
+      });
+      const text = await res.text();
+      if (res.status === 429 || res.status >= 500) {
+        onTick?.(attempt, `retry-${res.status}`);
+        await sleep(delay);
+        delay = Math.min(delay * 2, 15_000);
+        continue;
+      }
+      if (!res.ok) {
+        throw new FortyGuardError(`status failed (${res.status})`, res.status, text.slice(0, 300));
+      }
+      const json = safeJson(text);
+      const state = String(pick<string>(json, ['data.status']) ?? '').toLowerCase();
+      onTick?.(attempt, state);
+      if (['completed', 'complete', 'success', 'done'].includes(state)) return json;
+      if (['failed', 'error', 'cancelled'].includes(state)) {
+        throw new FortyGuardError(`activity ${activityId} ended "${state}"`);
+      }
+      await sleep(delay);
+      delay = Math.min(delay * 2, 15_000);
+    }
+  }
+}
+
+/** One point's 24-hour environmental profile, temperatures in Fahrenheit. */
+export interface HourlyProfile {
+  activityId: string;
+  lat: number;
+  lon: number;
+  elevationM: number | null;
+  inputTempC: number;
+  /** ISO-8601 local timestamps, 24 of them. */
+  timestamps: string[];
+  apparentTempF: number[];
+  heatIndexF: number[];
+  wetBulbF: number[];
+  humidityPct: number[];
+  cloudCoverOctas: number[];
+  airQualityIdx: number[];
 }
 
 /* -------------------------------------------------------------------------- */

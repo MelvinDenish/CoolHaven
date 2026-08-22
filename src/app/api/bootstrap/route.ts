@@ -27,6 +27,7 @@ import {
   MissingSnapshotError,
   loadManifest,
   loadReliefSites,
+  loadHourly,
   loadRoadDensity,
   loadRoutes,
 } from '@/lib/server/snapshot';
@@ -101,6 +102,7 @@ export async function GET(req: Request) {
       // The demand layer (FR7) is computed in the browser so a scenario
       // recomputes without a round trip, which means the road weights have to
       // travel with the bootstrap.
+      hourly: loadHourly(region.id),
       roadDensity: loadRoadDensity(region.id),
       assumptions: {
         notes: ASSUMPTION_NOTES,

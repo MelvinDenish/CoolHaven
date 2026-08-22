@@ -162,6 +162,19 @@ export function loadRoadDensity(regionId: string): RoadDensity | null {
 }
 
 /** Park and water polygons, served by /api/context and drawn as a map layer. */
+/**
+ * Real hourly environmental profiles from /v1/env_params.
+ *
+ * Optional: absent until `npm run data:hourly` has run with a key. The Worker
+ * view degrades to the day-part comparison when it is missing rather than
+ * showing an empty chart.
+ */
+export function loadHourly(regionId: string): unknown | null {
+  const path = resolve(DATA, regionId, 'hourly.json');
+  if (!existsSync(path)) return null;
+  return JSON.parse(readFileSync(path, 'utf8'));
+}
+
 export function loadOsmContext(regionId: string): unknown | null {
   const path = resolve(regionDir(regionId), 'osm-context.geojson');
   if (!existsSync(path)) return null;

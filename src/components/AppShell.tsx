@@ -108,7 +108,27 @@ export interface Bootstrap {
     list: RouteFeature[];
     workerDemo: { primary: RouteFeature; alternative: RouteFeature | null };
   };
+  hourly: HourlyFile | null;
   roadDensity: RoadDensity | null;
+}
+
+/** Real 24-hour profiles from /v1/env_params. See scripts/fetch-hourly.ts. */
+export interface HourlyFile {
+  date: string;
+  filterType: number;
+  fetchedAt: string;
+  points: Array<{
+    id: string;
+    label: string;
+    lat: number;
+    lon: number;
+    timestamps: string[];
+    apparentTempF: number[];
+    heatIndexF: number[];
+    wetBulbF: number[];
+    humidityPct: number[];
+    airQualityIdx: number[];
+  }>;
 }
 
 const VIEWS: Array<{ key: ViewKey; label: string; sub: string }> = [

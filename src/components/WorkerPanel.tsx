@@ -23,10 +23,10 @@ import { BAND_META, compareRoutes, scoreRoute } from '@/lib/scoring';
 import { HeatField } from '@/lib/grid';
 import { MOVEMENT, THRESHOLDS } from '@/lib/assumptions';
 import { DAY_PARTS, type DayPart } from '@/lib/config';
-import { valuesFor } from '@/lib/grid';
+import { tempColor, valuesFor } from '@/lib/grid';
 import type { HeatGrid, ReliefSite, RouteFeature, RouteScore } from '@/lib/types';
 import type { Bootstrap } from './AppShell';
-import { BandPill, Chip, Empty, SectionLabel, fmtMinutes } from './ui';
+import { BandPill, Chip, Empty, Metric, SectionLabel, fmtMinutes } from './ui';
 
 export default function WorkerPanel({
   boot,
@@ -100,6 +100,42 @@ export default function WorkerPanel({
   );
 
   const meta = BAND_META[primaryScore.band];
+
+  /* ---------------------------------- real hourly profile (FR17, best form) */
+
+  /**
+   * The strongest answer to "leave earlier or later" in the whole product.
+   *
+   * /v1/heatmap has no hour parameter, but /v1/env_params returns 24 hourly
+   * values per point - apparent temperature, wet bulb, air quality. So the
+   * hour-by-hour question gets a real hour-by-hour answer, taken from the
+   * point nearest the run's start.
+   */
+  const hourly = useMemo(() => {
+    const pts = boot.hourly?.points ?? [];
+    if (pts.length === 0) return null;
+    const start = demo.primary.coords[0];
+    let best = pts[0];
+    let bestD = Infinity;
+    for (const p of pts) {
+      const d = Math.hypot(p.lon - start[0], p.lat - start[1]);
+      if (d < bestD) {
+        bestD = d;
+        best = p;
+      }
+    }
+    const app = best.apparentTempF;
+    if (!app?.length) return null;
+    // Working hours only: nobody schedules a delivery round for 3 AM.
+    const WORK_START = 5;
+    const WORK_END = 20;
+    const window = app
+      .map((v, h) => ({ h, v }))
+      .filter((x) => x.h >= WORK_START && x.h <= WORK_END);
+    const coolest = window.reduce((a, b) => (b.v < a.v ? b : a));
+    const hottest = window.reduce((a, b) => (b.v > a.v ? b : a));
+    return { point: best, app, window, coolest, hottest };
+  }, [boot.hourly, demo.primary]);
 
   /* ------------------------------------------ when to go (FR17), for real */
 
@@ -377,9 +413,92 @@ export default function WorkerPanel({
         )}
       </section>
 
+      {/* -------------------------------- real hourly profile from env_params */}
+      {hourly ? (
+        <section className="p-4 border-b border-[var(--color-hairline)]">
+          <SectionLabel right={<Chip tone="relief">hourly</Chip>}>
+            What it feels like, hour by hour
+          </SectionLabel>
+
+          <div className="flex items-end gap-[2px] h-[86px] mb-1">
+            {hourly.window.map(({ h, v }) => {
+              const lo = hourly.coolest.v;
+              const hi = hourly.hottest.v;
+              const frac = hi > lo ? (v - lo) / (hi - lo) : 0.5;
+              const isCoolest = h === hourly.coolest.h;
+              const isHottest = h === hourly.hottest.h;
+              return (
+                <span
+                  key={h}
+                  className="flex-1 relative group"
+                  title={`${String(h).padStart(2, '0')}:00 — feels like ${v.toFixed(0)} degF`}
+                >
+                  <span
+                    className="block w-full"
+                    style={{
+                      height: `${18 + frac * 62}px`,
+                      background: tempColor(v),
+                      outline: isCoolest
+                        ? '1.5px solid var(--color-relief)'
+                        : isHottest
+                          ? '1.5px solid var(--color-bad)'
+                          : 'none',
+                    }}
+                  />
+                </span>
+              );
+            })}
+          </div>
+          <div className="flex justify-between num text-[9px] text-[var(--color-faint)] mb-3">
+            <span>05:00</span>
+            <span>12:00</span>
+            <span>20:00</span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Metric
+              label="Coolest working hour"
+              value={`${String(hourly.coolest.h).padStart(2, '0')}:00`}
+              tone="relief"
+              size="sm"
+              hint={`feels like ${hourly.coolest.v.toFixed(0)} degF`}
+            />
+            <Metric
+              label="Worst hour"
+              value={`${String(hourly.hottest.h).padStart(2, '0')}:00`}
+              tone="bad"
+              size="sm"
+              hint={`feels like ${hourly.hottest.v.toFixed(0)} degF`}
+            />
+          </div>
+
+          <p className="text-[11px] text-[var(--color-relief)] leading-relaxed mt-3">
+            Running this at {String(hourly.coolest.h).padStart(2, '0')}:00 instead of{' '}
+            {String(hourly.hottest.h).padStart(2, '0')}:00 is{' '}
+            <span className="num">
+              {(hourly.hottest.v - hourly.coolest.v).toFixed(0)} degF
+            </span>{' '}
+            less apparent heat.
+          </p>
+
+          <p className="text-[10.5px] text-[var(--color-faint)] leading-relaxed mt-2">
+            Real hourly data from <span className="num">POST /v1/env_params</span> at the
+            point nearest this run&apos;s start ({hourly.point.label}). This is
+            <em> apparent</em> temperature - what a body experiences - not the dry-bulb
+            grid value. It is the only hour-of-day resolution the API exposes; the
+            heatmap endpoint has no hour parameter at all.
+          </p>
+        </section>
+      ) : null}
+
       {/* ------------------------------------------------- when to go (FR17) */}
       <section className="p-4 border-b border-[var(--color-hairline)]">
-        <SectionLabel>Go at a different time of day</SectionLabel>
+        <SectionLabel>Re-score the whole run</SectionLabel>
+        <p className="text-[10.5px] text-[var(--color-faint)] leading-relaxed mb-2.5">
+          The chart above is one point. This re-scores the <em>entire route</em> against
+          the min, average and max field the API returns per cell - so the map and every
+          number move with it.
+        </p>
 
         <div className="flex flex-col gap-1.5">
           {partOptions.map(({ part, score }) => {
@@ -403,11 +522,10 @@ export default function WorkerPanel({
                     : 'var(--color-surface-2)',
                 }}
               >
-                <span className="w-[62px]">
-                  <span className="text-[12px] font-semibold block leading-tight">
+                <span className="w-[74px] shrink-0">
+                  <span className="text-[12px] font-semibold block leading-tight capitalize">
                     {part.label.replace('Day ', '')}
                   </span>
-                  <span className="label text-[8.5px]">{part.blurb}</span>
                 </span>
                 <span className="flex-1">
                   <span className="num text-[12px] text-[var(--color-ember)]">

@@ -16,7 +16,7 @@
     "data:ingest": "tsx scripts/ingest-fortyguard.ts",
     "data:all": "npm run data:stations && npm run data:osm && npm run data:routes && npm run data:ingest",
     "verify:coverage": "tsx scripts/verify-coverage.ts",
-    "data:site-temps": "tsx scripts/fetch-site-temps.ts"
+    "data:hourly": "tsx scripts/fetch-hourly.ts"
   },
   "dependencies": {
     "leaflet": "^1.9.4",

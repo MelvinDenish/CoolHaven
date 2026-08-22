@@ -96,15 +96,26 @@ Three things worth knowing, all measured rather than assumed:
 
 ### Two limits that shaped the product
 
-**There is no hour-of-day parameter.** `hour` and `start_time` are accepted and
-ignored — two submissions differing only by `hour` returned byte-identical
-statistics. So the hour slider an earlier build had was removed rather than
-faked, which is what base PRD FR17 demands.
+**`/v1/heatmap` has no hour-of-day parameter.** `hour` and `start_time` are
+accepted and ignored — two submissions differing only by `hour` returned
+byte-identical statistics. So the hour slider an earlier build had was removed
+rather than faked, which is what base PRD FR17 demands.
 
-What the API *does* give is a **min, average and max per cell for the day**, and
-on the snapshot day that is a real ~14 °F swing (93 → 100 → 107.5 °F in
-Phoenix). That range is the day-part selector, and it is a genuine re-scoring
-of the same route against three real fields.
+Two things replaced it, both real:
+
+- **`/v1/env_params` returns 24 hourly values per point.** This endpoint is not
+  a temperature lookup — it takes a dry-bulb temperature as *input* and returns
+  a derived hourly profile: apparent temperature, heat index, wet bulb,
+  humidity, cloud cover, air quality. It is the only hour-of-day resolution in
+  the API, and it is per-point, which is exactly the shape FR17 needs. The
+  Worker view charts it: Phoenix apparent temperature runs **94 °F at 06:00 to
+  114 °F at 13:00** — a 21 °F decision.
+- **Every heatmap cell carries min / average / max for the day.** That range
+  re-scores the *whole route and field* (93 → 100 → 107.5 °F in Phoenix), which
+  the point profile cannot do.
+
+The Worker view shows both and says which is which: one is a chart at a point,
+the other moves every number on screen.
 
 **The forecast horizon is about one day.** Snapshot-date + 2 returned HTTP 500
 for every tile in both regions, so the snapshot carries two days, not three.
@@ -250,7 +261,7 @@ npm run data:osm               # OpenStreetMap via Overpass          (no key)
 npm run data:routes            # OSRM, or ORS if keyed               (no key)
 npm run data:ingest            # FortyGuard — the real integration   (key)
 npm run data:credit-probe      # Addendum A4 empirical check         (KEY REQUIRED)
-npm run data:site-temps        # env_params point queries            (KEY REQUIRED)
+npm run data:hourly            # env_params 24h profiles             (KEY REQUIRED)
 npm run data:all               # stations + osm + routes + ingest
 
 npm run verify:coverage        # independently re-derives the relief-gap headline
@@ -292,7 +303,7 @@ scripts/          build-time only — the FortyGuard integration lives here
   credit-probe.ts        Addendum A4 empirical credit check
   fetch-heat-relief.ts   two publishers, two schemas, one output shape
   fetch-osm.ts           Overpass -> road density + vegetation + context
-  fetch-site-temps.ts    env_params point queries at relief sites
+  fetch-hourly.ts        env_params -> real 24-hour profiles per point
   generate-routes.ts     ORS/OSRM -> data/<region>/routes.json (committed)
   verify-coverage.ts     independently re-derives the headline, per region
 
