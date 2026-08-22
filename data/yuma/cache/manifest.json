@@ -1,7 +1,7 @@
 {
  "schema": "coolroute.manifest.v2",
  "regionId": "yuma",
- "generatedAt": "2026-08-22T19:46:42.639Z",
+ "generatedAt": "2026-08-22T20:24:38.100Z",
  "liveApiUsed": true,
  "sources": [
   "fortyguard"
