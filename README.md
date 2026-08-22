@@ -3,6 +3,8 @@
 **Heat intelligence for the outdoor mobile workforce.**
 FortyGuard Hackathon '26 · Resilient Cities & Infrastructure
 
+**Live: [coolroute-network-planner.vercel.app](https://coolroute-network-planner.vercel.app)**
+
 Two Arizona regions. Three audiences. One cached dataset, one scoring function.
 
 ```bash
@@ -307,6 +309,36 @@ runs every 30 minutes in Arizona daylight hours, refreshes, verifies and
 one: it runs on a read-only filesystem and could only refresh an ephemeral
 copy, which satisfies the word "schedule" and misses a requirement that says
 *committed*. Needs `FORTYGUARD_API_KEY` as a repo secret.
+
+### Deployment
+
+Deployed to Vercel at
+**[coolroute-network-planner.vercel.app](https://coolroute-network-planner.vercel.app)**.
+
+```bash
+vercel link --yes --project coolroute-network-planner
+vercel deploy --prod
+```
+
+Two things make this work and are easy to get wrong:
+
+- **The committed data has to reach the serverless bundle.** The API routes
+  read `data/<region>/...` from disk at request time, and the paths are built
+  from `regionId` at runtime, so Next's file tracer cannot see them.
+  [`next.config.mjs`](next.config.mjs) pins them with
+  `outputFileTracingIncludes: { '/api/**/*': ['./data/**/*'] }`. Without it the
+  deploy builds cleanly and then 503s on every request.
+- **Four environment variables**, set on the project rather than committed:
+  `FORTYGUARD_API_KEY` and `FORTYGUARD_BASE_URL` (used only by
+  `/api/admin/refresh-tile`, the on-demand single-tile refresh),
+  `ORS_API_KEY` (used only by `/api/route-plan`) and `OSRM_BASE_URL` (its
+  keyless fallback). Nothing else in the app touches the network, which is
+  what makes FR3 checkable.
+
+Git-push deploys are not wired up: linking the GitHub repo needs a login
+connection on the Vercel account, which is an account setting rather than
+something the CLI can do. `vercel deploy --prod` from the working tree is the
+current path.
 
 ---
 

@@ -12,6 +12,12 @@ npm install
 npm run build && npm start        # http://localhost:3000
 ```
 
+Or test the deployment directly:
+**[coolroute-network-planner.vercel.app](https://coolroute-network-planner.vercel.app)**.
+Everything in sections 1-8 works there, with one exception: section 0 is
+terminal-only, and step 1.11's on-demand tile refresh writes the fetched tile
+to disk, which a serverless filesystem will not keep. Run those two locally.
+
 > **Exact numbers in this guide will drift.** The scheduled refresh re-pulls
 > live data every 30 minutes and relief sites open and close through the
 > season, so expect small differences. The *shapes* - which route is worst,
