@@ -12,6 +12,11 @@ npm install
 npm run build && npm start        # http://localhost:3000
 ```
 
+> **Exact numbers in this guide will drift.** The scheduled refresh re-pulls
+> live data every 30 minutes and relief sites open and close through the
+> season, so expect small differences. The *shapes* - which route is worst,
+> which hour is coolest, which rows move - are what to check.
+
 Use `npm run dev` if you want to edit while testing. A wide window (≥1400 px)
 is expected — this is a desktop tool and the mobile layout is deliberately not
 built yet.

@@ -219,6 +219,12 @@ be its own kind of wrong.
 
 Phoenix, snapshot day, day average, live data:
 
+> **Figures drift.** The scheduled refresh re-pulls the relief networks and the
+> heat field every 30 minutes, and both genuinely change - sites open and close
+> through the season. Numbers quoted here are from one snapshot; expect the
+> live app to differ by a site or two. `npm run verify:coverage` always prints
+> the current ones.
+
 | | |
 |---|---|
 | Focus area within a 400 m walk of an **open** relief site | **16.0%** |
