@@ -20,7 +20,7 @@ import { THRESHOLDS } from '@/lib/assumptions';
 import { DAY_PARTS, type DayPart } from '@/lib/config';
 import type { RouteFeature, RouteScore } from '@/lib/types';
 import type { Bootstrap } from './AppShell';
-import { BandPill, Chip, Metric, SectionLabel, fmtMinutes } from './ui';
+import { BandPill, Chip, CoverageNote, Metric, SectionLabel, fmtMinutes } from './ui';
 
 export default function DispatcherPanel({
   boot,
@@ -250,6 +250,7 @@ export default function DispatcherPanel({
                         Longest stretch with no relief within reach:{' '}
                         <span className="num">{score.worstReliefGapM} m</span>
                       </div>
+                      <CoverageNote score={score} className="mt-1" />
                     </div>
                   ) : null}
                 </button>

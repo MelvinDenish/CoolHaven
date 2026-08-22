@@ -223,8 +223,28 @@ export interface RouteScore {
   /** Longest run of the route with no relief site within the walk radius. */
   worstReliefGapM: number;
   nearestRelief: { siteId: string; name: string; distanceM: number; atIdx: number } | null;
+  /**
+   * Fraction of the route, 0..1, whose temperature came from a measured grid
+   * cell rather than from the nearest tile edge.
+   *
+   * The AOI is a handful of ~10 mi tiles, not a continuous surface - the API's
+   * area cap forces that - so a run leaving the tiles gets an edge-extrapolated
+   * value. That is a defensible estimate, but it is not a measurement, and a
+   * product whose whole argument is provenance cannot present the two
+   * identically. Below 1, the UI says so.
+   */
+  coveredFraction: number;
+  /** Metres of the route outside measured coverage. The absolute form of the above. */
+  offCoverageM: number;
   /** Per-sample temps, for drawing the heat-coloured route line. */
-  samples: Array<{ lon: number; lat: number; tempF: number; distanceM: number }>;
+  samples: Array<{
+    lon: number;
+    lat: number;
+    tempF: number;
+    distanceM: number;
+    /** false = tempF is extrapolated from the nearest tile edge, not measured. */
+    inCoverage: boolean;
+  }>;
 }
 
 export interface DemandCell {

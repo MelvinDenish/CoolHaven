@@ -339,6 +339,41 @@ export function ProvenanceBar({
   );
 }
 
+/**
+ * Says out loud when part of a scored route sits outside measured coverage.
+ *
+ * The AOI is a handful of tiles, not a continuous surface - the API's ~50 mi2
+ * cap forces that - so a run leaving the tiles gets its temperature from the
+ * nearest tile edge. `scoreRoute` deliberately keeps those samples in the
+ * denominator, because dropping them would flatter exactly the runs that
+ * wander furthest. But an extrapolated value is not a measured one, and this
+ * component is that difference being stated rather than assumed.
+ *
+ * Renders nothing at full coverage, which is the normal case.
+ */
+export function CoverageNote({
+  score,
+  className = '',
+}: {
+  score: { coveredFraction: number; offCoverageM: number };
+  className?: string;
+}) {
+  if (score.coveredFraction >= 0.999) return null;
+  const pct = Math.round((1 - score.coveredFraction) * 100);
+  const km = (score.offCoverageM / 1000).toFixed(1);
+  return (
+    <p
+      className={`text-[11px] leading-relaxed text-[var(--color-faint)] ${className}`}
+      title="Cells are measured only inside the AOI tiles. Outside them the nearest tile-edge value is used."
+    >
+      <span className="text-[var(--color-warn)] font-semibold">{pct}%</span> of this run
+      (<span className="num">{km}</span> km) falls outside the measured tiles. Those
+      samples still count toward the exposure index, but their temperature comes from
+      the nearest tile edge rather than from a measured cell.
+    </p>
+  );
+}
+
 export function Empty({ children }: { children: ReactNode }) {
   return (
     <div className="border border-dashed border-[var(--color-hairline)] px-3 py-6 text-center text-[11.5px] text-[var(--color-faint)] leading-relaxed">

@@ -105,7 +105,7 @@ Open http://localhost:3000. You land in **Planner / Phoenix**.
 **Expect:** a green pulsing dot and **`FORTYGUARD CACHED SNAPSHOT`**, then
 `FILTER_TYPE 3 (forecast)` · `READING Day average` · `VALID AUG 21, 3:00 PM MST`
 · `RELIEF LAYER MAG Heat Relief Network` · `OPEN NOW 43/60 sites in focus` ·
-`ROUTING OSRM`.
+`ROUTING OpenRouteService`.
 
 **Why:** provenance is a component, not a footnote. If the snapshot were
 modelled this bar turns **amber** and reads "Modelled stand-in — not FortyGuard
@@ -398,19 +398,48 @@ so the map and every number move with it.
 
 ### 4.5 Score a different trip — FR14
 
-**Do:** enter From `33.4197, -112.0664`, To `33.5090, -112.0691`, leave the
+**Do:** enter From `33.4438, -112.0736`, To `33.5090, -112.0691`, leave the
 waypoint blank. Click **Route and score**.
 
-**Expect:** a real OSRM route with an alternative, drawn and scored.
+**Expect:** a real OpenRouteService route with a genuine alternative, drawn and
+scored - about **8.0 km / 15 min** for the fastest path and **8.7 km / 16 min**
+for the alternative. Both ends sit inside the measured tiles, so no coverage
+caveat appears.
 
-**Now add a waypoint:** `33.4392, -112.0954`. Re-run.
+**Now add a waypoint:** `33.4652, -112.0946`. Re-run.
 
-**Expect:** a visibly longer route (~18 km vs ~10.7 km) and **no alternative
-comparison** — with the note explaining both engines stop returning alternatives
+**Expect:** a visibly longer route (**~11.4 km / 21 min**, against 8.0 km) and
+**no alternative comparison** — with the note explaining both engines stop returning alternatives
 once a trip has a via point.
 
 **Error paths to try:** garbage in a field → "Enter both points as lat, lon";
 bad waypoint → "Waypoint must be lat, lon, or left blank".
+
+### 4.6 Prove the coverage caveat — measured vs extrapolated
+
+The AOI is a handful of ~10 mi tiles rather than a continuous surface, because
+the API caps a single request at about 50 mi². A run that leaves the tiles has
+to get its temperature from somewhere, and the app is explicit about where.
+
+**Do:** enter From `33.4197, -112.0664` — just south of `downtown-core`'s edge
+— To `33.5090, -112.0691`. Click **Route and score**.
+
+**Expect:** the route still scores normally, and a line appears beneath the
+relief-gap figure reading *"N% of this run (X km) falls outside the measured
+tiles."*
+
+**Why this matters:** those off-tile samples stay in the exposure denominator.
+Dropping them would have been easier and would have made every wandering run
+look cooler than it is — a route 30% outside coverage would quietly report the
+exposure of the 70% that happened to be measured. Instead each such sample
+takes the nearest tile-edge value, which is a defensible estimate but is *not*
+a measurement, and the note says so. Full-coverage routes render no note at
+all, so its presence is information rather than boilerplate.
+
+**Also visible in Dispatcher:** expand `r2-warehouse-civic` or
+`r3-buckeye-industrial` in the fleet list. Both genuinely clip past the tile
+edges (~28%) and carry the same line. `r4`, `r5`, `r6`, `r8` and both worker
+demo paths are fully inside coverage and show nothing.
 
 ---
 

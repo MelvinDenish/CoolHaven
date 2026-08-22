@@ -148,11 +148,19 @@ const ROUTE_SETS: Record<string, RegionRoutes> = {
         ],
       },
     ],
+    // Both ends sit INSIDE the measured tiles, which is a hard requirement
+    // rather than a nicety. downtown-core and midtown-camelback form a
+    // contiguous two-tile column (lon -112.0980..-112.0450, lat
+    // 33.4350..33.5150); an endpoint outside it lets the router escape onto a
+    // freeway, and then the Worker view scores a run whose temperatures are
+    // extrapolated from a tile edge instead of measured. The earlier start at
+    // 33.4197 sat below downtown-core's south edge and did exactly that: 83%
+    // of its samples fell outside coverage.
     demo: {
       id: 'worker-demo',
-      name: 'Depot to Camelback drop',
-      from: [-112.0664, 33.4197],
-      to: [-112.0691, 33.509],
+      name: 'Union Station depot to Camelback drop',
+      from: [-112.0736, 33.4438], // Phoenix Union Station, in downtown-core
+      to: [-112.0691, 33.509], //    Camelback Rd, in midtown-camelback
     },
   },
 
@@ -237,11 +245,17 @@ const ROUTE_SETS: Record<string, RegionRoutes> = {
         ],
       },
     ],
+    // Yuma's two tiles are genuinely disjoint - somerton-corridor sits south-
+    // west of yuma-core with unmeasured desert between them - so a Somerton
+    // start put roughly half the demo run on extrapolated ground. Both ends
+    // now sit inside yuma-core (lon -114.6520..-114.5860, lat
+    // 32.6550..32.7260). The Somerton runs are still in the fleet; it is only
+    // the single scored demo trip that has to stay on measured streets.
     demo: {
       id: 'worker-demo',
-      name: 'Somerton field block to Yuma medical centre',
-      from: [-114.7099, 32.5964],
-      to: [-114.6297, 32.6858],
+      name: 'Airport freight depot to Yuma Regional Medical Center',
+      from: [-114.606, 32.6566], // Yuma International Airport, in yuma-core
+      to: [-114.6297, 32.6858], //  Yuma Regional Medical Center, in yuma-core
     },
   },
 };

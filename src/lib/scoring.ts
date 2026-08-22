@@ -67,11 +67,18 @@ export function scoreRoute(
   let exposureIndex = 0;
   let minutesInExtreme = 0;
   let minutesExposed = 0;
+  let offCoverage = 0;
 
   for (const p of pts) {
-    const { tempF } = field.sampleClamped(p.lon, p.lat);
+    // sampleClamped, not sample: a point outside the tiles falls back to the
+    // nearest tile edge rather than dropping out. That keeps the denominator
+    // honest - an exposure index computed over only the in-coverage subset
+    // would flatter every run that leaves the AOI - but the fallback is an
+    // extrapolation, so we count it and report the fraction.
+    const { tempF, inCoverage } = field.sampleClamped(p.lon, p.lat);
+    if (!inCoverage) offCoverage++;
     const t = Number.isFinite(tempF) ? tempF : THRESHOLDS.comfortF;
-    samples.push({ lon: p.lon, lat: p.lat, tempF: t, distanceM: p.distanceM });
+    samples.push({ lon: p.lon, lat: p.lat, tempF: t, distanceM: p.distanceM, inCoverage });
     sumTemp += t;
     if (t > peakTempF) peakTempF = t;
     const over = Math.max(0, t - THRESHOLDS.comfortF);
@@ -92,6 +99,8 @@ export function scoreRoute(
     minutesInExtreme: round1(minutesInExtreme),
     minutesExposed: round1(minutesExposed),
     band: bandFor(exposureIndex),
+    coveredFraction: samples.length ? (samples.length - offCoverage) / samples.length : 1,
+    offCoverageM: Math.round(offCoverage * MOVEMENT.sampleSpacingM),
     peakSegment: findPeakSegment(samples),
     ...reliefCoverage(samples, sites),
     samples,

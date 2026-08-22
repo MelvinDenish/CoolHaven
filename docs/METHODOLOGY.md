@@ -80,6 +80,34 @@ exposureIndex = Σ  max(0, T_sample − 90) × minutesPerSample
 This makes a long mild route and a short brutal route comparable on one number,
 which is exactly what a dispatcher ranking eight runs needs.
 
+### Samples outside the measured tiles
+
+The AOI is a set of ~10 mi tiles, not a continuous surface — the API caps one
+request at roughly 50 mi² — so a run can leave measured ground. Two choices
+were available and only one of them is honest.
+
+Dropping off-tile samples from the sum would have been simpler, and it would
+have systematically flattered the runs that wander furthest: a route 30%
+outside coverage would have reported the exposure of the 70% that happened to
+be measured. So every sample stays in, and an off-tile point takes the value of
+the nearest tile edge (`HeatField.sampleClamped`).
+
+That is an extrapolation, not a measurement, and the two must not look alike in
+a product whose central claim is provenance. `scoreRoute` therefore returns
+`coveredFraction` and `offCoverageM` alongside the index, and any route below
+full coverage renders a line in both the Worker and Dispatcher views naming the
+percentage. Fully covered routes render nothing, so the note carries
+information rather than being decoration.
+
+The demo trips in both regions were moved to endpoints inside the tiles for
+this reason. The Phoenix demo previously started at 33.4197, below
+`downtown-core`'s southern edge, which let the router escape onto a freeway and
+put **83%** of the headline Worker route on extrapolated ground. Both demos are
+now at 0%. Among the fleet runs, `r2-warehouse-civic` and
+`r3-buckeye-industrial` still clip the tile edges at about 28%, and
+`y6-utility-south` at 22% — those are real properties of the AOI limit, left
+in place and disclosed rather than tuned away.
+
 ### Movement assumptions
 
 | Parameter | Value | Basis |

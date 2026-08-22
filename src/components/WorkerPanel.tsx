@@ -26,7 +26,15 @@ import { DAY_PARTS, type DayPart } from '@/lib/config';
 import { tempColor, valuesFor } from '@/lib/grid';
 import type { HeatGrid, ReliefSite, RouteFeature, RouteScore } from '@/lib/types';
 import type { Bootstrap } from './AppShell';
-import { BandPill, Chip, Empty, Metric, SectionLabel, fmtMinutes } from './ui';
+import {
+  BandPill,
+  Chip,
+  CoverageNote,
+  Empty,
+  Metric,
+  SectionLabel,
+  fmtMinutes,
+} from './ui';
 
 export default function WorkerPanel({
   boot,
@@ -322,6 +330,8 @@ export default function WorkerPanel({
           Longest stretch with no relief site within {MOVEMENT.walkToReliefM} m:{' '}
           <span className="num">{primaryScore.worstReliefGapM} m</span>.
         </p>
+
+        <CoverageNote score={primaryScore} className="mt-2" />
       </section>
 
       {/* ------------------------------------------ alternative (Addition 2) */}

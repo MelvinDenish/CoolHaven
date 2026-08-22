@@ -46,7 +46,7 @@ judge will ask about.
 | **Heat field** | **Real.** 10 grids, all `source: "fortyguard"`, each carrying its own `activity_id`. `liveApiUsed: true` in both regions. |
 | **Relief networks** | **Real.** 253 MAG Heat Relief Network sites (Phoenix) + 21 AZDHS Heat Preparedness Network sites (Yuma), with published hours, ADA and pet flags. |
 | **Roads and land cover** | **Real.** OpenStreetMap via Overpass, per region. |
-| **Work routes** | **Real geometry.** 8 Phoenix + 7 Yuma runs plus a demo trip each, resolved on the actual road network by OSRM. Endpoints are real named locations; the runs are representative, not a carrier's manifest. |
+| **Work routes** | **Real geometry.** 8 Phoenix + 7 Yuma runs plus a demo trip each, resolved on the actual road network by **OpenRouteService** (public OSRM is the keyless fallback). Endpoints are real named locations inside the measured tiles; the runs are representative, not a carrier's manifest. |
 | **Intervention effects** | **Assumptions.** Every one is labelled in the UI at the moment you use it. See [Methodology](docs/METHODOLOGY.md). |
 
 Delete a cache file and re-run `npm run data:ingest` and it comes back from the
@@ -273,7 +273,7 @@ npm run build && npm start
 
 npm run data:stations          # relief networks, both regions      (no key)
 npm run data:osm               # OpenStreetMap via Overpass          (no key)
-npm run data:routes            # OSRM, or ORS if keyed               (no key)
+npm run data:routes            # OpenRouteService, OSRM if unkeyed   (ORS key)
 npm run data:ingest            # FortyGuard — the real integration   (key)
 npm run data:credit-probe      # Addendum A4 empirical check         (KEY REQUIRED)
 npm run data:hourly            # env_params 24h profiles             (KEY REQUIRED)
@@ -296,7 +296,7 @@ Overpass returned 500/502/504 from both primary mirrors during development.
 ```bash
 cp .env.example .env.local     # or use .env — both are gitignored
 FORTYGUARD_API_KEY=...         # required only by scripts/, never by the app
-ORS_API_KEY=                   # optional; OSRM is used when absent
+ORS_API_KEY=...                # preferred router; OSRM is the keyless fallback
 ```
 
 ### Scheduled refresh (FR2)
