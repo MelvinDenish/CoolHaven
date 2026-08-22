@@ -8,13 +8,20 @@
 # refreshed snapshot ends up COMMITTED. A Vercel cron runs on a read-only
 # filesystem and cannot write to the repo, so it could only refresh an
 # ephemeral in-memory copy - which would satisfy the word "schedule" and miss
-# the point of the requirement. This workflow refreshes the data, commits it,
-# and the commit triggers a redeploy. The committed snapshot stays the source
-# of truth, exactly as the architecture assumes.
+# the point of the requirement. This workflow refreshes the data and commits
+# it; the committed snapshot stays the source of truth, exactly as the
+# architecture assumes.
 #
 # SETUP: add FORTYGUARD_API_KEY as a repository secret. Without it the workflow
 # still runs and regenerates everything it can (relief network, routes), and
 # the heat field stays a modelled stand-in - which the app then banners.
+#
+# OPTIONAL, to push the refresh all the way to the live site: add VERCEL_TOKEN,
+# VERCEL_ORG_ID and VERCEL_PROJECT_ID as repository secrets. Until then the
+# deploy step skips itself and the deployment serves whatever snapshot was
+# current when it was last deployed by hand. A commit alone does NOT redeploy:
+# that would need the GitHub repo linked to the Vercel project, which requires
+# a login connection on the Vercel account and cannot be done from the CLI.
 
 name: Refresh data snapshot
 
@@ -104,3 +111,17 @@ jobs:
           LIVE=$(node -e "const m=require('./data/phoenix/cache/manifest.json');console.log(m.liveApiUsed)")
           git commit -m "data: refresh snapshot (liveApiUsed=$LIVE)"
           git push
+
+      # Inert until the three secrets exist. Deploying from the working tree
+      # rather than from a git trigger is deliberate: the project has no GitHub
+      # connection, and this way the deploy carries exactly the snapshot this
+      # run just verified rather than whatever the default branch holds by the
+      # time a webhook fires.
+      - name: Deploy the refreshed snapshot
+        if: ${{ env.VERCEL_TOKEN != '' }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: npx vercel deploy --prod --yes --token "$VERCEL_TOKEN"
+        continue-on-error: true

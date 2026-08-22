@@ -310,6 +310,11 @@ one: it runs on a read-only filesystem and could only refresh an ephemeral
 copy, which satisfies the word "schedule" and misses a requirement that says
 *committed*. Needs `FORTYGUARD_API_KEY` as a repo secret.
 
+Add `VERCEL_TOKEN`, `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` as secrets too and
+the workflow pushes each verified refresh to the live site; without them the
+deploy step skips and the deployment keeps whatever snapshot it was last given
+by hand. A commit on its own does **not** redeploy — see below.
+
 ### Deployment
 
 Deployed to Vercel at
