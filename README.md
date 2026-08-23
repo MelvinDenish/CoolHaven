@@ -19,7 +19,12 @@ npm run dev        # http://localhost:3000 — the snapshot is committed, this j
 About **32 million people work outdoors in the United States**. Extreme heat is
 the country's leading cause of weather-related death — roughly **2,000 a year**,
 ahead of hurricanes and floods — and drove an estimated **28,000 additional
-workplace injuries in 2023**.
+workplace injuries in 2023**. The total cost to the US economy was around
+**$162 billion in 2024**, with lost worker productivity a major component.
+
+The framing is deliberately US-only rather than global. FortyGuard's coverage is
+US-only today, so a single-country pitch backed by four sourced figures is
+stronger than a vaguer multi-country one — see *Scope and future work* below.
 
 Three different people can act on that, and they need different answers from
 the same data:
@@ -95,6 +100,18 @@ Three things worth knowing, all measured rather than assumed:
   in code — `HeatField` throws on mixed `filterType`, and `/api/field` demands
   both parameters — so it starts working the moment historic is served. Until
   then the status bar says `filter_type 3 (forecast)` on every view.
+
+### The endpoints, and what each is for
+
+Addendum A2's plan, and what actually happened to each.
+
+| Endpoint | Role here | Priority | Status |
+|---|---|---|---|
+| `POST /v1/heatmap` | Core engine. One call per tile per timestamp, on district-scale polygons. | Highest | **Used.** 6 Phoenix + 4 Yuma grids per refresh |
+| `GET /v1/status/{activity_id}` | Async polling with exponential backoff. Not optional — every heatmap submit requires it. | Required | **Used.** 1 s → 15 s ceiling |
+| `POST /v1/env_params` | Point queries at tile centroids and route endpoints. Hourly heat index, wet bulb, humidity, air quality. | High | **Used.** The only hour-of-day resolution in the API |
+| `POST /v1/heat_intelligence` | Richer multi-dimensional reports to strengthen the Planner narrative. | Medium (bonus) | **Attempted.** Contract found, submits accepted, every activity polls to `Failed`. Premium-gated |
+| Satellite / Streetview | Land-cover context for scenario realism. | Low / optional | **Not attempted.** Premium |
 
 ### Two limits that shaped the product
 
@@ -415,6 +432,86 @@ stretched over its bbox.
   cool pavement are now core, per the additions brief.
 - **No regulatory-compliance claims.** Thresholds are working bands for an
   employer's internal planning, not tied to any named standard.
+
+---
+
+## Scope and future work
+
+**FortyGuard's coverage is US-only.** That is a property of the data source,
+not of the design, and it is the reason the pitch above is framed around US
+figures rather than global ones. Two Arizona regions were chosen because the
+problem is sharpest there, not because the approach is Arizona-shaped.
+
+**International scaling is deferred, not abandoned.** Architecturally it is the
+same move that adding Yuma was: a region is a bounding box, a set of tiles, and
+a local relief-network source. [`src/lib/regions.ts`](src/lib/regions.ts) already
+carries all three per region, and `ReliefSource` already abstracts over two
+different agency schemas with different field names. A non-US city needs a
+fourth thing the repo cannot supply: FortyGuard serving that geography. When it
+does, the work is a new entry in `REGIONS` plus a relief-source adapter —
+additive, not a redesign.
+
+**Other explicit future work**, in the order it would be worth doing:
+
+- **Historic baselines** once `filter_type` 1 is served on a non-Premium key.
+  The Planner-uses-historic / operations-uses-forecast split that Addendum A2
+  asks for is already enforced in code and is simply waiting on the API.
+- **`heat_intelligence`** for the Planner narrative, if Premium credits open up.
+- **Worker-facing mobile app.** The responsive layout works on a phone, but a
+  worker mid-shift wants a notification, not a browser tab.
+
+---
+
+## Non-functional requirements, measured
+
+Base PRD §7 states two requirements that are claims about the running app
+rather than about its code, so both were measured rather than asserted.
+
+**Performance: <3 s for any in-app interaction.** Measured on the production
+deployment, timed from the click to the second animation frame after the
+resulting paint:
+
+| Interaction | What it recomputes | Measured |
+|---|---|---|
+| Apply 4 recommended stations to a scenario | Whole field re-derived, all 15 routes rescored, 3 canvas overlays redrawn | **1,291 ms** |
+| Switch to Dispatcher | Every active run scored and ranked | **1,048 ms** |
+| Switch region, Phoenix → Yuma | Bootstrap refetched, new field, new routes, full rescore | **1,043 ms** |
+
+The heaviest interaction in the product uses under half the budget. It holds
+because nothing on the interactive path calls FortyGuard — the whole point of
+the caching layer.
+
+**Demo reliability: runs from the committed snapshot with no internet
+dependency, rehearsed explicitly.** Rehearsed, not assumed. Enumerating every
+network request the production app makes gives **one** external host:
+
+```
+coolroute-network-planner.vercel.app   17 requests   (app + cached snapshot)
+tile.openstreetmap.org                 71 requests   (basemap only)
+```
+
+No FortyGuard, no OpenRouteService, no Overpass at runtime. Re-running with the
+basemap unreachable: the heat field still renders, relief sites still render,
+routes still render, and every score, ranking, scenario and export still works.
+What is lost is street names and landmarks — geographic context, not function.
+
+Bundling an offline basemap was considered and rejected: it is megabytes of
+tile assets to protect against a failure mode that degrades the map into a
+still-usable one. Say what breaks instead of pretending nothing does.
+
+---
+
+## Risks and how they are mitigated
+
+Addendum A5 asks for these two by name. Both are mitigated in code rather than
+in prose, so each row points at the thing that enforces it.
+
+| Risk | Mitigation | Where |
+|---|---|---|
+| **AOI limit exceeded** — a request over ~50 mi² / 130 km² is rejected, and Phoenix as a whole is far over it | Tiles are declared per region and validated *before* any request goes out; the build fails rather than the API. Phoenix is 3 tiles / 26.3 mi², Yuma 2 / 33.2 mi² | `assertTilesWithinAoiLimit()` in [config.ts](src/lib/config.ts) |
+| **Credit budget unknown** — no per-call cost is documented, so blind estimation could exhaust the 2,000,000 allotment | Empirical probe run against a real key before the caching layer was built, per A4; the script refuses to run without one. An (area, date) pair is never re-requested without `--force` | [credit-probe.ts](scripts/credit-probe.ts), [ingest-fortyguard.ts](scripts/ingest-fortyguard.ts) |
+| **Demo-time network failure** | Nothing on the judged path touches the network except basemap tiles; the snapshot is committed | [snapshot.ts](src/lib/server/snapshot.ts) has no network call at all |
+| **Upstream data source down** | Every data script preserves the previous snapshot on failure — not theoretical, Overpass returned 500/502/504 during development | all of `scripts/` |
 
 ---
 

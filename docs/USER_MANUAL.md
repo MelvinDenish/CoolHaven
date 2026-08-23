@@ -545,6 +545,59 @@ readout, so that is what opens first.
 
 ---
 
+## 9 · The two non-functional requirements
+
+Base PRD §7 asks for these as properties of the running app, so check them
+rather than taking the README's numbers on trust.
+
+### 9.1 Every interaction under 3 seconds
+
+**Do:** open DevTools → Console on the live site and paste:
+
+```js
+const t0 = performance.now();
+[...document.querySelectorAll('button')].find(b => b.textContent.includes('Add all to Option A')).click();
+requestAnimationFrame(() => requestAnimationFrame(() =>
+  console.log('ms to paint:', Math.round(performance.now() - t0))));
+```
+
+**Expect:** roughly **1,300 ms**, and Option A flips to "4 moves". That is the
+heaviest interaction in the product — the whole field is re-derived, all 15
+routes are rescored and three canvas overlays are redrawn. Switching view or
+region lands nearer 1,050 ms.
+
+**Why it holds:** nothing on the interactive path calls FortyGuard. Every
+number on screen is derived from the committed snapshot in the browser.
+
+### 9.2 No internet dependency beyond the basemap
+
+**Do:** in the Console, list every host the page has contacted:
+
+```js
+const h = {};
+performance.getEntriesByType('resource').forEach(e => {
+  const host = new URL(e.name).host; h[host] = (h[host] || 0) + 1;
+});
+console.table(h);
+```
+
+**Expect:** exactly two hosts — the app's own origin, and
+`tile.openstreetmap.org`. No FortyGuard, no OpenRouteService, no Overpass.
+
+**Now take the basemap away:**
+
+```js
+document.querySelector('.leaflet-tile-pane').style.display = 'none';
+```
+
+**Expect:** the heat field, the relief sites and the routes all stay drawn, and
+every score, ranking, scenario and export keeps working. You lose street names
+and landmarks — geographic context, not function. That is the honest shape of
+this app offline, and it is why no offline basemap is bundled: megabytes of
+tile assets to protect against a failure that leaves the tool usable anyway.
+
+---
+
 ## What is deliberately not built
 
 - **Historic data (`filter_type` 1)** — the API returns HTTP 500 on this key.
