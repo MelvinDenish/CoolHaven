@@ -6,7 +6,7 @@
  "endpoint": "https://services1.arcgis.com/MdyCMZnX1raZ7TS3/arcgis/rest/services/HRN_Public_view/FeatureServer/0/query",
  "where": "1=1",
  "attribution": "Maricopa Association of Governments (MAG) Heat Relief Network, public feature service. Locations, hours and services as published by MAG.",
- "fetchedAt": "2026-08-23T21:22:59.263Z",
+ "fetchedAt": "2026-08-23T21:47:20.977Z",
  "totalCount": 254,
  "focusCount": 49,
  "focusBbox": [
