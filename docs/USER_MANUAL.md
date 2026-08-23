@@ -552,24 +552,33 @@ rather than taking the README's numbers on trust.
 
 ### 9.1 Every interaction under 3 seconds
 
-**Do:** open DevTools → Console on the live site and paste:
+**Do not** measure this with `requestAnimationFrame` unless the tab is in the
+foreground. A backgrounded tab throttles rAF to about one callback per second,
+which makes every interaction look like it takes a second. The tell: time
+**Hide legend**, a pure CSS toggle, with the same harness. If that also reports
+~1,000 ms, you are measuring Chrome.
+
+**Do:** with the window focused and in front, open DevTools → Console:
 
 ```js
 const t0 = performance.now();
 [...document.querySelectorAll('button')].find(b => b.textContent.includes('Add all to Option A')).click();
-requestAnimationFrame(() => requestAnimationFrame(() =>
-  console.log('ms to paint:', Math.round(performance.now() - t0))));
+console.log('sync commit ms:', (performance.now() - t0).toFixed(1));
 ```
 
-**Expect:** roughly **1,300 ms**, and Option A flips to "4 moves". That is the
-heaviest interaction in the product — the whole field is re-derived, all 15
-routes are rescored and three canvas overlays are redrawn. Switching view or
-region lands nearer 1,050 ms.
+**Expect:** under ~2 ms, and Option A flips to "4 moves". React commits discrete
+events synchronously, so this is the real cost of the click.
 
-**Why it holds:** nothing on the interactive path calls FortyGuard. Every
-number on screen is derived from the committed snapshot in the browser.
+**The underlying recompute**, measured in Node against the committed snapshot
+(median of 9 warm runs): scoring all 8 Phoenix routes against 254 relief sites
+takes **103 ms**; applying 4 stations and rescoring everything takes **151 ms**.
+Yuma is **5 ms** — 20× faster despite having *more* grid cells, because relief
+coverage loops over 254 Phoenix sites versus Yuma's 21.
 
-### 9.2 No internet dependency beyond the basemap
+**Why it holds:** nothing on the interactive path calls FortyGuard. Every number
+on screen is derived in the browser from the committed snapshot.
+
+### 9.2 No third-party dependency beyond the basemap
 
 **Do:** in the Console, list every host the page has contacted:
 
@@ -581,8 +590,10 @@ performance.getEntriesByType('resource').forEach(e => {
 console.table(h);
 ```
 
-**Expect:** exactly two hosts — the app's own origin, and
-`tile.openstreetmap.org`. No FortyGuard, no OpenRouteService, no Overpass.
+**Expect:** exactly two hosts — the app's own origin (the bundle plus
+`/api/bootstrap` and `/api/field`, serving the committed snapshot) and
+`tile.openstreetmap.org`. No FortyGuard, no OpenRouteService, no Overpass. That
+is FR3 demonstrated rather than asserted.
 
 **Now take the basemap away:**
 
@@ -592,9 +603,13 @@ document.querySelector('.leaflet-tile-pane').style.display = 'none';
 
 **Expect:** the heat field, the relief sites and the routes all stay drawn, and
 every score, ranking, scenario and export keeps working. You lose street names
-and landmarks — geographic context, not function. That is the honest shape of
-this app offline, and it is why no offline basemap is bundled: megabytes of
-tile assets to protect against a failure that leaves the tool usable anyway.
+and landmarks — geographic context, not function.
+
+This hides the basemap on an already-loaded map, so it shows the data layers are
+independent of the tile layer rather than simulating a cold start with no
+network. For the failure that matters on demo day — OpenStreetMap unreachable —
+the conclusion is the same, and it is why no offline basemap is bundled:
+megabytes of tile assets to guard against a failure that leaves the tool usable.
 
 ---
 

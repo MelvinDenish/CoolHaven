@@ -465,39 +465,63 @@ additive, not a redesign.
 ## Non-functional requirements, measured
 
 Base PRD §7 states two requirements that are claims about the running app
-rather than about its code, so both were measured rather than asserted.
+rather than about its code, so both were measured. The first measurement
+attempt was wrong and is worth recording, because it is the kind of wrong that
+usually ships.
 
-**Performance: <3 s for any in-app interaction.** Measured on the production
-deployment, timed from the click to the second animation frame after the
-resulting paint:
+**Performance: <3 s for any in-app interaction.**
 
-| Interaction | What it recomputes | Measured |
+The obvious method — click a control, wait two animation frames, read the
+clock — reported ~1,300 ms for the heaviest interaction. That looked plausible
+and was an artifact: the browser tab was backgrounded, so `requestAnimationFrame`
+was throttled to about one callback per second. The control that proved it was
+**Hide legend**, a pure CSS class toggle, which reported **1,028 ms** through
+the same harness. Any figure near that floor was measuring Chrome, not CoolRoute.
+
+Measured instead where the work actually is — in Node, against the committed
+snapshot, median of 9 warm runs:
+
+| Recompute | Scope | Median |
 |---|---|---|
-| Apply 4 recommended stations to a scenario | Whole field re-derived, all 15 routes rescored, 3 canvas overlays redrawn | **1,291 ms** |
-| Switch to Dispatcher | Every active run scored and ranked | **1,048 ms** |
-| Switch region, Phoenix → Yuma | Bootstrap refetched, new field, new routes, full rescore | **1,043 ms** |
+| Score every route (the Dispatcher list) | 8 routes × 254 relief sites, 6,776 cells | **103 ms** |
+| Apply 4 stations and rescore everything | field re-derived + all routes rescored | **151 ms** |
+| Same, Yuma | 7 routes × 21 sites, 8,680 cells | **5 ms** |
 
-The heaviest interaction in the product uses under half the budget. It holds
-because nothing on the interactive path calls FortyGuard — the whole point of
-the caching layer.
+Phoenix costs 20× Yuma not because of grid size — Yuma has *more* cells — but
+because relief coverage is a nested loop over 254 sites per route sample
+against Yuma's 21. That is the hot path if this ever needs optimising, and it
+does not: the heaviest recompute in the product is **151 ms against a 3,000 ms
+budget**. In the browser the click-to-commit cost measures under 1 ms, because
+React commits discrete events synchronously and the recompute above is the
+whole of the work.
 
-**Demo reliability: runs from the committed snapshot with no internet
-dependency, rehearsed explicitly.** Rehearsed, not assumed. Enumerating every
-network request the production app makes gives **one** external host:
+It holds because nothing on the interactive path calls FortyGuard — the point
+of the caching layer.
+
+**Demo reliability: runs from the committed snapshot, no live API dependency.**
+
+Enumerating every network request the production app issues gives two hosts and
+no others:
 
 ```
-coolroute-network-planner.vercel.app   17 requests   (app + cached snapshot)
-tile.openstreetmap.org                 71 requests   (basemap only)
+coolroute-network-planner.vercel.app   17   app bundle + /api/bootstrap + /api/field
+tile.openstreetmap.org                 71   basemap tiles
 ```
 
-No FortyGuard, no OpenRouteService, no Overpass at runtime. Re-running with the
-basemap unreachable: the heat field still renders, relief sites still render,
-routes still render, and every score, ranking, scenario and export still works.
-What is lost is street names and landmarks — geographic context, not function.
+No FortyGuard, no OpenRouteService, no Overpass at runtime — which is exactly
+what FR3 asks for. The same-origin requests are the app serving its own
+committed snapshot, so the accurate claim is *no third-party dependency beyond
+basemap tiles*, not *no network at all*.
 
-Bundling an offline basemap was considered and rejected: it is megabytes of
-tile assets to protect against a failure mode that degrades the map into a
-still-usable one. Say what breaks instead of pretending nothing does.
+Hiding the basemap pane on a loaded map leaves the heat field, the relief sites
+and the routes all still drawn, and every score, ranking, scenario and export
+still working. Strictly that demonstrates the data layers are independent of
+the basemap layer rather than simulating a cold offline start — but it is the
+same conclusion for the failure that matters: lose OpenStreetMap and you lose
+street names and landmarks, not function.
+
+No offline basemap is bundled. That would be megabytes of tile assets to guard
+against a failure that leaves the tool usable anyway. Better to say what breaks.
 
 ---
 
