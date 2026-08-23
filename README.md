@@ -491,12 +491,24 @@ Phoenix costs 20× Yuma not because of grid size — Yuma has *more* cells — b
 because relief coverage is a nested loop over 254 sites per route sample
 against Yuma's 21. That is the hot path if this ever needs optimising, and it
 does not: the heaviest recompute in the product is **151 ms against a 3,000 ms
-budget**. In the browser the click-to-commit cost measures under 1 ms, because
-React commits discrete events synchronously and the recompute above is the
-whole of the work.
+budget**.
 
-It holds because nothing on the interactive path calls FortyGuard — the point
-of the caching layer.
+**What that figure is, and is not.** It is the computation an interaction
+triggers, measured directly. It is *not* end-to-end click-to-paint: React
+commits the click in under 1 ms and schedules the recompute, and the canvas
+redraw sits on top of it. Two attempts to measure the full round trip in an
+automated browser produced artifacts rather than numbers — the
+`requestAnimationFrame` method hit background-tab throttling, and `longtask`
+entries turned out not to be attributed through the automation harness at all
+(it missed a deliberately injected 150 ms block, which is how that was caught).
+So the honest position: the dominant cost is measured and is 5% of budget; the
+remaining paint cost is not measured. To close it, run
+[USER_MANUAL §9.1](docs/USER_MANUAL.md) in a **foreground** tab, where rAF is
+trustworthy. It takes about a minute.
+
+Whatever that last number proves to be, it holds for a structural reason:
+nothing on the interactive path calls FortyGuard. That is the point of the
+caching layer.
 
 **Demo reliability: runs from the committed snapshot, no live API dependency.**
 
