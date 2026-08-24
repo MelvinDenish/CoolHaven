@@ -6,20 +6,20 @@
  "endpoint": "https://services1.arcgis.com/MdyCMZnX1raZ7TS3/arcgis/rest/services/HRN_Public_view/FeatureServer/0/query",
  "where": "1=1",
  "attribution": "Maricopa Association of Governments (MAG) Heat Relief Network, public feature service. Locations, hours and services as published by MAG.",
- "fetchedAt": "2026-08-24T04:48:21.814Z",
- "totalCount": 254,
- "focusCount": 49,
+ "fetchedAt": "2026-08-24T13:53:08.514Z",
+ "totalCount": 253,
+ "focusCount": 48,
  "focusBbox": [
   -112.098,
   33.415,
   -111.985,
   33.515
  ],
- "withKnownHours": 252,
+ "withKnownHours": 251,
  "byKind": {
   "cooling_center": 94,
   "hydration_station": 142,
-  "respite_center": 18
+  "respite_center": 17
  },
  "sites": [
   {
@@ -7204,57 +7204,6 @@
    "adaAccessible": true,
    "seasonStart": "2026-06-01",
    "seasonEnd": "2026-09-30",
-   "source": "magHRN",
-   "verifiedDate": "2026-08-24"
-  },
-  {
-   "id": "hrn-487",
-   "name": "Grace Lutheran Church",
-   "org": "AZ Faith Network",
-   "kind": "respite_center",
-   "lon": -112.069954,
-   "lat": 33.461043,
-   "address": "1124 N. 3rd St. Phoenix AZ 85004",
-   "city": "Phoenix",
-   "phone": "602-334-4331",
-   "hours": "Mo-We 9am-5pm, Th & Fr 11am-7pm, Sa 1pm-7pm, Su 12:30pm-7pm",
-   "hoursByDay": [
-    {
-     "openMin": 750,
-     "closeMin": 1140
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 660,
-     "closeMin": 1140
-    },
-    {
-     "openMin": 660,
-     "closeMin": 1140
-    },
-    {
-     "openMin": 780,
-     "closeMin": 1140
-    }
-   ],
-   "open24": false,
-   "hoursKnown": true,
-   "services": null,
-   "pets": null,
-   "adaAccessible": true,
-   "seasonStart": "2026-08-06",
-   "seasonEnd": "2026-08-23",
    "source": "magHRN",
    "verifiedDate": "2026-08-24"
   },
