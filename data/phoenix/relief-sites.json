@@ -6,7 +6,7 @@
  "endpoint": "https://services1.arcgis.com/MdyCMZnX1raZ7TS3/arcgis/rest/services/HRN_Public_view/FeatureServer/0/query",
  "where": "1=1",
  "attribution": "Maricopa Association of Governments (MAG) Heat Relief Network, public feature service. Locations, hours and services as published by MAG.",
- "fetchedAt": "2026-08-24T16:38:58.864Z",
+ "fetchedAt": "2026-08-24T17:32:25.794Z",
  "totalCount": 253,
  "focusCount": 48,
  "focusBbox": [
@@ -7313,7 +7313,7 @@
    "address": "7205 N. 51st Ave Glendale AZ 85301",
    "city": "Glendale",
    "phone": "602-334-4331",
-   "hours": "Mo-Fr 12pm-8pm, Sa 2pm-8pm",
+   "hours": "Mo-Fr 12pm-8pm, Sa 12pm-8pm",
    "hoursByDay": [
     null,
     {
@@ -7337,7 +7337,7 @@
      "closeMin": 1200
     },
     {
-     "openMin": 840,
+     "openMin": 720,
      "closeMin": 1200
     }
    ],
