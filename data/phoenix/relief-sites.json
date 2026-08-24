@@ -6,7 +6,7 @@
  "endpoint": "https://services1.arcgis.com/MdyCMZnX1raZ7TS3/arcgis/rest/services/HRN_Public_view/FeatureServer/0/query",
  "where": "1=1",
  "attribution": "Maricopa Association of Governments (MAG) Heat Relief Network, public feature service. Locations, hours and services as published by MAG.",
- "fetchedAt": "2026-08-24T21:31:07.507Z",
+ "fetchedAt": "2026-08-24T22:28:25.962Z",
  "totalCount": 252,
  "focusCount": 48,
  "focusBbox": [
@@ -1344,7 +1344,7 @@
   },
   {
    "id": "hrn-67",
-   "name": "Cesar Chavez Library",
+   "name": "Prickly Pear Library",
    "org": "City of Phoenix",
    "kind": "cooling_center",
    "lon": -112.13876,
@@ -10872,7 +10872,7 @@
   },
   {
    "id": "hrn-596",
-   "name": "Caesar Chavez Community Center",
+   "name": "Aguila Community Center",
    "org": "City of Phoenix",
    "kind": "hydration_station",
    "lon": -112.141418,
