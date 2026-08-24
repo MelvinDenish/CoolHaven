@@ -6,8 +6,8 @@
  "endpoint": "https://services1.arcgis.com/MdyCMZnX1raZ7TS3/arcgis/rest/services/HRN_Public_view/FeatureServer/0/query",
  "where": "1=1",
  "attribution": "Maricopa Association of Governments (MAG) Heat Relief Network, public feature service. Locations, hours and services as published by MAG.",
- "fetchedAt": "2026-08-24T18:41:34.607Z",
- "totalCount": 253,
+ "fetchedAt": "2026-08-24T19:30:53.041Z",
+ "totalCount": 252,
  "focusCount": 48,
  "focusBbox": [
   -112.098,
@@ -15,11 +15,11 @@
   -111.985,
   33.515
  ],
- "withKnownHours": 251,
+ "withKnownHours": 250,
  "byKind": {
   "cooling_center": 94,
   "hydration_station": 142,
-  "respite_center": 17
+  "respite_center": 16
  },
  "sites": [
   {
@@ -10104,57 +10104,6 @@
    "pets": null,
    "adaAccessible": null,
    "seasonStart": "2026-06-01",
-   "seasonEnd": "2026-09-30",
-   "source": "magHRN",
-   "verifiedDate": "2026-08-24"
-  },
-  {
-   "id": "hrn-572",
-   "name": "MIND24-7",
-   "org": "MIND24-7",
-   "kind": "respite_center",
-   "lon": -112.125446,
-   "lat": 33.576719,
-   "address": "10046 N. Metro Pkwy Phoenix AZ 85051",
-   "city": "Phoenix",
-   "phone": "844-646-3247",
-   "hours": "Open 24/7",
-   "hoursByDay": [
-    {
-     "openMin": 0,
-     "closeMin": 1439
-    },
-    {
-     "openMin": 0,
-     "closeMin": 1439
-    },
-    {
-     "openMin": 0,
-     "closeMin": 1439
-    },
-    {
-     "openMin": 0,
-     "closeMin": 1439
-    },
-    {
-     "openMin": 0,
-     "closeMin": 1439
-    },
-    {
-     "openMin": 0,
-     "closeMin": 1439
-    },
-    {
-     "openMin": 0,
-     "closeMin": 1439
-    }
-   ],
-   "open24": true,
-   "hoursKnown": true,
-   "services": null,
-   "pets": false,
-   "adaAccessible": true,
-   "seasonStart": "2026-06-08",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
    "verifiedDate": "2026-08-24"
