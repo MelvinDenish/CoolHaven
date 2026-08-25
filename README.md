@@ -5,7 +5,7 @@ FortyGuard Hackathon '26 · Resilient Cities & Infrastructure
 
 **Live: [coolroute-network-planner.vercel.app](https://coolroute-network-planner.vercel.app)**
 
-Two Arizona regions. Three audiences. One cached dataset, one scoring function.
+Four US regions. Three audiences. One cached dataset, one scoring function.
 
 ```bash
 npm install
@@ -31,7 +31,7 @@ the same data:
 
 | View | The question | What it gives you |
 |---|---|---|
-| **Planner** | Where should cooling infrastructure go? | Exposure-demand layer, ranked siting, a Forma-style scenario studio, GeoJSON export |
+| **Planner** | Where should cooling infrastructure go? | Exposure-demand layer, ranked siting, measured ground truth per site, budget and target solvers, a six-tool scenario studio, GeoJSON in and out |
 | **Dispatcher** | Which crews do I pull today? | Every active run scored and ranked worst-first, by part of day |
 | **Worker** | Is this run safe, and should I go another way or at another time? | One number, one band, one instruction, nearest open relief |
 
@@ -50,11 +50,12 @@ judge will ask about.
 
 | Layer | Status |
 |---|---|
-| **Heat field** | **Real.** 10 grids, all `source: "fortyguard"`, each carrying its own `activity_id`. `liveApiUsed: true` in both regions. |
-| **Relief networks** | **Real.** 253 MAG Heat Relief Network sites (Phoenix) + 21 AZDHS Heat Preparedness Network sites (Yuma), with published hours, ADA and pet flags. |
+| **Heat field** | **Real.** Every grid `source: "fortyguard"`, each carrying its own `activity_id`, and the snapshot date rolls to today on every ingest. `npm run verify:data` checks both. |
+| **Relief layers** | **Real, at two different grades.** Phoenix and Yuma read published agency networks with hours, ADA and pet flags. Las Vegas and Tucson read community-mapped OSM amenities — real places, weaker guarantees, flagged `osm-derived` everywhere they surface. |
+| **Ground segmentation** | **Real, and measured.** Street-level and overhead imagery with per-class frame composition, from `/v1/streetview` and `/v1/satellite`. |
 | **Roads and land cover** | **Real.** OpenStreetMap via Overpass, per region. |
-| **Work routes** | **Real geometry.** 8 Phoenix + 7 Yuma runs plus a demo trip each, resolved on the actual road network by **OpenRouteService** (public OSRM is the keyless fallback). Endpoints are real named locations inside the measured tiles; the runs are representative, not a carrier's manifest. |
-| **Intervention effects** | **Assumptions.** Every one is labelled in the UI at the moment you use it. See [Methodology](docs/METHODOLOGY.md). |
+| **Work routes** | **Real geometry.** Sample runs per region plus a demo trip each, resolved on the actual road network by **OpenRouteService** where a key was available and **public OSRM** otherwise — each region's `routes.json` records which, and the provenance bar reads it from there rather than asserting one. Endpoints are real named locations inside the measured tiles; the runs are representative, not a carrier's manifest. |
+| **Intervention effects** | **Assumptions.** Every one is labelled in the UI at the moment you use it — including after the ground segmentation arrived, because a photograph measures cover, not degrees. See [Methodology](docs/METHODOLOGY.md). |
 
 Delete a cache file and re-run `npm run data:ingest` and it comes back from the
 live API. Remove the key and it comes back as a modelled stand-in stamped
@@ -107,11 +108,36 @@ Addendum A2's plan, and what actually happened to each.
 
 | Endpoint | Role here | Priority | Status |
 |---|---|---|---|
-| `POST /v1/heatmap` | Core engine. One call per tile per timestamp, on district-scale polygons. | Highest | **Used.** 6 Phoenix + 4 Yuma grids per refresh |
-| `GET /v1/status/{activity_id}` | Async polling with exponential backoff. Not optional — every heatmap submit requires it. | Required | **Used.** 1 s → 15 s ceiling |
+| `POST /v1/heatmap` | Core engine. One call per tile per timestamp, on district-scale polygons. | Highest | **Used.** One grid per tile per available day |
+| `GET /v1/status/{activity_id}` | Async polling with exponential backoff. Not optional — every submit requires it. | Required | **Used.** 1 s → 15 s ceiling |
 | `POST /v1/env_params` | Point queries at tile centroids and route endpoints. Hourly heat index, wet bulb, humidity, air quality. | High | **Used.** The only hour-of-day resolution in the API |
-| `POST /v1/heat_intelligence` | Richer multi-dimensional reports to strengthen the Planner narrative. | Medium (bonus) | **Attempted.** Contract found, submits accepted, every activity polls to `Failed`. Premium-gated |
-| Satellite / Streetview | Land-cover context for scenario realism. | Low / optional | **Not attempted.** Premium |
+| `POST /v1/streetview` | Eye-level imagery with semantic segmentation at sampled points. | Low / optional | **Used.** Drives the Ground truth panel |
+| `POST /v1/satellite` | Overhead imagery with land-cover segmentation. | Low / optional | **Used.** Same panel, the view from above |
+| `POST /v1/heat_intelligence` | Richer multi-dimensional reports to strengthen the Planner narrative. | Medium (bonus) | **Available, not shipped.** Completes and returns a generated PDF; a PDF is not something this UI can do anything useful with |
+
+### The two segmentation endpoints
+
+These are the ones Addendum A2 filed under "Premium / optional", and the reason
+they took a while to land is that the failure mode is misleading: a wrong body
+returns **422 naming a missing field but not its nesting**, which reads like
+"you are not entitled to this" rather than "you have the shape wrong".
+
+```
+POST /v1/streetview
+  { latitude, longitude, vertical_angle, horizontal_angle, back_view }
+  -> front / back, each: original_image, segmented_image, segments{}, image_date
+
+POST /v1/satellite
+  { latitude, longitude,
+    sat:       { latitude, longitude },          <- nested, and repeats the pair
+    date_time: { start_date, filter_type } }
+  -> original_image, image_year, segmentation{ segments{}, image_content }
+```
+
+Both complete in about six seconds — two orders of magnitude faster than a
+heatmap tile. `segments` is the payload that matters: the share of the frame
+that is tree, sky, building, road, sidewalk, car. Street-level imagery is Google
+Street View served through FortyGuard and arrives with its own attribution.
 
 ### Two limits that shaped the product
 
@@ -136,17 +162,22 @@ Two things replaced it, both real:
 The Worker view shows both and says which is which: one is a chart at a point,
 the other moves every number on screen.
 
-**`/v1/heat_intelligence` is not available on this key.** Addendum A2 lists it
-as a Medium/bonus "richer multi-dimensional report", and the contract does
-exist — `{latitude, longitude, temperature, date, analysis:[...]}` where
-`analysis` accepts `geographic`, `environmental`, `urban`, `events`,
-`anthropogenic`. Submissions are accepted and return an `activity_id`, but the
-activity then polls straight to **`Failed`**, with one dimension or five. A2
-flagged it as Premium-gated and that appears to be exactly what it is. Not
-implemented rather than half-implemented.
+**`/v1/heat_intelligence` works, and is still not shipped.** The contract is
+`{latitude, longitude, temperature, date, analysis:[...]}` where `analysis`
+accepts `geographic`, `environmental`, `urban`, `events`, `anthropogenic`. It
+submits, polls to `Completed`, and returns a signed link to a generated **PDF**.
+That is a document for a person to read, not data this UI can compute against,
+and rendering someone else's PDF inside a planning tool adds a dependency
+without adding a number. The client method is not written; the finding is
+recorded here so the next person does not re-derive it.
 
-**The forecast horizon is about one day.** Snapshot-date + 2 returned HTTP 500
-for every tile in both regions, so the snapshot carries two days, not three.
+**The forecast horizon has closed to the snapshot day.** Day +1 currently
+completes and returns **zero cells** for every tile; day +2 previously returned
+HTTP 500. So the committed snapshot carries one day, and the day selector only
+offers what the manifest actually holds. Days the service cannot serve are
+dropped rather than filled with a modelled stand-in, and a (tile, date) pair
+found empty is remembered so the next scheduled run does not spend three and a
+half minutes re-discovering it.
 
 ### Discipline
 
@@ -178,14 +209,32 @@ A region is one entry in [`src/lib/regions.ts`](src/lib/regions.ts). Everything
 downstream takes a `Region`. Adding a third city is a config entry plus
 `npm run data:all -- --region=<id>`.
 
-| Region | Tiles | Area | Relief sites | Publisher | Workforce |
+| Region | Tiles | Area | Relief source | Quality | Workforce |
 |---|---|---|---|---|---|
-| **Phoenix, AZ** | 3 | 26.3 mi² | 253 | MAG Heat Relief Network | Couriers, postal, utility, municipal |
-| **Yuma, AZ** | 2 | 33.2 mi² | 21 | AZDHS Heat Preparedness Network | Agricultural crews, municipal, utility |
+| **Phoenix, AZ** | 3 | 26.3 mi² | MAG Heat Relief Network | agency | Couriers, postal, utility, municipal |
+| **Yuma, AZ** | 2 | 33.2 mi² | AZDHS Heat Preparedness Network | agency | Agricultural crews, municipal, utility |
+| **Las Vegas, NV** | 2 | ~18 mi² | OpenStreetMap amenities | osm-derived | Hospitality, couriers, warehouse, municipal |
+| **Tucson, AZ** | 2 | ~19 mi² | OpenStreetMap amenities | osm-derived | Couriers, university, utility, landscaping |
 
 Yuma is a stress test, not decoration: different agency, **different schema**,
 agricultural rather than courier workforce, a tenth of the relief density. If
 the engine works there it is not quietly overfitted to Phoenix.
+
+Las Vegas and Tucson test a harder claim — that a city with **no agency feed at
+all** still works. They read community-mapped OSM amenities instead: drinking
+fountains, libraries, community centres. Real places, but nobody has undertaken
+to be a relief site, and OSM rarely carries opening hours.
+
+**So their coverage figures are not comparable with Phoenix's**, and the app
+never puts them in the same table. Each region carries a `dataQuality` flag,
+the provenance bar names the source, and `npm run verify:data` reports
+`osm-derived` as a **WARN** rather than a PASS.
+
+Adding a region is a `REGIONS` entry plus `npm run data:all -- --region=<id>` —
+**and** a hand-authored route set in `scripts/generate-routes.ts`, because
+sample runs have to start and end at real places inside the measured tiles.
+That last part is the one bit of adding a city that is not automatic, and the
+earlier claim that it was "one config entry" was overstated.
 
 ---
 
@@ -226,6 +275,77 @@ trip has a via point.
 The judged path never depends on live routing: all runs are resolved at build
 time and committed.
 
+### 1b · From locating to planning
+
+Three additions that move the Planner from annotating a map to producing a plan.
+
+**Solve for a budget.** *"I have $500k — what is the best mix?"* The solver
+walks a deep pool of candidate sites and picks greedily by **new ground covered
+per dollar**, re-evaluating after each pick because placements overlap.
+
+**Solve for a target.** *"How many sites to reach 25% coverage, and what does it
+cost?"* Same engine, different stopping condition — and when the target is not
+reachable from the viable candidates, it says so and reports where it stopped
+rather than quietly returning its best effort.
+
+Maximum coverage is NP-hard and the objective is submodular, so greedy is not
+optimal — it is provably within a constant factor, and, more usefully here,
+**followable**: "it bought this one first because it covered the most uncovered
+ground per dollar" survives a council meeting in a way a branch-and-bound
+optimum does not. The panel says greedy rather than implying an optimum.
+
+**A six-tool palette.** Stations and canopy and cool pavement, plus **misting**
+(large effect, deliberately tiny radius — evaporative cooling works on the
+person standing in it), **shade sails** (smaller than canopy, available the day
+it is installed) and **bus-shelter retrofit**. That last one exists because of a
+bug: the OSM relief pull initially counted bus shelters as relief sites, which
+was wrong — but the *structures* are already standing on exactly the corridors
+workers use, and converting one is a fraction of a new station's cost.
+
+### 2 · The Forma round trip
+
+**Out:** GeoJSON carrying `coolroute:deltaF`, confidence, assumption and unit
+cost, so the coefficient travels with the geometry.
+
+**In:** [`forma-import.ts`](src/lib/forma-import.ts) reads a design back and
+turns it into scored scenario elements. Points become facilities, lines become
+corridors, polygons become footprints sized from their own extent. A file this
+app exported round-trips exactly, because it carries `coolroute:kind`; a foreign
+file is mapped from geometry and any Forma category hints.
+
+The failure it catches by name is the one that actually happens: Forma exports
+in the project's local coordinate system by default, and a file in metres would
+otherwise be scored somewhere in the Gulf of Guinea. Coordinates outside the
+legal lon/lat range are rejected with a message naming the CRS as the problem.
+
+**This is a file reader, not an Autodesk integration** — no account, no SDK, no
+extension, and the panel says so where you use it.
+
+### 2b · Street level, two ways
+
+**Click any street.** Road centrelines are pulled from Overpass at build time
+and committed (4,207 streets in Phoenix), and clicking one reports its **mean,
+peak and coolest** temperature along its whole length, sampled from the field
+currently on screen. Apply a canopy corridor over it and probe again — the
+numbers move, because it samples the active scenario field rather than a value
+baked in at build time.
+
+The honest limit: `/v1/heatmap` has **no granularity parameter**, so the server
+picks the cell size (~100 m). The readout is street-level; the data underneath
+is 100 m-level, and the two are not the same claim.
+
+**Ground truth.** `/v1/streetview` and `/v1/satellite` return imagery *plus a
+semantic segmentation* — the share of the frame that is tree, sky, building,
+road, sidewalk, car. That is a measurement at eye level, and it is the only one
+in the product that speaks to whether a canopy intervention is possible at a
+site at all: planting on a block already at 40% tree cover is a different
+proposition from planting at 2%.
+
+What it deliberately does **not** do is set the canopy coefficient.
+`canopyHeadroom()` in [assumptions.ts](src/lib/assumptions.ts) draws that line
+in code — a photograph contains no temperature, so `tree_canopy.deltaF` stays
+the labelled assumption it always was, and the panel says so on screen.
+
 ### 3 · Real cooling infrastructure
 
 Two publishers, two schemas, one mapping in
@@ -235,8 +355,10 @@ product that only works where one agency publishes one schema is not multi-city.
 **Opening hours are used, not just displayed.** This began as a correctness
 bug: coverage that counts a hydration station which shut at 3 PM overstates the
 network at 4 PM — precisely when the field is hottest, so the error ran in the
-worst possible direction. Fixing it moved Phoenix coverage from 20.8% to
-**16.0%**. Sites shut at the modelled hour are excluded and drawn hollow. Sites
+worst possible direction. Fixing it cut the reported Phoenix coverage by about
+**a fifth** — the exact pair of figures moves with every refresh, but the
+direction and rough size do not. Sites shut at the modelled hour are excluded
+and drawn hollow. Sites
 whose publisher gave no hours are counted as available and reported separately,
 because deleting real sites over a blank field in someone else's database would
 be its own kind of wrong.
@@ -255,20 +377,21 @@ Phoenix, snapshot day, day average, live data:
 
 | | |
 |---|---|
-| Focus area within a 400 m walk of an **open** relief site | **16.0%** |
-| Relief sites open at this hour | **43 of 60** |
-| Cells that are hot, heavily worked **and** beyond that walk | **5,229** |
-| Longest stretch of an average route with no relief in reach | **6.9 km** |
+| Focus area within a 400 m walk of an **open** relief site | **17.6%** |
+| Relief sites open at this hour | **213 of 254** |
+| Cells that are hot, heavily worked **and** beyond that walk | **5,071** |
+| Longest stretch of an average route with no relief in reach | **6.1 km** |
 
 **The gap is not spread evenly.** Verified per route with
 `npm run verify:coverage`:
 
-- Phoenix **Buckeye Road industrial run**: 16.8 km, **100% of it** with zero
-  relief sites within a 400 m walk. Nearest is 942 m away.
+- Phoenix **Buckeye Road industrial run**: 16.7 km, **100% of it** with zero
+  relief sites within a 400 m walk.
 - Yuma **south-county utility circuit**: 9.2 km, **also 100%**.
-- Dense downtown loops: 27–32%.
+- Tucson **south rail-industrial circuit**: **96%**; the airport approach, 94%.
+- Dense downtown and civic loops, in every city: **27–35%**.
 
-Two cities, two publishers, one structural pattern. These networks are
+Four cities, three kinds of data source, one structural pattern. These networks are
 distributed where *residents* are — libraries, community centres, churches —
 which is correct for their purpose and leaves the freight, industrial and
 agricultural corridors effectively unserved. Nobody built them wrong. Nobody
@@ -278,8 +401,8 @@ Apply the four top-ranked recommendations:
 
 | Metric | Base | Scenario | Change |
 |---|---|---|---|
-| Relief coverage | 16.0% | 18.7% | **+2.7 pts (+16.8%)** |
-| Worst relief gap, averaged over routes | 6,919 m | 4,625 m | **−2,294 m (−33.2%)** |
+| Relief coverage | 17.6% | 20.3% | **+2.7 pts (+15.3%)** |
+| Worst relief gap, averaged over routes | 6,067 m | 3,868 m | **−2,199 m (−36.2%)** |
 | Capital cost | — | $180k | ≈ $67k per coverage point |
 
 ---
@@ -290,14 +413,17 @@ Apply the four top-ranked recommendations:
 npm run dev                    # the committed snapshot — no keys needed
 npm run build && npm start
 
-npm run data:stations          # relief networks, both regions      (no key)
-npm run data:osm               # OpenStreetMap via Overpass          (no key)
+npm run data:stations          # relief layers, every region         (no key)
+npm run data:osm               # Overpass: roads, streets, land use  (no key)
 npm run data:routes            # OpenRouteService, OSRM if unkeyed   (ORS key)
 npm run data:ingest            # FortyGuard — the real integration   (key)
 npm run data:credit-probe      # Addendum A4 empirical check         (KEY REQUIRED)
 npm run data:hourly            # env_params 24h profiles             (KEY REQUIRED)
+npm run data:ground            # streetview + satellite segmentation (KEY REQUIRED)
 npm run data:all               # stations + osm + routes + ingest
 
+npm run verify                 # typecheck + verify:data + verify:coverage
+npm run verify:data            # freshness, provenance and integrity of the snapshot
 npm run verify:coverage        # independently re-derives the relief-gap headline
 npm run typecheck
 
@@ -370,15 +496,20 @@ current path.
 scripts/          build-time only — the FortyGuard integration lives here
   ingest-fortyguard.ts   submit -> poll -> rasterise -> classify -> cache
   credit-probe.ts        Addendum A4 empirical credit check
-  fetch-heat-relief.ts   two publishers, two schemas, one output shape
-  fetch-osm.ts           Overpass -> road density + vegetation + context
+  fetch-heat-relief.ts   three sources, three schemas, one output shape
+  fetch-osm.ts           Overpass -> road density + street lines + context
   fetch-hourly.ts        env_params -> real 24-hour profiles per point
+  fetch-ground.ts        streetview + satellite -> frame composition per point
   generate-routes.ts     ORS/OSRM -> data/<region>/routes.json (committed)
   verify-coverage.ts     independently re-derives the headline, per region
+  verify-data.ts         freshness, provenance, drift - fails the build on FAIL
 
 src/lib/          isomorphic domain logic — no framework, no I/O
-  regions.ts        THE multi-city layer. Add a city here, nothing else.
+  regions.ts        THE multi-city layer. A city is an entry here + a route set.
+  basemaps.ts       ground layers and street types, kept free of Leaflet
   assumptions.ts    EVERY tunable coefficient, with its provenance
+                    — including canopyHeadroom(), the one thing the ground
+                      segmentation does and does not license us to say
   config.ts         AOI guard, forecast days, day parts, cell risk bands
   fortyguard.ts     the API client + the documented real contract
   grid.ts           geometry, HeatField sampler, day-part selection
@@ -387,11 +518,18 @@ src/lib/          isomorphic domain logic — no framework, no I/O
   recommend.ts      demand layer (FR7) + station siting (FR8)
   relief.ts         opening-hours reasoning
   share.ts          scenario <-> URL fragment
+  solve.ts          budget and target solvers - greedy, and says so
   forma-export.ts   GeoJSON / CSV export
+  forma-import.ts   a design read back in and scored (the return leg)
   synthetic.ts      modelled stand-in, used only when the live call is absent
 
-src/app/api/      bootstrap · field · context · route-plan · export/forma
-                  · admin/refresh-tile
+src/components/   the three views, plus
+  Onboarding.tsx    the opening screen: one derived number, then four steps
+  GroundPanel.tsx   street-level segmentation and shade headroom
+  MapCanvas.tsx     heat canvas, basemap switch, street probe
+
+src/app/api/      bootstrap · field · context · streets · ground · route-plan
+                  · export/forma · admin/refresh-tile
 data/<region>/    the committed snapshot — this is what the app reads
 ```
 
@@ -439,8 +577,10 @@ stretched over its bbox.
 
 **FortyGuard's coverage is US-only.** That is a property of the data source,
 not of the design, and it is the reason the pitch above is framed around US
-figures rather than global ones. Two Arizona regions were chosen because the
-problem is sharpest there, not because the approach is Arizona-shaped.
+figures rather than global ones. Four regions across two states were chosen
+because the problem is sharpest there, not because the approach is
+Arizona-shaped — and two of them deliberately have no agency relief feed at all,
+which is the harder test.
 
 **International scaling is deferred, not abandoned.** Architecturally it is the
 same move that adding Yuma was: a region is a bounding box, a set of tiles, and
@@ -453,10 +593,19 @@ additive, not a redesign.
 
 **Other explicit future work**, in the order it would be worth doing:
 
-- **Historic baselines** once `filter_type` 1 is served on a non-Premium key.
-  The Planner-uses-historic / operations-uses-forecast split that Addendum A2
-  asks for is already enforced in code and is simply waiting on the API.
-- **`heat_intelligence`** for the Planner narrative, if Premium credits open up.
+- **Historic baselines** once `filter_type` 1 is served on this key. The
+  Planner-uses-historic / operations-uses-forecast split that Addendum A2 asks
+  for is already enforced in code and is simply waiting on the API.
+- **A longer forecast horizon** if the service starts serving day +1 again. The
+  ingest already attempts it, drops it cleanly when it comes back empty, and
+  remembers not to keep asking.
+- **Ground segmentation at every recommended site**, rather than at a fixed set
+  of sample points. The call is fast (~6 s) and cheap; what makes it a build
+  rather than a config change is that recommendations are computed in the
+  browser, so the points to sample are not known until someone moves a slider.
+- **`heat_intelligence` as a Planner attachment.** It works and returns a
+  generated PDF; making that useful means deciding what a planning tool does
+  with someone else's document.
 - **Worker-facing mobile app.** The responsive layout works on a phone, but a
   worker mid-shift wants a notification, not a browser tab.
 
@@ -479,19 +628,19 @@ was throttled to about one callback per second. The control that proved it was
 the same harness. Any figure near that floor was measuring Chrome, not CoolRoute.
 
 Measured instead where the work actually is — in Node, against the committed
-snapshot, median of 9 warm runs:
+snapshot, median of 9 warm runs. On the snapshot those figures were taken from,
+scoring every Phoenix route came to **103 ms**, and applying four stations and
+rescoring everything to **151 ms** — the heaviest recompute in the product, against
+a 3,000 ms budget.
 
-| Recompute | Scope | Median |
-|---|---|---|
-| Score every route (the Dispatcher list) | 8 routes × 254 relief sites, 6,776 cells | **103 ms** |
-| Apply 4 stations and rescore everything | field re-derived + all routes rescored | **151 ms** |
-| Same, Yuma | 7 routes × 21 sites, 8,680 cells | **5 ms** |
+Those absolute numbers move with the data: the relief networks change size on
+every refresh, and coverage is a nested loop over sites per route sample, so
+Phoenix cost roughly 20× Yuma despite Yuma having *more* grid cells. That loop
+is the hot path if this ever needs optimising, and it does not.
 
-Phoenix costs 20× Yuma not because of grid size — Yuma has *more* cells — but
-because relief coverage is a nested loop over 254 sites per route sample
-against Yuma's 21. That is the hot path if this ever needs optimising, and it
-does not: the heaviest recompute in the product is **151 ms against a 3,000 ms
-budget**.
+What holds regardless of the snapshot is the structure: the work is bounded by
+routes × sites × samples, it runs in the browser, and nothing on the interactive
+path calls FortyGuard.
 
 **What that figure is, and is not.** It is the computation an interaction
 triggers, measured directly. It is *not* end-to-end click-to-paint: React
@@ -512,6 +661,15 @@ caching layer.
 
 **Demo reliability: runs from the committed snapshot, no live API dependency.**
 
+Stated precisely, because there are two exceptions and both are deliberate. On
+the **judged path** — load, switch views, move any scenario control, score,
+rank, export — the only hosts contacted are this app's own origin and the
+basemap tile server. Two features off that path do reach further, and each says
+so in the UI at the moment you use it: the **ad-hoc trip planner** calls
+OpenRouteService or OSRM, and the **live tile refresh** calls FortyGuard.
+Selecting the satellite basemap adds Esri's tile host for as long as it is
+selected.
+
 Enumerating every network request the production app issues gives two hosts and
 no others:
 
@@ -524,6 +682,13 @@ No FortyGuard, no OpenRouteService, no Overpass at runtime — which is exactly
 what FR3 asks for. The same-origin requests are the app serving its own
 committed snapshot, so the accurate claim is *no third-party dependency beyond
 basemap tiles*, not *no network at all*.
+
+**One addition since that was measured.** Switching the ground layer to
+**Satellite** adds a third host, `server.arcgisonline.com`, for as long as it is
+selected. It is off by default and it is imagery only — every score, ranking,
+scenario and export is unaffected by losing it, exactly as with OpenStreetMap.
+The street-level readout and the Ground truth panel add no hosts at all: both
+are served from the committed snapshot by `/api/streets` and `/api/ground`.
 
 Hiding the basemap pane on a loaded map leaves the heat field, the relief sites
 and the routes all still drawn, and every score, ranking, scenario and export

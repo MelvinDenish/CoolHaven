@@ -29,10 +29,13 @@ import { decodeScenario, encodeScenario } from '@/lib/share';
 import type { RoadDensity } from '@/lib/recommend';
 import { ProvenanceBar } from './ui';
 import PlannerPanel from './PlannerPanel';
+import type { GroundFile } from './GroundPanel';
+import Onboarding, { type HeadlineFacts } from './Onboarding';
 import DispatcherPanel from './DispatcherPanel';
 import WorkerPanel from './WorkerPanel';
 import Legend from './Legend';
 import type { MapLayers } from './MapCanvas';
+import type { BasemapId, StreetCollection } from '@/lib/basemaps';
 import type {
   HeatGrid,
   Intervention,
@@ -161,6 +164,18 @@ export default function AppShell() {
    */
   const [dayPart, setDayPart] = useState<DayPart>('avg');
   const [contextGeoJson, setContextGeoJson] = useState<unknown | null>(null);
+
+  /**
+   * Street-level readout state.
+   *
+   * `basemap` is a view preference, not data. `streets` is fetched once per
+   * region and kept, because the probe is the kind of thing a user does
+   * repeatedly once they discover it, and re-downloading 800 KB per click
+   * would make the second probe slower than the first.
+   */
+  const [basemap, setBasemap] = useState<BasemapId>('streets');
+  const [streets, setStreets] = useState<StreetCollection | null>(null);
+  const [ground, setGround] = useState<GroundFile | null>(null);
 
   const [variants, setVariants] = useState<Scenario[]>(EMPTY_VARIANTS);
   const [activeVariant, setActiveVariant] = useState(0);
@@ -304,6 +319,42 @@ export default function AppShell() {
       .catch(() => undefined);
   }, [layers.context, regionId]);
 
+  /* ------------------------------------------- street centrelines, lazily */
+  /**
+   * Loaded as soon as a region is chosen rather than on first click: the probe
+   * has no affordance of its own - you discover it by clicking a street - so a
+   * first click that silently did nothing while 800 KB downloaded would read as
+   * a broken feature rather than a slow one.
+   */
+  useEffect(() => {
+    let cancelled = false;
+    setStreets(null);
+    fetch(`/api/streets?region=${encodeURIComponent(regionId)}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((fc) => {
+        if (!cancelled) setStreets(fc as StreetCollection | null);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [regionId]);
+
+  /* -------------------------------------- ground segmentation, lazily */
+  useEffect(() => {
+    let cancelled = false;
+    setGround(null);
+    fetch(`/api/ground?region=${encodeURIComponent(regionId)}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((g) => {
+        if (!cancelled) setGround(g as GroundFile | null);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [regionId]);
+
   /**
    * Grids for the active field, with any live-refreshed tile substituted in.
    * A tile someone just re-fetched from the API should be what they see, even
@@ -411,6 +462,40 @@ export default function AppShell() {
     return routes.map((r) => scoreRoute(r, scenarioField, scenarioSites));
   }, [routes, scenarioField, scenarioSites]);
 
+  /**
+   * The single number the opening screen leads with.
+   *
+   * Derived from the same scores everything else uses rather than written into
+   * the copy, so it cannot go stale when the data refreshes - and so it is true
+   * of whichever region you happen to open. The worst route by uncovered
+   * fraction is the honest headline: it is the finding, not an average that
+   * hides it.
+   */
+  const headlineFacts = useMemo((): HeadlineFacts | null => {
+    if (!boot || baseScores.length === 0) return null;
+    const byId = new Map(routes.map((r) => [r.id, r] as const));
+    let worst: { score: (typeof baseScores)[number]; share: number } | null = null;
+
+    for (const s of baseScores) {
+      const route = byId.get(s.routeId);
+      if (!route || !route.distanceM) continue;
+      const share = s.worstReliefGapM / route.distanceM;
+      if (!worst || share > worst.share) worst = { score: s, share };
+    }
+    if (!worst) return null;
+
+    const route = byId.get(worst.score.routeId)!;
+    return {
+      routeName: route.name,
+      routeKm: route.distanceM / 1000,
+      gapKm: worst.score.worstReliefGapM / 1000,
+      uncoveredShare: Math.min(1, worst.share),
+      regionName: boot.region.name.split(',')[0],
+      reliefLabel: boot.relief.sourceLabel,
+      sitesInFocus: boot.relief.focusCount,
+    };
+  }, [boot, baseScores, routes]);
+
   const demandBase = useMemo(() => {
     if (!baseField || view !== 'planner') return null;
     return buildDemandLayer(baseField, boot?.roadDensity ?? null, routes, openState.open);
@@ -491,7 +576,7 @@ export default function AppShell() {
       if (!placing) return;
       const spec = INTERVENTIONS[placing];
 
-      if (placing === 'cooling_station') {
+      if (INTERVENTIONS[placing].geometry === 'point') {
         const index = interventions.length + 1;
         addIntervention({
           id: `${placing}-${index}-${Math.round(lon * 1e5)}-${Math.round(lat * 1e5)}`,
@@ -616,6 +701,8 @@ export default function AppShell() {
   return (
     <main className="min-h-[100dvh] lg:h-screen flex flex-col">
       {/* ------------------------------------------------------------- top */}
+      <Onboarding facts={headlineFacts} />
+
       <header className="flex items-stretch flex-wrap border-b border-[var(--color-hairline)] bg-[var(--color-surface)] shrink-0 no-print">
         <div className="px-4 py-2.5 border-r border-[var(--color-hairline)] flex items-center">
           <div>
@@ -717,6 +804,11 @@ export default function AppShell() {
               onSelectRoute={setSelectedRouteId}
               focusBounds={mapBounds}
               fitKey={regionId}
+              basemap={basemap}
+              streets={streets}
+              // The scenario field, so a probed street reflects any canopy or
+              // pavement treatment currently applied rather than the baseline.
+              probeField={scenarioField ?? baseField}
             />
           ) : (
             <div className="absolute inset-0 grid place-items-center">
@@ -729,6 +821,9 @@ export default function AppShell() {
             onToggle={(k) => setLayers((p) => ({ ...p, [k]: !p[k] }))}
             showDemand={view === 'planner'}
             cellRiskBands={boot.cellRiskBands}
+            basemap={basemap}
+            onBasemapChange={setBasemap}
+            streetsReady={streets !== null}
             placing={placing}
             corridorPoints={corridorDraft.length}
             onFinishCorridor={finishCorridor}
@@ -770,6 +865,7 @@ export default function AppShell() {
               }}
               validAt={validAt ?? ''}
               filterType={activeSlice?.filterType ?? 1}
+              ground={ground}
               onShowDemand={() => setLayers((p) => ({ ...p, demand: true }))}
               onLiveGrid={onLiveGrid}
               onAdHocRoutes={setAdHocRoutes}

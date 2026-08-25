@@ -12,8 +12,14 @@
  * Every coefficient used here comes from lib/assumptions.ts and is rendered in
  * the scenario panel next to the control that applies it.
  */
-import { INTERVENTIONS, MAX_STACKED_COOLING_F, MOVEMENT } from './assumptions';
+import {
+  INTERVENTIONS,
+  INTERVENTION_KINDS,
+  MAX_STACKED_COOLING_F,
+  MOVEMENT,
+} from './assumptions';
 import { HeatField, cellCenter, planarM } from './grid';
+import { ACCESS_INTERVENTIONS } from './types';
 import type { HeatGrid, Intervention, InterventionKind, ReliefSite } from './types';
 
 /**
@@ -171,17 +177,21 @@ export function applyInterventions(
  * Relief sites as they exist under a scenario: the real published Heat Relief
  * Network plus any station the scenario proposes.
  *
- * This is the half of the model that makes `cooling_station` matter at all.
- * Its assumption spec sets deltaF to 0 on purpose - a station does not cool
- * the street, it changes whether a worker has anywhere to stop - so its whole
+ * This is the half of the model that makes the ACCESS interventions matter at
+ * all. Their specs set deltaF to 0 on purpose - a station does not cool the
+ * street, it changes whether a worker has anywhere to stop - so their whole
  * effect flows through coverage, here.
+ *
+ * Driven by ACCESS_INTERVENTIONS rather than an inline `kind === 'cooling_station'`
+ * test, so adding a zero-effect intervention (the bus-shelter retrofit) cannot
+ * silently contribute nothing.
  */
 export function effectiveReliefSites(
   sites: ReliefSite[],
   interventions: Intervention[],
 ): ReliefSite[] {
   const proposed = interventions
-    .filter((i) => i.kind === 'cooling_station')
+    .filter((i) => ACCESS_INTERVENTIONS.includes(i.kind))
     .map<ReliefSite>((i) => ({
       id: i.id,
       name: i.label,
@@ -218,11 +228,11 @@ export interface ScenarioCost {
 }
 
 export function scenarioCost(interventions: Intervention[]): ScenarioCost {
-  const byKind = {
-    cooling_station: { count: 0, usd: 0 },
-    tree_canopy: { count: 0, usd: 0 },
-    cool_pavement: { count: 0, usd: 0 },
-  } as ScenarioCost['byKind'];
+  // Built from the palette rather than listed by hand, so a new intervention
+  // kind cannot be left out of the cost breakdown and silently cost nothing.
+  const byKind = Object.fromEntries(
+    INTERVENTION_KINDS.map((k) => [k, { count: 0, usd: 0 }]),
+  ) as ScenarioCost['byKind'];
 
   for (const iv of interventions) {
     const spec = INTERVENTIONS[iv.kind];

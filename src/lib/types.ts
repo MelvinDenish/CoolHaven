@@ -98,9 +98,31 @@ export interface GridProvenance {
 export interface SnapshotManifest {
   schema: 'coolroute.manifest.v2';
   regionId: string;
+  /**
+   * The calendar date (Arizona local) this snapshot describes - its day 0.
+   *
+   * Optional only so manifests written before the rolling-date change still
+   * parse; readers fall back to the earliest grid date. It lives here rather
+   * than in regions.ts because a date describes a RUN, not a place, and keeping
+   * it with the data means the client can never disagree with what was written.
+   */
+  snapshotDate?: string;
   generatedAt: string;
   /** true when every grid in the snapshot has source === 'fortyguard' */
   liveApiUsed: boolean;
+  /**
+   * How many grids this run pulled over the wire. Zero means everything was
+   * already cached - which is a legitimate outcome, but not a "refresh".
+   */
+  fetchedThisRun?: number;
+  /**
+   * (tileId|date) pairs the API completed but had no data for.
+   *
+   * Remembered so the next run does not spend three and a half minutes and a
+   * credit re-discovering that the forecast horizon has not moved. Expires by
+   * construction: tomorrow's day +1 is a different date.
+   */
+  unavailable?: string[];
   sources: DataSource[];
   grids: Array<{
     file: string;
@@ -153,7 +175,27 @@ export interface ReliefSite {
   proposed?: boolean;
 }
 
-export type InterventionKind = 'cooling_station' | 'tree_canopy' | 'cool_pavement';
+export type InterventionKind =
+  | 'cooling_station'
+  | 'tree_canopy'
+  | 'cool_pavement'
+  | 'misting_station'
+  | 'shade_sail'
+  | 'shelter_retrofit';
+
+/**
+ * Which interventions provide relief ACCESS rather than ambient cooling.
+ *
+ * These are the ones that add a stopping point to the relief network, so a
+ * scenario containing them changes coverage and relief-gap figures even though
+ * their deltaF is zero. Keeping the list here rather than testing
+ * `deltaF === 0` in three places means a new zero-effect intervention cannot be
+ * silently left out of the coverage maths.
+ */
+export const ACCESS_INTERVENTIONS: InterventionKind[] = [
+  'cooling_station',
+  'shelter_retrofit',
+];
 
 /** One what-if move. The unit of both the scenario engine and the Forma export. */
 export interface Intervention {

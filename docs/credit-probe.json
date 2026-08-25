@@ -1,0 +1,14 @@
+{
+  "probedAt": "2026-08-24T12:53:17.729Z",
+  "region": "phoenix",
+  "tile": "midtown-camelback",
+  "areaMi2": 8.4,
+  "granularityM": 100,
+  "cells": 2156,
+  "filterType": 3,
+  "activityId": "d70a6470-6ad5-4961-8991-069575ab3b22",
+  "pointsReturned": 2160,
+  "elapsedMs": 207940,
+  "creditsReported": null,
+  "projection": null
+}

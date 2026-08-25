@@ -33,11 +33,10 @@
  *       npm run data:ingest -- --region=yuma
  *       npm run data:ingest -- --force        (re-request even if cached)
  */
-import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'node:fs';
+import { writeFileSync, readFileSync, existsSync, mkdirSync, readdirSync, unlinkSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { config as loadEnv } from 'dotenv';
 import {
-  ARIZONA_UTC_OFFSET,
   FORECAST_DAYS,
   GRANULARITY_M,
   addDays,
@@ -45,6 +44,7 @@ import {
   cellRiskThresholds,
   classifyCell,
   gridDimsFor,
+  resolveSnapshotDate,
   tileAreaMi2,
 } from '../src/lib/config';
 import { FortyGuardClient, type HeatmapCell } from '../src/lib/fortyguard';
@@ -75,8 +75,13 @@ async function main() {
     );
   }
 
+  // One date for the whole run, resolved once so every region in a multi-region
+  // run describes the same day even if the run straddles local midnight.
+  const snapshotDate = resolveSnapshotDate(process.argv);
+  console.log(`[ingest] snapshot date: ${snapshotDate} (Arizona local)`);
+
   for (const region of regionsFromArgv()) {
-    await ingestRegion(region, client, baseUrl);
+    await ingestRegion(region, client, baseUrl, snapshotDate);
   }
 }
 
@@ -84,6 +89,7 @@ async function ingestRegion(
   region: Region,
   client: FortyGuardClient | null,
   baseUrl: string,
+  snapshotDate: string,
 ) {
   assertTilesWithinAoiLimit(region.tiles);
   const cacheDir = resolve(process.cwd(), `data/${region.id}/cache`);
@@ -107,18 +113,52 @@ async function ingestRegion(
     console.log(`[ingest:${region.id}]   ${t.id}: ${tileAreaMi2(t.bbox).toFixed(1)} mi2`);
   }
 
+  /*
+   * Dates this region already asked for and was told there is nothing for.
+   *
+   * Without this, every scheduled run re-attempts day +1: three submissions
+   * that each poll for three and a half minutes before completing with zero
+   * cells. At a 30-minute cadence that is ~144 pointless calls a day against a
+   * finite credit budget, to re-learn a fact that has not changed.
+   *
+   * Keyed by (tile, date), so it expires naturally - tomorrow's day +1 is a new
+   * date and gets a fresh attempt. `--force` ignores it entirely, which is the
+   * escape hatch for when the horizon reopens.
+   */
+  const previouslyUnavailable = new Set<string>();
+  const manifestPath = resolve(cacheDir, 'manifest.json');
+  if (existsSync(manifestPath) && !force) {
+    try {
+      const prev = JSON.parse(readFileSync(manifestPath, 'utf8')) as SnapshotManifest;
+      for (const key of prev.unavailable ?? []) previouslyUnavailable.add(key);
+    } catch {
+      /* a corrupt manifest just means we retry everything */
+    }
+  }
+
   const grids: SnapshotManifest['grids'] = [];
   const notes: string[] = [];
   let liveCount = 0;
+  /**
+   * Grids this run actually pulled over the wire.
+   *
+   * Distinct from liveCount, which also counts grids found already cached with
+   * source 'fortyguard'. Conflating the two is what let 24 commits announce
+   * "refresh snapshot (liveApiUsed=true)" while nothing had been fetched.
+   */
+  let fetchedCount = 0;
   let creditsSpent = 0;
+  /** Real errors: HTTP failures, timeouts, malformed payloads. */
   const failures: string[] = [];
+  /** (tile, date) pairs the API completed but had no data for - a horizon limit. */
+  const unavailable: string[] = [];
 
   for (const tile of region.tiles) {
     for (const day of FORECAST_DAYS) {
-      const date = addDays(region.snapshotDate, day.dayOffset);
+      const date = addDays(snapshotDate, day.dayOffset);
       // Nominal mid-afternoon stamp. The API's field is daily; the hour here is
       // presentational only and the UI never claims otherwise.
-      const validAt = `${date}T15:00:00${ARIZONA_UTC_OFFSET}`;
+      const validAt = `${date}T15:00:00${region.utcOffset}`;
       const file = `${tile.id}__ft${day.filterType}__${date}.json`;
       const path = resolve(cacheDir, file);
 
@@ -127,6 +167,15 @@ async function ingestRegion(
         console.log(`[ingest:${region.id}] cached   ${file} (${cached.source})`);
         grids.push(entry(file, cached));
         if (cached.source === 'fortyguard') liveCount++;
+        continue;
+      }
+
+      const unavailableKey = `${tile.id}|${date}`;
+      if (previouslyUnavailable.has(unavailableKey)) {
+        console.log(
+          `[ingest:${region.id}] skip     ${tile.id} ${date} (no data on a previous run)`,
+        );
+        unavailable.push(unavailableKey);
         continue;
       }
 
@@ -148,7 +197,15 @@ async function ingestRegion(
           process.stdout.write('\n');
 
           if (result.cells.length === 0) {
-            throw new Error('completed but returned no parseable cells');
+            // Not an error: the activity completed, the service simply has
+            // nothing for this date. Recorded as a horizon limit, not a fault,
+            // so it does not block pruning the way a real failure should.
+            process.stdout.write('\n');
+            console.warn(
+              `[ingest:${region.id}] no data   ${tile.id} ${date} (completed, zero cells)`,
+            );
+            unavailable.push(unavailableKey);
+            continue;
           }
 
           grid = rasterise({
@@ -174,6 +231,7 @@ async function ingestRegion(
           };
           creditsSpent += result.creditsReported ?? 0;
           liveCount++;
+          fetchedCount++;
         } catch (err) {
           const msg = err instanceof Error ? err.message : String(err);
           process.stdout.write('\n');
@@ -182,10 +240,28 @@ async function ingestRegion(
         }
       }
 
+      /*
+       * A day the API cannot serve is DROPPED, not modelled.
+       *
+       * The forecast horizon moves: day +1 currently completes and returns zero
+       * parseable cells (it used to return data, and +2 used to 500). When that
+       * happens with a working key, substituting a synthetic grid would quietly
+       * mix a modelled field into a live snapshot and hand the day-part selector
+       * an invented day - which is precisely what FR17 forbids.
+       *
+       * The modelled fallback still exists, but only for its actual purpose:
+       * letting someone who clones the repo with NO key run the app end to end.
+       */
+      if (!grid && client) {
+        console.warn(
+          `[ingest:${region.id}] dropping ${tile.id} ${date} - the API served no data for it.`,
+        );
+        continue;
+      }
+
       if (!grid) {
-        // Either no key, or the live call failed. Fall back to the model rather
-        // than leaving a hole in the field - and stamp it so it cannot be
-        // mistaken for measurement.
+        // No key at all. Fall back to the model rather than leaving a hole in
+        // the field - and stamp it so it cannot be mistaken for measurement.
         const rd = roads?.tiles[tile.id];
         if (!rd || rd.cols !== cols || rd.rows !== rows) {
           throw new Error(
@@ -217,7 +293,8 @@ async function ingestRegion(
 
   if (liveCount > 0) {
     notes.push(
-      `Live FortyGuard ingest: ${liveCount} of ${grids.length} grids fetched from the API.`,
+      `Snapshot date ${snapshotDate}. ${liveCount} of ${grids.length} grids are FortyGuard data; ` +
+        `${fetchedThisRunLabel(fetchedCount, grids.length)}.`,
     );
     notes.push(
       creditsSpent > 0
@@ -242,13 +319,84 @@ async function ingestRegion(
     'API limitation: no hour-of-day parameter exists, so slices are forecast DAYS. ' +
       'Intra-day variation comes from the min/average/max each cell carries.',
   );
+  if (unavailable.length) {
+    notes.push(
+      `The API completed but returned no data for: ${unavailable.join(', ')}. ` +
+        'Those days are omitted from the snapshot rather than filled with a modelled ' +
+        'stand-in, so the day selector only offers days the service actually served.',
+    );
+  }
   if (failures.length) notes.push(`Failed calls this run: ${failures.join(' | ')}`);
+
+  /*
+   * Prune grids the snapshot no longer describes.
+   *
+   * With a rolling date, yesterday's files would otherwise pile up forever, and
+   * they are not free: loadGrids() in the server snapshot loader reads and
+   * parses EVERY file in this directory on each cold start, and next.config.mjs
+   * traces all of data/ into every serverless function. An archive nothing can
+   * reach - the UI's forecast-day selector only ever offers the dates below -
+   * would be pure cost.
+   *
+   * Guarded deliberately: only prune when this run wrote a complete, live set.
+   * A partial or fallback run keeps whatever was already on disk, so a failed
+   * refresh degrades to "yesterday's real data" rather than deleting good grids
+   * and leaving a hole.
+   */
+  const keepFiles = new Set(grids.map((g) => g.file));
+  let pruned = 0;
+  /*
+   * Completeness is "every tile has the snapshot day", not "every planned call
+   * succeeded". Those differ because the forecast horizon moves: if the API has
+   * no day +1 this week, day +1 is legitimately absent and must not block the
+   * prune forever - but a MISSING TILE on day 0 leaves a hole in the field, and
+   * then yesterday's grids are the better thing to keep.
+   */
+  const dayZeroTiles = new Set(
+    grids.filter((g) => g.validAt.startsWith(snapshotDate)).map((g) => g.tileId),
+  );
+  // Note what is deliberately NOT in this condition: `failures.length === 0`.
+  // A failure on a day that gets dropped anyway - day +1 currently 404s or
+  // returns nothing - says nothing about whether day 0 is good, and gating on
+  // it meant a complete, fully live snapshot never pruned its predecessors.
+  const completeAndLive =
+    dayZeroTiles.size === region.tiles.length &&
+    grids.length > 0 &&
+    liveCount === grids.length;
+  if (completeAndLive) {
+    for (const file of readdirSync(cacheDir)) {
+      if (!file.endsWith('.json') || file === 'manifest.json') continue;
+      if (keepFiles.has(file)) continue;
+      unlinkSync(resolve(cacheDir, file));
+      pruned++;
+    }
+    if (pruned > 0) {
+      console.log(`[ingest:${region.id}] pruned ${pruned} grid(s) outside ${snapshotDate}..`);
+      notes.push(
+        `Pruned ${pruned} grid file(s) describing dates outside this snapshot. ` +
+          'The cache holds only the dates the UI can reach.',
+      );
+    }
+  } else if (grids.length !== planned || failures.length > 0) {
+    notes.push(
+      'Incomplete or fallback run: older grid files were NOT pruned, so the ' +
+        'previous snapshot stays on disk rather than leaving a gap.',
+    );
+  }
 
   const manifest: SnapshotManifest = {
     schema: 'coolroute.manifest.v2',
     regionId: region.id,
+    snapshotDate,
     generatedAt: new Date().toISOString(),
-    liveApiUsed: liveCount > 0,
+    // Every grid, not merely one. types.ts documents this flag as "true when
+    // every grid in the snapshot has source === 'fortyguard'", and the UI turns
+    // its provenance bar green on the strength of it - so a snapshot that is
+    // half modelled must not set it.
+    liveApiUsed: grids.length > 0 && liveCount === grids.length,
+    /** How many grids this run actually fetched, as opposed to found cached. */
+    fetchedThisRun: fetchedCount,
+    unavailable,
     sources: Array.from(new Set(grids.map((g) => g.source))),
     grids,
     notes,
@@ -256,8 +404,16 @@ async function ingestRegion(
   writeFileSync(resolve(cacheDir, 'manifest.json'), JSON.stringify(manifest, null, 1));
 
   console.log(
-    `[ingest:${region.id}] wrote ${grids.length} grids | live=${liveCount} | liveApiUsed=${manifest.liveApiUsed}`,
+    `[ingest:${region.id}] ${grids.length} grids for ${snapshotDate} | live=${liveCount} | ` +
+      `fetched this run=${fetchedCount} | pruned=${pruned} | liveApiUsed=${manifest.liveApiUsed}`,
   );
+}
+
+/** Says plainly whether anything came over the wire, for the manifest notes. */
+function fetchedThisRunLabel(fetched: number, total: number): string {
+  if (fetched === 0) return 'none were fetched this run, every grid was already cached';
+  if (fetched === total) return `all ${fetched} were fetched this run`;
+  return `${fetched} of them were fetched this run, the rest were already cached`;
 }
 
 /**

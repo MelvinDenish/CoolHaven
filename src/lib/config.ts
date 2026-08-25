@@ -196,3 +196,51 @@ export function addDays(dateYmd: string, days: number): string {
 
 /** Arizona does not observe DST. Both regions are in it. */
 export const ARIZONA_UTC_OFFSET = '-07:00';
+
+/**
+ * Today's calendar date in Arizona, as YYYY-MM-DD.
+ *
+ * This has to be the LOCAL date, not the UTC one. The refresh workflow runs on
+ * UTC runners, and Arizona is UTC-7 all year (no DST). Using the UTC date would
+ * roll the snapshot forward to "tomorrow" at 17:00 local every day, so a run at
+ * 18:00 Phoenix time would ask the API for a date that, locally, has not
+ * started yet - and label the result as today's field.
+ */
+export function arizonaToday(now: Date = new Date()): string {
+  const shifted = new Date(now.getTime() - 7 * 60 * 60 * 1000);
+  return shifted.toISOString().slice(0, 10);
+}
+
+/**
+ * The date the snapshot being written describes.
+ *
+ * Defaults to today in Arizona, so a scheduled refresh genuinely advances the
+ * field instead of re-resolving to a date already on disk. Two escape hatches,
+ * both for reproducibility rather than convenience:
+ *
+ *   --date=YYYY-MM-DD   pin one run (re-fetching a specific day, debugging)
+ *   SNAPSHOT_DATE=...   same, via the environment
+ *
+ * This used to be a hardcoded `snapshotDate` per region, which meant every
+ * scheduled ingest resolved to the same two past dates, found them cached and
+ * skipped - so the committed heat field never moved while the commit message
+ * said it had been refreshed. A date is a property of a RUN, not of a place,
+ * which is why it no longer lives on Region.
+ */
+export function resolveSnapshotDate(argv: string[] = [], env = process.env): string {
+  const flag = argv.find((a) => a.startsWith('--date='))?.split('=')[1]?.trim();
+  const fromEnv = env.SNAPSHOT_DATE?.trim();
+  const pinned = flag || fromEnv;
+  if (pinned) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(pinned)) {
+      throw new Error(`Snapshot date must be YYYY-MM-DD, got "${pinned}".`);
+    }
+    return pinned;
+  }
+  return arizonaToday();
+}
+
+/** The set of dates one ingest run targets: the snapshot day plus each forecast day. */
+export function targetDatesFor(snapshotDate: string): string[] {
+  return FORECAST_DAYS.map((d) => addDays(snapshotDate, d.dayOffset));
+}

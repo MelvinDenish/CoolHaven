@@ -81,6 +81,15 @@ jobs:
         run: npm run data:stations ${{ steps.args.outputs.region }}
         continue-on-error: true
 
+      # Re-resolved with ORS when the key is present, so every region uses the
+      # same router rather than whichever one was available the day it was first
+      # generated. Falls back to keyless OSRM, and never fails the run.
+      - name: Refresh work routes
+        env:
+          ORS_API_KEY: ${{ secrets.ORS_API_KEY }}
+        run: npm run data:routes ${{ steps.args.outputs.region }}
+        continue-on-error: true
+
       - name: Refresh heat field
         env:
           FORTYGUARD_API_KEY: ${{ secrets.FORTYGUARD_API_KEY }}
@@ -98,6 +107,10 @@ jobs:
       - name: Verify the snapshot still loads
         run: |
           npm run typecheck
+          # verify:data exits non-zero on any FAIL - a snapshot that has gone
+          # stale, lost a grid, or drifted out of internal consistency must not
+          # be committed and deployed on top of a working one.
+          npm run verify:data
           npm run verify:coverage
 
       - name: Commit refreshed snapshot
@@ -109,8 +122,18 @@ jobs:
             echo "No snapshot changes - nothing to commit."
             exit 0
           fi
-          LIVE=$(node -e "const m=require('./data/phoenix/cache/manifest.json');console.log(m.liveApiUsed)")
-          git commit -m "data: refresh snapshot (liveApiUsed=$LIVE)"
+          # Report what this run actually did. `liveApiUsed` only says the cached
+          # grids came from FortyGuard at some point, so using it alone let this
+          # message announce a refresh on runs that fetched nothing at all.
+          SUMMARY=$(node -e "
+            const m = require('./data/phoenix/cache/manifest.json');
+            const fetched = m.fetchedThisRun ?? 0;
+            const date = m.snapshotDate ?? m.grids[0]?.validAt?.slice(0,10) ?? 'unknown';
+            console.log(fetched > 0
+              ? 'heat field ' + date + ' (' + fetched + ' grids fetched)'
+              : 'relief network only (heat field ' + date + ' already cached)');
+          ")
+          git commit -m "data: $SUMMARY"
           git push
 
       # Inert until the three secrets exist. Deploying from the working tree
@@ -126,7 +149,23 @@ jobs:
       # the job, including `npm ci` and the three data scripts, all of which
       # execute third-party package code. Testing for it in the shell keeps the
       # credential in this step alone and makes the skip unambiguous.
+      # Only deploy when the heat field actually moved. With a rolling snapshot
+      # date that is once a day; the other ~29 runs in daylight hours are relief
+      # -site churn, and redeploying for each would burn Vercel's daily
+      # deployment allowance to ship a file nobody can see the difference in.
+      - name: Decide whether a deploy is warranted
+        id: deploy_gate
+        run: |
+          FETCHED=$(node -e "const m=require('./data/phoenix/cache/manifest.json');console.log(m.fetchedThisRun ?? 0)")
+          echo "fetched=$FETCHED" >> "$GITHUB_OUTPUT"
+          if [ "$FETCHED" -gt 0 ]; then
+            echo "Heat field changed ($FETCHED grids) - deploy warranted."
+          else
+            echo "No grids fetched this run - skipping deploy."
+          fi
+
       - name: Deploy the refreshed snapshot
+        if: steps.deploy_gate.outputs.fetched != '0'
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}

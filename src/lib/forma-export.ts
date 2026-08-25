@@ -53,6 +53,11 @@ const FORMA_CATEGORY: Record<InterventionKind, string> = {
   cooling_station: 'building',
   tree_canopy: 'vegetation',
   cool_pavement: 'ground-surface',
+  // A misting rig and a shade sail are both small built structures; Forma has
+  // no finer category, and `coolroute:kind` carries the precise one alongside.
+  misting_station: 'building',
+  shade_sail: 'building',
+  shelter_retrofit: 'building',
 };
 
 export function buildFormaExport(
@@ -93,7 +98,7 @@ export function buildFormaExport(
 function toFeature(iv: Intervention): FormaFeature {
   const spec = INTERVENTIONS[iv.kind];
   const isCorridor = Boolean(iv.corridor && iv.corridor.length >= 2);
-  const areaTreatment = iv.kind !== 'cooling_station';
+  const areaTreatment = INTERVENTIONS[iv.kind].geometry === 'corridor';
 
   const properties: FormaFeature['properties'] = {
     name: iv.label,
@@ -114,7 +119,7 @@ function toFeature(iv: Intervention): FormaFeature {
     'forma:category': FORMA_CATEGORY[iv.kind],
     // Forma reads a height field when extruding imported context. A station is
     // a small structure; area treatments are ground-level and stay flat.
-    'forma:height': iv.kind === 'cooling_station' ? 3.5 : 0,
+    'forma:height': INTERVENTIONS[iv.kind].geometry === 'point' ? 3.5 : 0,
   };
 
   return {

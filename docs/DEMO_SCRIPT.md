@@ -24,12 +24,18 @@ Three things to point at:
 > "The app never calls FortyGuard. It reads what this writes. That's why every
 > interaction is instant, and why this demo works with the network unplugged."
 
-**Then point at the banner.** Amber, top of the screen:
+**Then point at the provenance bar.** Green dot, top of the screen, reading
+`FORTYGUARD CACHED SNAPSHOT` — and next to it, today's date.
 
-> "And because we didn't have a key when we built this snapshot, the heat field
-> you're about to see is a modelled stand-in — the app says so, permanently,
-> and every cached tile carries its source as a data field. Put a key in and
-> the same pipeline writes real grids and the banner turns green."
+> "This is live FortyGuard data, pulled today. Every grid carries the
+> `activity_id` of the call that produced it, so 'we used the API' is checkable
+> rather than claimed. And the date matters: the snapshot rolls forward every
+> run. Take the key away and the same pipeline writes a modelled stand-in
+> instead, stamps every tile `source: synthetic`, and this bar turns amber. The
+> app never guesses which it has."
+
+*(Optional, 10 seconds, and it lands well with technical judges:*
+`npm run verify:data` *— freshness, provenance, and drift checks, all PASS.)*
 
 ---
 
@@ -58,10 +64,11 @@ Click **Show demand layer on map**.
 > and by courier routes we generated on the real street network. The brightest
 > cells are hot, busy, *and* more than a walk from any relief."
 
-Read the two numbers: **16.0% coverage**, **4,665 uncovered hot cells** - and
-the amber note underneath.
+Read the two numbers on screen — **relief coverage** and **uncovered hot
+cells** — and the amber note underneath. *(Both move with each refresh; read
+what the panel says rather than a memorised figure.)*
 
-> "And notice this: 17 of the 60 sites in the focus area are shut at 3 PM, so
+> "And notice this: a chunk of the sites in the focus area are shut at 3 PM, so
 > they don't count. Coverage that included them would look better and be
 > wrong, in the direction that matters most - the hour the network is least
 > available is the hour the heat is worst."
@@ -94,6 +101,22 @@ Point at *Mean field temperature: no change*.
 > "And notice this one didn't move. A cooling station doesn't cool the street.
 > We model it as zero degrees, on purpose — its benefit is access, not
 > temperature. Making up a number there would have been easy and wrong."
+
+Scroll up one section to **Ground truth** and click through a point or two.
+
+> "And before we place a single tree, here's what's actually on that street.
+> This is FortyGuard's street-view segmentation — the share of the frame that's
+> tree, sky, building, road. Two and a half percent canopy, a third of the frame
+> open sky. That's not a model, that's a measurement at eye level.
+>
+> It answers the question the map can't: is there even room to plant here?
+> Recommending canopy on a block already at forty percent cover is a different
+> proposition from this.
+>
+> What it deliberately does *not* do is set the temperature number. A photograph
+> contains no degrees. So the canopy tool's minus-two-point-five stays labelled
+> an assumption — the segmentation tells you where planting is possible, not
+> what it buys you."
 
 Pick up the **canopy** tool so its assumption text is on screen.
 
@@ -162,29 +185,49 @@ Scroll to **Cooler way round?**
 > degree-minutes *worse*. The tool says that rather than quietly reporting a
 > saving of zero."
 
-Scroll to **Leave earlier or later**.
+Scroll to **What it feels like, hour by hour**.
 
-> "This one's real too — we captured three separate forecast timestamps, so
-> this is the same run re-scored, not an estimate. Going at noon instead of
-> three saves 143 degree-minutes."
+> "This is the hour-by-hour answer, and it's real. `/v1/heatmap` has no hour
+> parameter at all — two submissions differing only by hour come back
+> byte-identical, so we deleted the hour slider rather than fake it. But
+> `/v1/env_params` returns 24 hourly values per point, and it's *apparent*
+> temperature — what a body actually experiences. Six in the morning against one
+> in the afternoon is a twenty-degree decision."
+
+Scroll to **Re-score the whole run**.
+
+> "And this one moves the whole field, not just a point. Every cell carries a
+> min, an average and a max for the day, so the same run gets re-scored against
+> three real fields. Two different mechanisms, both measured, and the panel says
+> which is which."
 
 ---
 
-## 4:40–4:55 — The second city
+## 4:40–4:55 — The other cities
 
-Change the **Region** dropdown to **Yuma**.
+Change the **Region** dropdown to **Yuma**, then to **Tucson**.
 
 > "Same code path, different city. Yuma is one of the hottest places in the
 > country, the workforce is agricultural rather than courier, and the relief
 > data comes from a completely different agency with a different schema — state
-> health services instead of the Maricopa council of governments.
+> health services instead of the Maricopa council of governments. The
+> south-county utility circuit runs its entire length with zero relief sites
+> within a walk.
 >
-> Relief coverage here is 6.3%, against 16% in Phoenix. And the same pattern
-> holds: the south-county utility circuit runs its entire length with zero
-> relief sites within a walk. Two cities, two publishers, one structural gap —
-> which is how you know it isn't a Phoenix artefact.
+> Tucson and Las Vegas are a harder test: neither has an agency feed at all, so
+> those read community-mapped OpenStreetMap amenities instead — and the app
+> flags them as a weaker grade of data rather than averaging them in. Their
+> coverage numbers are never put in the same table as Phoenix's.
 >
-> Adding a third city is one config entry and one command."
+> And the finding still reproduces. In Tucson the civic runs sit around thirty
+> percent uncovered; the rail-industrial and airport-approach runs are at
+> ninety-four and ninety-six. Four cities, three data sources, one structural
+> gap — freight and industrial corridors fall through it everywhere, because
+> relief networks are built where residents are."
+
+*(If asked what adding a city costs: a config entry, one command, and a
+hand-authored set of sample runs — the runs have to start and end at real
+places inside the measured tiles.)*
 
 ---
 
@@ -194,10 +237,13 @@ Change the **Region** dropdown to **Yuma**.
 > pull today, and whether this run is safe right now — all from one cached
 > dataset and one scoring function.
 >
-> What's real here: the relief network, the roads, the routes, the API
-> integration. What's modelled: the temperature field in this snapshot, and
-> every intervention effect — and the app tells you which is which without
-> being asked. That last part is the bit we'd want a city to trust us on."
+> What's measured here: the temperature field, the relief networks, the roads,
+> the routes, and the ground segmentation. What's assumed: every intervention
+> effect, and they're labelled at the moment you use them — including after the
+> ground data arrived, because a photograph measures cover, not degrees.
+>
+> The app tells you which is which without being asked. That last part is the
+> bit we'd want a city to trust us on."
 
 ---
 

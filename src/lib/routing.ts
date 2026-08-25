@@ -38,7 +38,17 @@ export interface RoutePlanResult {
   degradedReason?: string;
 }
 
-const ORS_BASE = 'https://api.openrouteservice.org';
+/**
+ * OpenRouteService base URL.
+ *
+ * Overridable because ORS is mid-migration: the dashboard now warns that
+ * `api.openrouteservice.org` is being deprecated in favour of `api.heigit.org`.
+ * The old host still answers, so it stays the default rather than betting the
+ * demo on a cutover date we do not control - set ORS_BASE_URL to switch hosts
+ * without a code change once the new one is confirmed working on your key.
+ */
+const ORS_BASE =
+  process.env.ORS_BASE_URL?.trim() || 'https://api.openrouteservice.org';
 
 export async function planRoute(
   req: RoutePlanRequest,

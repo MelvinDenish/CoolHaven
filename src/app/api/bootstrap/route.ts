@@ -21,7 +21,13 @@ import {
   MOVEMENT,
   THRESHOLDS,
 } from '@/lib/assumptions';
-import { CELL_RISK_BANDS, GRANULARITY_M, TIME_SLICES, tileAreaMi2 } from '@/lib/config';
+import {
+  CELL_RISK_BANDS,
+  GRANULARITY_M,
+  TIME_SLICES,
+  addDays,
+  tileAreaMi2,
+} from '@/lib/config';
 import { DEFAULT_REGION_ID, REGIONS, getRegion, regionBbox } from '@/lib/regions';
 import {
   MissingSnapshotError,
@@ -30,9 +36,40 @@ import {
   loadHourly,
   loadRoadDensity,
   loadRoutes,
+  snapshotDateFor,
 } from '@/lib/server/snapshot';
 
 export const dynamic = 'force-dynamic';
+
+/**
+ * The forecast days this region's committed snapshot can actually serve.
+ *
+ * Keeps the labels and filter types from config while dropping any day with no
+ * grids behind it, so the Dispatcher and Worker day selectors only ever offer
+ * something /api/field can answer.
+ */
+/** True when a region has enough committed data to actually render. */
+function hasSnapshot(region: { id: string }): boolean {
+  try {
+    loadManifest(region.id);
+    loadReliefSites(region.id);
+    loadRoutes(region.id);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function availableSlices(regionId: string) {
+  const manifest = loadManifest(regionId);
+  const day0 = snapshotDateFor(regionId);
+  return TIME_SLICES.filter((slice) => {
+    const date = addDays(day0, slice.dayOffset);
+    return manifest.grids.some(
+      (g) => g.filterType === slice.filterType && g.validAt.startsWith(date),
+    );
+  });
+}
 
 export async function GET(req: Request) {
   const requested = new URL(req.url).searchParams.get('region') ?? DEFAULT_REGION_ID;
@@ -53,13 +90,22 @@ export async function GET(req: Request) {
     const routesFile = loadRoutes(region.id);
 
     return NextResponse.json({
-      // Every region, so the dropdown never drifts from the ingest config.
-      regions: REGIONS.map((r) => ({
+      /*
+       * Only regions with a committed snapshot behind them.
+       *
+       * REGIONS is the ingest configuration - a region can legitimately exist
+       * there before its data has been generated. Listing those in the dropdown
+       * offers the user a city that answers 503 the moment they pick it, which
+       * looks like a broken app rather than an unbuilt one.
+       */
+      regions: REGIONS.filter(hasSnapshot).map((r) => ({
         id: r.id,
         name: r.name,
         subtitle: r.subtitle,
         blurb: r.blurb,
         workforce: r.workforce,
+        reliefQuality: r.relief.dataQuality,
+        reliefLabel: r.relief.label,
         tileCount: r.tiles.length,
         areaMi2: Number(r.tiles.reduce((a, t) => a + tileAreaMi2(t.bbox), 0).toFixed(1)),
       })),
@@ -71,7 +117,9 @@ export async function GET(req: Request) {
         workforce: region.workforce,
         center: region.center,
         bbox: regionBbox(region),
-        snapshotDate: region.snapshotDate,
+        // From the manifest, not from config: the client derives every
+        // /api/field request from this, so it has to be what was ingested.
+        snapshotDate: snapshotDateFor(region.id),
       },
       granularityM: GRANULARITY_M,
       cellRiskBands: CELL_RISK_BANDS,
@@ -79,7 +127,12 @@ export async function GET(req: Request) {
         ...t,
         areaMi2: Number(tileAreaMi2(t.bbox).toFixed(1)),
       })),
-      timeSlices: TIME_SLICES,
+      // Only the days this snapshot actually has grids for.
+      //
+      // FORECAST_DAYS is what the ingest ATTEMPTS; the API's horizon moves, and
+      // a day it served last week may return nothing this week. Advertising the
+      // static list would put a "Next day" button on screen that answers 404.
+      timeSlices: availableSlices(region.id),
       manifest,
       relief: {
         source: sitesFile.source,

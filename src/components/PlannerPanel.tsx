@@ -44,8 +44,10 @@ import type {
   Scenario,
 } from '@/lib/types';
 import type { Bootstrap } from './AppShell';
-import { FleetImport, RefreshPanel } from './PlannerTools';
+import { DesignImport, FleetImport, RefreshPanel } from './PlannerTools';
 import { Chip, DeltaRow, Empty, Metric, SectionLabel, fmtUsd } from './ui';
+import GroundPanel, { type GroundFile } from './GroundPanel';
+import { solveForBudget, solveForTarget } from '@/lib/solve';
 
 interface Props {
   boot: Bootstrap;
@@ -70,6 +72,8 @@ interface Props {
   onPlacing: (k: InterventionKind | null) => void;
   validAt: string;
   filterType: number;
+  /** Ground segmentation, or null until /api/ground resolves. */
+  ground: GroundFile | null;
   onShowDemand: () => void;
   onLiveGrid: (grid: HeatGrid) => void;
   onAdHocRoutes: (routes: RouteFeature[]) => void;
@@ -97,11 +101,16 @@ export default function PlannerPanel({
   onPlacing,
   validAt,
   filterType,
+  ground,
   onShowDemand,
   onLiveGrid,
   onAdHocRoutes,
 }: Props) {
   const [recommendCount, setRecommendCount] = useState(4);
+  /* Scenario solver controls - see src/lib/solve.ts for the method. */
+  const [solveMode, setSolveMode] = useState<'budget' | 'target'>('budget');
+  const [budgetUsd, setBudgetUsd] = useState(500_000);
+  const [targetPct, setTargetPct] = useState(25);
   const [showMethod, setShowMethod] = useState(false);
   const [showCompare, setShowCompare] = useState(false);
   const [exporting, setExporting] = useState(false);
@@ -140,6 +149,26 @@ export default function PlannerPanel({
     () => (demandBase ? recommendStations(demandBase, recommendCount) : []),
     [demandBase, recommendCount],
   );
+
+  /*
+   * A deeper candidate pool for the solvers.
+   *
+   * The ranked list above shows 3-6 sites because that is what a planner reads.
+   * A solver working to a budget or a target needs somewhere to search, so it
+   * gets a much longer list of viable, spaced sites - and the solver, not the
+   * ranking, decides how many of them get bought.
+   */
+  const solverCandidates = useMemo(
+    () => (demandBase ? recommendStations(demandBase, 40) : []),
+    [demandBase],
+  );
+
+  const solution = useMemo(() => {
+    if (!demandBase || solverCandidates.length === 0) return null;
+    return solveMode === 'budget'
+      ? solveForBudget(solverCandidates, demandBase, budgetUsd)
+      : solveForTarget(solverCandidates, demandBase, targetPct / 100);
+  }, [demandBase, solverCandidates, solveMode, budgetUsd, targetPct]);
 
   /**
    * Cross-option comparison - the "comparable options" half of the brief.
@@ -406,6 +435,139 @@ export default function PlannerPanel({
         </button>
       </section>
 
+      {/* ------------------------------------------------------------ solver */}
+      <section className="p-4 border-b border-[var(--color-hairline)]">
+        <SectionLabel right={<Chip tone="warn">greedy</Chip>}>Solve for a plan</SectionLabel>
+
+        <div className="grid grid-cols-2 gap-1 mb-3">
+          {(
+            [
+              ['budget', 'I have a budget'],
+              ['target', 'I have a target'],
+            ] as const
+          ).map(([mode, label]) => (
+            <button
+              key={mode}
+              onClick={() => setSolveMode(mode)}
+              aria-pressed={solveMode === mode}
+              className="btn py-1.5"
+              style={{
+                borderColor:
+                  solveMode === mode ? 'var(--color-ember)' : 'var(--color-hairline)',
+                color: solveMode === mode ? 'var(--color-ember)' : 'var(--color-muted)',
+                background:
+                  solveMode === mode ? 'var(--color-surface-3)' : 'var(--color-surface-2)',
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {solveMode === 'budget' ? (
+          <label className="block mb-3">
+            <span className="label block mb-1.5">
+              Budget{' '}
+              <span className="num text-[var(--color-bone)] text-[11px]">
+                {fmtUsd(budgetUsd)}
+              </span>
+            </span>
+            <input
+              type="range"
+              min={50_000}
+              max={3_000_000}
+              step={50_000}
+              value={budgetUsd}
+              onChange={(e) => setBudgetUsd(Number(e.target.value))}
+              className="w-full"
+              aria-label="Capital budget in dollars"
+            />
+          </label>
+        ) : (
+          <label className="block mb-3">
+            <span className="label block mb-1.5">
+              Target coverage{' '}
+              <span className="num text-[var(--color-bone)] text-[11px]">{targetPct}%</span>
+            </span>
+            <input
+              type="range"
+              min={5}
+              max={60}
+              step={1}
+              value={targetPct}
+              onChange={(e) => setTargetPct(Number(e.target.value))}
+              className="w-full"
+              aria-label="Target relief coverage percentage"
+            />
+          </label>
+        )}
+
+        {solution ? (
+          <>
+            <div className="grid grid-cols-3 gap-3 mb-3">
+              <Metric label="Sites" value={solution.chosen.length} />
+              <Metric
+                label="Coverage"
+                value={(solution.finalCoverage * 100).toFixed(1)}
+                unit="%"
+                tone="relief"
+                hint={`from ${(solution.baseCoverage * 100).toFixed(1)}%`}
+              />
+              <Metric
+                label="Capital"
+                value={solution.totalUsd ? fmtUsd(solution.totalUsd) : '--'}
+                hint={
+                  solution.usdPerPoint
+                    ? `${fmtUsd(solution.usdPerPoint)} per point`
+                    : 'no coverage gained'
+                }
+              />
+            </div>
+
+            <p
+              className="text-[10.5px] leading-relaxed mb-3 px-2.5 py-2 border"
+              style={{
+                borderColor: solution.exhausted
+                  ? 'var(--color-warn)'
+                  : 'var(--color-hairline-bright)',
+                color: solution.exhausted
+                  ? 'var(--color-warn)'
+                  : 'var(--color-muted)',
+                background: solution.exhausted
+                  ? 'color-mix(in oklab, var(--color-warn) 8%, transparent)'
+                  : 'var(--color-surface-2)',
+              }}
+            >
+              {solution.note}
+            </p>
+
+            <button
+              className="btn w-full"
+              disabled={solution.chosen.length === 0}
+              onClick={() => onChangeInterventions([...interventions, ...solution.chosen])}
+            >
+              Add {solution.chosen.length} to {variants[activeVariant].name}
+            </button>
+          </>
+        ) : (
+          <Empty>No candidate sites to solve over in this region.</Empty>
+        )}
+
+        <p className="text-[10.5px] leading-relaxed text-[var(--color-faint)] mt-3">
+          Maximum coverage is NP-hard and placements overlap, so this picks
+          greedily by new ground per dollar and says so rather than implying an
+          optimum. Only access interventions are placed — a canopy corridor cools
+          a street but gives nobody somewhere to stop.
+        </p>
+      </section>
+
+      {/*
+        Placed above the scenario studio on purpose: the canopy tool below
+        carries an assumed degF figure, and the honest order is to see what is
+        actually on the ground at a site before choosing a treatment for it.
+      */}
+      <GroundPanel ground={ground} />
+
       {/* --------------------------------------------------- scenario studio */}
       <section className="p-4 border-b border-[var(--color-hairline)]">
         <SectionLabel>Scenario studio</SectionLabel>
@@ -481,7 +643,7 @@ export default function PlannerPanel({
                       {fmtUsd(spec.unitCostUsd)}
                     </span>
                     <span className="text-[9.5px] text-[var(--color-faint)]">
-                      {kind === 'cooling_station' ? 'click to place' : 'draw a corridor'}
+                      {spec.geometry === 'point' ? 'click to place' : 'draw a corridor'}
                     </span>
                   </span>
                 </span>
@@ -761,6 +923,11 @@ export default function PlannerPanel({
         filterType={filterType}
         hourLocal={activeSliceHour}
         onGrid={onLiveGrid}
+      />
+
+      <DesignImport
+        regionBbox={boot.region.bbox}
+        onImport={(imported) => onChangeInterventions([...interventions, ...imported])}
       />
 
       <FleetImport onRoutes={onAdHocRoutes} />

@@ -93,6 +93,15 @@ export interface InterventionSpec {
   costUnit: string;
   /** Hex colour used for the map footprint and the panel chip. */
   color: string;
+  /**
+   * How this treatment is drawn, and it is not cosmetic.
+   *
+   * A building is a point; shade and resurfacing are specified and tendered per
+   * corridor-kilometre, so they are drawn as lines along streets. This used to
+   * be inferred with `kind === 'cooling_station'` in four separate files, which
+   * silently made every NEW point-shaped intervention behave like a corridor.
+   */
+  geometry: 'point' | 'corridor';
 }
 
 export const INTERVENTIONS: Record<InterventionKind, InterventionSpec> = {
@@ -113,6 +122,7 @@ export const INTERVENTIONS: Record<InterventionKind, InterventionSpec> = {
     unitCostUsd: 45_000,
     costUnit: 'per station, first-year capital + seasonal staffing',
     color: '#2563eb',
+    geometry: 'point',
   },
   tree_canopy: {
     kind: 'tree_canopy',
@@ -128,6 +138,7 @@ export const INTERVENTIONS: Record<InterventionKind, InterventionSpec> = {
     unitCostUsd: 380_000,
     costUnit: 'per treated corridor-km, planting + 3-year establishment',
     color: '#16a34a',
+    geometry: 'corridor',
   },
   cool_pavement: {
     kind: 'cool_pavement',
@@ -143,13 +154,85 @@ export const INTERVENTIONS: Record<InterventionKind, InterventionSpec> = {
     unitCostUsd: 220_000,
     costUnit: 'per treated lane-km',
     color: '#7c3aed',
+    geometry: 'corridor',
+  },
+  misting_station: {
+    kind: 'misting_station',
+    label: 'Misting station',
+    short: 'Misting',
+    // Evaporative cooling is powerful and extremely local - a few metres, not a
+    // few hundred. The radius is small on purpose; a misting line that appeared
+    // to cool a district would be a fiction.
+    deltaF: -8,
+    radiusM: 30,
+    confidence: 'directional',
+    assumption:
+      'Assumed effect: -8 degF within 30 m, decaying to 0 at the edge. Large but tiny in extent - evaporative cooling works on the person standing in it, not on the block.',
+    basis:
+      'Direction and scale follow published evaporative-cooling figures for outdoor misting in arid climates, where 10-20 degF at the nozzle is routinely reported. We model the conservative end and a deliberately short radius. Effectiveness collapses as humidity rises, which this model does NOT represent - in a Phoenix monsoon week the real figure is far lower. The exact coefficient is ours.',
+    unitCostUsd: 18_000,
+    costUnit: 'per station, install + seasonal water and maintenance',
+    color: '#0891b2',
+    geometry: 'point',
+  },
+  shade_sail: {
+    kind: 'shade_sail',
+    label: 'Shade sail / structure',
+    short: 'Shade',
+    // Between canopy and nothing: built shade works immediately and needs no
+    // establishment period, but covers far less ground than a tree corridor.
+    deltaF: -1.8,
+    radiusM: 60,
+    confidence: 'directional',
+    assumption:
+      'Assumed effect: -1.8 degF ambient under and immediately around the structure, decaying to 0 at 60 m. Smaller than canopy in reach, and available the day it is installed.',
+    basis:
+      'Built shade removes direct solar load immediately, with no establishment period and no irrigation - which is why cities use it at stops and yards where a tree cannot go. As with canopy, the radiant benefit to a person underneath is far larger than this air-temperature figure; we model only the ambient term. The exact coefficient is ours.',
+    unitCostUsd: 65_000,
+    costUnit: 'per structure, fabricated and installed',
+    color: '#ca8a04',
+    geometry: 'point',
+  },
+  shelter_retrofit: {
+    kind: 'shelter_retrofit',
+    label: 'Bus-shelter retrofit',
+    short: 'Retrofit',
+    /*
+     * The cheapest move in the palette, and it exists because of a finding.
+     *
+     * The OSM relief pull initially counted bus shelters as relief sites; they
+     * were excluded because a bare shelter is not one - no water, no cooling,
+     * nobody responsible for you. But the STRUCTURES are already there, on
+     * exactly the corridors workers use. Retrofitting one with shade cloth and
+     * a water point converts existing street furniture into real relief for a
+     * fraction of a new station's cost.
+     */
+    deltaF: 0,
+    radiusM: 400,
+    confidence: 'directional',
+    assumption:
+      'Assumed effect: no ambient cooling, same as a station - it buys relief ACCESS within a 400 m walk. Modelled identically to a new station because functionally that is what it becomes.',
+    basis:
+      'Costed as a retrofit of existing street furniture rather than new build: shade cloth, seating and a water point on a structure that already exists. The 400 m walk radius is the same one used for cooling centres. Whether a given shelter can take the retrofit is a site question this model does not answer.',
+    unitCostUsd: 12_000,
+    costUnit: 'per shelter, shade + water point retrofit',
+    color: '#65a30d',
+    geometry: 'point',
   },
 };
 
+/**
+ * Palette order, which is also rough cost order - cheapest structural move
+ * last, so the list reads from "build something new" down to "improve what is
+ * already on the street".
+ */
 export const INTERVENTION_KINDS: InterventionKind[] = [
   'cooling_station',
   'tree_canopy',
   'cool_pavement',
+  'misting_station',
+  'shade_sail',
+  'shelter_retrofit',
 ];
 
 /**
@@ -157,6 +240,110 @@ export const INTERVENTION_KINDS: InterventionKind[] = [
  * to any single grid cell is clamped here.
  */
 export const MAX_STACKED_COOLING_F = 6;
+
+/* -------------------------------------------------------------------------- */
+/* Shade headroom, from measured ground segmentation                          */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Canopy classes used by the Planner when reading a site's measured tree cover.
+ *
+ * Thresholds are ours and are working bands, not a standard. They exist to
+ * answer one question a planner actually asks - "is there room to plant here?"
+ * - and the cut points are set where the answer changes rather than at round
+ * numbers: below 5% a street frame has essentially no canopy, above 25% it is
+ * meaningfully shaded and the marginal tree buys less.
+ */
+export const CANOPY_BANDS = [
+  { id: 'bare', maxTreePct: 5, label: 'Effectively bare', headroom: 'high' },
+  { id: 'sparse', maxTreePct: 15, label: 'Sparse canopy', headroom: 'high' },
+  { id: 'partial', maxTreePct: 25, label: 'Partial canopy', headroom: 'moderate' },
+  { id: 'shaded', maxTreePct: 101, label: 'Already shaded', headroom: 'low' },
+] as const;
+
+export interface CanopyReading {
+  treePct: number;
+  skyPct: number;
+  builtPct: number;
+  band: (typeof CANOPY_BANDS)[number] | null;
+  /** True when the frame is an interior, so canopy has no meaning here. */
+  indoor: boolean;
+  /** The sentence the UI renders. States what is measured and what is not. */
+  note: string;
+}
+
+/**
+ * Classes that only appear when the camera is INSIDE a building.
+ *
+ * Street View has interior coverage in some places - shopping centres, transit
+ * halls, and notably Las Vegas casino floors, where the nearest panorama to a
+ * point on the Strip can be a hotel lobby. The segmentation is perfectly
+ * accurate about what it sees; it is just not seeing a street.
+ *
+ * This matters because the failure is silent and wrong in the confident
+ * direction: an interior frame reports ~0% tree cover, which reads as
+ * "effectively bare, high headroom - there is room to plant here" for a
+ * building's atrium.
+ */
+const INDOOR_CLASSES = ['ceiling', 'floor', 'door', 'wall', 'windowpane', 'stairs'];
+
+/**
+ * Interpret a measured street-level frame, WITHOUT inventing a temperature.
+ *
+ * This is the boundary between what /v1/streetview measures and what it cannot
+ * establish, and it is worth being exact about because the temptation runs the
+ * other way.
+ *
+ * MEASURED: the share of the frame that is tree, sky, building and road, at
+ * this point, on the date the imagery was captured.
+ *
+ * NOT MEASURED, and not derived here: how many degrees planting would buy. A
+ * photograph contains no temperature. Deriving a degF figure from a canopy
+ * percentage would require paired shaded/unshaded observations at the same
+ * hour, which this project does not have - so `tree_canopy.deltaF` stays the
+ * labelled assumption it always was.
+ *
+ * What this DOES add is headroom: whether a site has room for more canopy. A
+ * recommendation to plant on a block already at 40% tree cover is a weaker
+ * proposition than the same recommendation at 2%, and the tool could not tell
+ * those apart before.
+ */
+export function canopyHeadroom(segments: Record<string, number>): CanopyReading {
+  const treePct = segments.tree ?? segments.plant ?? 0;
+  const skyPct = segments.sky ?? 0;
+  const builtPct =
+    (segments.building ?? 0) + (segments.road ?? segments['road, route'] ?? 0);
+
+  // No sky and a meaningful share of interior classes means the camera was
+  // indoors. Report that rather than a canopy verdict about a lobby.
+  const indoorShare = INDOOR_CLASSES.reduce((a, k) => a + (segments[k] ?? 0), 0);
+  const indoor = skyPct < 1 && indoorShare > 20;
+  if (indoor) {
+    return {
+      treePct,
+      skyPct,
+      builtPct,
+      band: null,
+      indoor: true,
+      note:
+        'The nearest street-level imagery at this point is an INTERIOR view, so ' +
+        'canopy cover has no meaning here. The segmentation is accurate about what ' +
+        'it sees - it is simply not seeing a street. Sample a different point.',
+    };
+  }
+
+  const band = CANOPY_BANDS.find((b) => treePct < b.maxTreePct) ?? CANOPY_BANDS[3];
+
+  const note =
+    `Measured at this point: ${treePct.toFixed(1)}% of the street frame is tree cover, ` +
+    `${skyPct.toFixed(1)}% open sky, ${builtPct.toFixed(1)}% building and road. ` +
+    (band.headroom === 'low'
+      ? 'This block is already shaded - canopy here buys less than the assumed figure suggests.'
+      : 'There is room to plant here.') +
+    ' The temperature effect of planting remains an assumption; segmentation measures cover, not degrees.';
+
+  return { treePct, skyPct, builtPct, band, indoor: false, note };
+}
 
 /* -------------------------------------------------------------------------- */
 /* Demand layer heuristic (base PRD FR7 - "not left undefined")               */

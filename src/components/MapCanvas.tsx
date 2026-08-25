@@ -19,7 +19,13 @@
 import { useEffect, useMemo, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { tempColor } from '@/lib/grid';
+import { tempColor, densifyPath, HeatField } from '@/lib/grid';
+import {
+  BASEMAPS,
+  type BasemapId,
+  type StreetCollection,
+  type StreetFeature,
+} from '@/lib/basemaps';
 import { INTERVENTIONS, MOVEMENT, THRESHOLDS } from '@/lib/assumptions';
 import { CELL_RISK_BANDS } from '@/lib/config';
 import { hoursSummary } from '@/lib/relief';
@@ -65,7 +71,17 @@ interface Props {
   focusBounds: [[number, number], [number, number]];
   /** Changes when the region changes, so the map refits instead of drifting. */
   fitKey: string;
+  /** Which tile provider paints the ground. */
+  basemap: BasemapId;
+  /**
+   * Road centrelines for the street probe, or null until /api/streets loads.
+   * Absent is a normal state, not an error - the probe simply stays off.
+   */
+  streets: StreetCollection | null;
+  /** The field the probe samples. Carries the active day part. */
+  probeField: HeatField | null;
 }
+
 
 export default function MapCanvas({
   grids,
@@ -85,9 +101,13 @@ export default function MapCanvas({
   onSelectRoute,
   focusBounds,
   fitKey,
+  basemap,
+  streets,
+  probeField,
 }: Props) {
   const hostRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
+  const baseLayerRef = useRef<L.TileLayer | null>(null);
   const groups = useRef<Record<string, L.LayerGroup>>({});
   // Callbacks live in a ref so the map is built exactly once; putting them in
   // the effect's dependency list tears down and rebuilds Leaflet on every
@@ -96,6 +116,99 @@ export default function MapCanvas({
   handlers.current = { onPlace, onSelectRoute };
   const boundsRef = useRef(focusBounds);
   boundsRef.current = focusBounds;
+
+  /*
+   * Street probe state, held in a ref for the same reason the callbacks are:
+   * the map is built once, and its click handler has to see current values
+   * without the map being torn down and rebuilt on every parent render.
+   */
+  const probe = useRef<{
+    placing: InterventionKind | null;
+    streets: StreetCollection | null;
+    field: HeatField | null;
+  }>({ placing, streets, field: probeField });
+  probe.current = { placing, streets, field: probeField };
+
+  /**
+   * "How hot is this street?"
+   *
+   * Finds the nearest centreline to the click, samples the ACTIVE field along
+   * its whole length, and reports mean, peak and the hottest 100 m. The
+   * sampling is the same densify-and-sample the route scorer uses, so a street
+   * and a route that share tarmac report the same temperature.
+   *
+   * The tolerance scales with zoom: 60 m of slack when zoomed out to the whole
+   * district, tightening to a few metres up close, so a click near a junction
+   * picks the street you were pointing at rather than the nearest one to the
+   * pixel.
+   */
+  const probeStreetAt = (lon: number, lat: number) => {
+    const map = mapRef.current;
+    const group = groups.current.probe;
+    const { streets: fc, field } = probe.current;
+    if (!map || !group || !fc || !field) return;
+
+    group.clearLayers();
+
+    const toleranceM = Math.max(6, 1200 / Math.pow(2, map.getZoom() - 12));
+    let best: { feature: StreetFeature; distM: number } | null = null;
+
+    for (const f of fc.features) {
+      const coords = f.geometry.coordinates;
+      for (let i = 1; i < coords.length; i++) {
+        const d = pointToSegmentM([lon, lat], coords[i - 1], coords[i]);
+        if (d < (best?.distM ?? Infinity)) best = { feature: f, distM: d };
+      }
+    }
+
+    if (!best || best.distM > toleranceM) return;
+
+    const coords = best.feature.geometry.coordinates;
+    const samples = densifyPath(coords, 25);
+    let sum = 0;
+    let peak = -Infinity;
+    let low = Infinity;
+    let covered = 0;
+    for (const p of samples) {
+      const { tempF, inCoverage } = field.sampleClamped(p.lon, p.lat);
+      if (inCoverage) covered++;
+      sum += tempF;
+      if (tempF > peak) peak = tempF;
+      if (tempF < low) low = tempF;
+    }
+    const mean = samples.length ? sum / samples.length : NaN;
+    const lengthM = samples.length ? samples[samples.length - 1].distanceM : 0;
+    const outside = samples.length - covered;
+
+    L.polyline(
+      coords.map(([x, y]) => [y, x] as [number, number]),
+      { color: '#ffffff', weight: 6, opacity: 0.95, interactive: false },
+    ).addTo(group);
+    L.polyline(
+      coords.map(([x, y]) => [y, x] as [number, number]),
+      { color: tempColor(mean), weight: 3.5, opacity: 1, interactive: false },
+    ).addTo(group);
+
+    const name = best.feature.properties.name ?? 'Unnamed street';
+    const cls = (best.feature.properties.highway ?? '').replace(/_/g, ' ');
+
+    L.popup({ className: 'street-probe', maxWidth: 260 })
+      .setLatLng([lat, lon])
+      .setContent(
+        `<div class="probe-title">${escapeHtml(name)}</div>` +
+          `<div class="probe-sub">${escapeHtml(cls)} &middot; ${Math.round(lengthM)} m</div>` +
+          `<div class="probe-row"><span>Mean</span><b>${mean.toFixed(1)} &deg;F</b></div>` +
+          `<div class="probe-row"><span>Peak</span><b>${peak.toFixed(1)} &deg;F</b></div>` +
+          `<div class="probe-row"><span>Coolest</span><b>${low.toFixed(1)} &deg;F</b></div>` +
+          (outside > 0
+            ? `<div class="probe-note">${Math.round(
+                (outside / samples.length) * 100,
+              )}% of this street is outside the measured tiles - those samples take the nearest tile-edge value.</div>`
+            : '') +
+          `<div class="probe-note">Sampled from the field currently on screen, at the selected day and part of day.</div>`,
+      )
+      .openOn(map);
+  };
 
   /* ---------------------------------------------------------------- setup */
   useEffect(() => {
@@ -106,15 +219,12 @@ export default function MapCanvas({
       attributionControl: true,
       preferCanvas: true,
       minZoom: 9,
-      maxZoom: 17,
+      // 19, not 17: the street probe is only useful if you can get close enough
+      // to tell one street from the next, and satellite imagery carries detail
+      // well past the old ceiling.
+      maxZoom: 19,
     });
     map.fitBounds(boundsRef.current, { padding: [24, 24] });
-
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors',
-      className: 'basemap-tiles',
-      maxZoom: 19,
-    }).addTo(map);
 
     // Order matters: later groups draw on top.
     for (const key of [
@@ -125,12 +235,20 @@ export default function MapCanvas({
       'routes',
       'relief',
       'interventions',
+      // Above everything: a probed street has to stay visible over the field.
+      'probe',
     ]) {
       groups.current[key] = L.layerGroup().addTo(map);
     }
 
     map.on('click', (e: L.LeafletMouseEvent) => {
-      handlers.current.onPlace(e.latlng.lng, e.latlng.lat);
+      // A placement tool owns the click while it is armed; probing is what a
+      // click means the rest of the time.
+      if (probe.current.placing) {
+        handlers.current.onPlace(e.latlng.lng, e.latlng.lat);
+        return;
+      }
+      probeStreetAt(e.latlng.lng, e.latlng.lat);
     });
 
     mapRef.current = map;
@@ -159,11 +277,55 @@ export default function MapCanvas({
     mapRef.current?.fitBounds(boundsRef.current, { padding: [24, 24] });
   }, [fitKey]);
 
+  /* ---------------------------------------------------------------- basemap */
+  /**
+   * Swap the ground layer in place rather than rebuilding the map, so the
+   * user's pan and zoom survive the switch.
+   */
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    const spec = BASEMAPS[basemap];
+    const layer = L.tileLayer(spec.url, {
+      attribution: spec.attribution,
+      // The class carries the provider, because the dark-theme treatment is not
+      // the same for both: inverting a street raster makes a dark map, but
+      // inverting a photograph makes a negative.
+      className: `basemap-tiles basemap-${basemap}`,
+      maxZoom: spec.maxZoom,
+    });
+    layer.addTo(map);
+    layer.bringToBack();
+
+    const previous = baseLayerRef.current;
+    baseLayerRef.current = layer;
+    // Remove the old layer only once the new one has tiles up, otherwise the
+    // map flashes the empty background between providers.
+    if (previous) {
+      layer.once('load', () => previous.remove());
+      // A cached provider may never fire `load`; this is the backstop.
+      setTimeout(() => previous.remove(), 1200);
+    }
+  }, [basemap]);
+
   /* Cursor feedback while a placement tool is armed. */
   useEffect(() => {
     if (!hostRef.current) return;
     hostRef.current.style.cursor = placing ? 'crosshair' : '';
   }, [placing]);
+
+  /*
+   * Drop a probe result when the ground under it changes.
+   *
+   * The highlighted street and its popup describe one field at one day part.
+   * Leaving them on screen after the user switches region, day or day part
+   * would leave a stale temperature sitting on the map looking current.
+   */
+  useEffect(() => {
+    groups.current.probe?.clearLayers();
+    mapRef.current?.closePopup();
+  }, [fitKey, probeField]);
 
   /* ------------------------------------------------------------ heat field */
   const heatOverlays = useMemo(() => grids.map((g) => paintTemp(g)), [grids]);
@@ -401,7 +563,7 @@ export default function MapCanvas({
           weight: 1.5,
           opacity: 0.9,
           fillColor: spec.color,
-          fillOpacity: iv.kind === 'cooling_station' ? 0.06 : 0.16,
+          fillOpacity: INTERVENTIONS[iv.kind].geometry === 'point' ? 0.06 : 0.16,
         }).addTo(group);
       }
 
@@ -561,6 +723,32 @@ function sitePopup(s: ReliefSite, dayIndex: number, closed: boolean): string {
     </div>
     <div style="margin-top:7px;color:#6d6459;font-size:10px">${badges}</div>
   </div>`;
+}
+
+/**
+ * Distance from a point to a line segment, in metres.
+ *
+ * Distance to the nearest ENDPOINT would be wrong here: on a long straight
+ * arterial digitised with two vertices a kilometre apart, a click in the middle
+ * of the block is a kilometre from both ends and the street would never be
+ * picked. The projection onto the segment is what makes the probe feel like it
+ * is selecting the road under the cursor.
+ */
+function pointToSegmentM(
+  p: [number, number],
+  a: [number, number],
+  b: [number, number],
+): number {
+  const latScale = Math.cos((p[1] * Math.PI) / 180);
+  const px = (p[0] - a[0]) * latScale * 111_320;
+  const py = (p[1] - a[1]) * 110_574;
+  const bx = (b[0] - a[0]) * latScale * 111_320;
+  const by = (b[1] - a[1]) * 110_574;
+
+  const lenSq = bx * bx + by * by;
+  if (lenSq === 0) return Math.hypot(px, py);
+  const t = Math.max(0, Math.min(1, (px * bx + py * by) / lenSq));
+  return Math.hypot(px - t * bx, py - t * by);
 }
 
 function hexToRgb(hex: string): [number, number, number] {

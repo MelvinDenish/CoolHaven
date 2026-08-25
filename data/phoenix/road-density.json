@@ -1,12 +1,13 @@
 {
  "schema": "coolroute.roaddensity.v2",
+ "regionId": "phoenix",
  "granularityM": 100,
  "source": "osm",
  "endpoint": "https://overpass-api.de/api/interpreter",
  "attribution": "Data (c) OpenStreetMap contributors, ODbL, via Overpass API.",
- "fetchedAt": "2026-08-21T10:22:55.044Z",
- "roadWayCount": 7194,
- "greenWayCount": 907,
+ "fetchedAt": "2026-08-24T12:30:04.175Z",
+ "roadWayCount": 7195,
+ "greenWayCount": 908,
  "tiles": {
   "downtown-core": {
    "cols": 49,
@@ -721,8 +722,8 @@
     0.358,
     0.7,
     0.695,
-    0.929,
-    0.751,
+    0.809,
+    0.63,
     0.602,
     0.4,
     0.448,
@@ -11328,7 +11329,7 @@
     0.991,
     0.431,
     0.363,
-    0.433,
+    0.435,
     0,
     0,
     0,
@@ -11377,7 +11378,7 @@
     0,
     0,
     0,
-    0.287,
+    0.284,
     0,
     0,
     0.057,
@@ -13584,6 +13585,5 @@
     1
    ]
   }
- },
- "regionId": "phoenix"
+ }
 }

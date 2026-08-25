@@ -31,7 +31,6 @@ import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { NextResponse } from 'next/server';
 import {
-  ARIZONA_UTC_OFFSET,
   FORECAST_DAYS,
   GRANULARITY_M,
   addDays,
@@ -42,6 +41,7 @@ import {
 } from '@/lib/config';
 import { FortyGuardClient } from '@/lib/fortyguard';
 import { DEFAULT_REGION_ID, getRegion } from '@/lib/regions';
+import { snapshotDateFor } from '@/lib/server/snapshot';
 import type { FilterType, HeatGrid, Tile } from '@/lib/types';
 import type { HeatmapCell } from '@/lib/fortyguard';
 
@@ -111,8 +111,10 @@ export async function POST(req: Request) {
   const baseUrl =
     process.env.FORTYGUARD_BASE_URL?.trim() || 'https://api.fortyguard.com';
   const client = new FortyGuardClient({ apiKey, baseUrl });
-  const date = addDays(region.snapshotDate, dayOffset);
-  const validAt = `${date}T15:00:00${ARIZONA_UTC_OFFSET}`;
+  // Day 0 comes from the committed manifest, so an on-demand refresh always
+  // targets the same date the rest of the snapshot describes.
+  const date = addDays(snapshotDateFor(region.id), dayOffset);
+  const validAt = `${date}T15:00:00${region.utcOffset}`;
   const regionId = region.id;
 
   const encoder = new TextEncoder();

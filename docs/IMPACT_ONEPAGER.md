@@ -55,21 +55,24 @@ comparison.
 
 ## What it shows, on the committed snapshot
 
-*(Figures produced by the app from **live FortyGuard data** — 10 grids, all
-`source: "fortyguard"`, each carrying its own `activity_id`.)*
+*(Figures produced by the app from **live FortyGuard data** — every grid
+`source: "fortyguard"`, each carrying its own `activity_id`. Snapshot of
+**2026-08-24**; the scheduled refresh re-pulls the field and the relief
+networks, so expect these to move by a point or two.
+`npm run verify:data` prints the current ones.)*
 
 | | |
 |---|---|
-| Phoenix focus area within a 400 m walk of an OPEN relief site | **16.0%** |
-| Grid cells that are hot, heavily worked, **and** beyond that walk | **5,229** |
-| Longest stretch of an average route with no relief in reach | **6.9 km** |
+| Phoenix focus area within a 400 m walk of an OPEN relief site | **17.6%** |
+| Grid cells that are hot, heavily worked, **and** beyond that walk | **5,071** |
+| Longest stretch of an average route with no relief in reach | **6.1 km** |
 
 ### Yuma: the same product, a starker picture
 
 | | Phoenix | Yuma |
 |---|---|---|
-| Relief coverage of focus area (3 PM, open sites only) | 16.0% | **6.3%** |
-| Sites publishing usable opening hours | 251 of 253 | **2 of 21** |
+| Relief coverage of focus area (3 PM, open sites only) | 17.6% | **6.3%** |
+| Sites publishing usable opening hours | 252 of 254 | **2 of 21** |
 
 ### The finding underneath that average
 
@@ -94,6 +97,13 @@ utility circuit runs 9.2 km with zero relief sites within a 400 m walk of any
 point; the 4th Avenue commercial strip runs 92% of its length uncovered. Two
 cities, two publishers, one structural pattern.
 
+**And again in a third and fourth city, from a third kind of source.** Las Vegas
+and Tucson have no agency relief feed at all, so they read community-mapped
+OpenStreetMap amenities — a weaker grade of data, labelled as such throughout
+and never averaged in with the agency regions. The pattern holds anyway: in
+Tucson the civic and downtown runs sit around 30% uncovered while the
+rail-industrial and airport-approach runs reach 96% and 94%.
+
 This is what the demand layer exists to find. These networks are distributed
 where *residents* are — libraries, community centres, churches — which is
 correct for their purpose and leaves the industrial, freight and agricultural
@@ -105,8 +115,8 @@ Apply the four top-ranked station recommendations:
 
 | Metric | Base | Scenario | Change |
 |---|---|---|---|
-| Relief coverage of focus area | 16.0% | 18.7% | **+2.7 pts (+16.8%)** |
-| Worst relief gap, averaged over routes | 6,919 m | 4,625 m | **−2,294 m (−33.2%)** |
+| Relief coverage of focus area | 17.6% | 20.3% | **+2.7 pts (+15.3%)** |
+| Worst relief gap, averaged over routes | 6,067 m | 3,868 m | **−2,199 m (−36.2%)** |
 | Capital cost | — | $180k | ≈ $67k per coverage point |
 
 Four stations, at roughly the cost of a single intersection rebuild, cut the

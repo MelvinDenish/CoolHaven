@@ -10,17 +10,25 @@
  * Adding a third city is: add an entry here, then
  * `npm run data:all -- --region=<id>`. No code changes anywhere else.
  *
- * Why these two:
+ * Why these four:
  *
- *   Phoenix  - the flagship. Dense last-mile courier work, and the Maricopa
- *              Association of Governments publishes the richest Heat Relief
- *              Network dataset in the state.
- *   Yuma     - the stress test, and arguably the stronger case for the
- *              product. One of the hottest cities in the United States, with
- *              an outdoor agricultural workforce rather than a courier one, a
- *              different relief-data publisher with a different schema, and
- *              roughly a tenth of Phoenix's site density. If the engine works
- *              here it is not quietly overfitted to Phoenix.
+ *   Phoenix   - the flagship. Dense last-mile courier work, and the Maricopa
+ *               Association of Governments publishes the richest Heat Relief
+ *               Network dataset in the state.
+ *   Yuma      - the stress test, and arguably the stronger case for the
+ *               product. One of the hottest cities in the United States, with
+ *               an outdoor agricultural workforce rather than a courier one, a
+ *               different relief-data publisher with a different schema, and
+ *               roughly a tenth of Phoenix's site density. If the engine works
+ *               here it is not quietly overfitted to Phoenix.
+ *   Las Vegas - out of Arizona entirely, and onto the OSM relief adapter.
+ *   Tucson    - a second OSM-adapter city, to show the fallback is a pattern
+ *               rather than a one-off.
+ *
+ * The last two carry `dataQuality: 'osm-derived'` and their coverage numbers
+ * are NOT comparable with the first two. That is a real limitation of having no
+ * agency feed, and it is labelled everywhere it surfaces rather than averaged
+ * away.
  */
 import type { Tile } from './types';
 
@@ -33,14 +41,32 @@ import type { Tile } from './types';
  */
 export interface ReliefSource {
   /** Field-mapping strategy. */
-  kind: 'magHRN' | 'azdhs';
-  /** ArcGIS FeatureServer layer query endpoint. */
+  kind: 'magHRN' | 'azdhs' | 'osm';
+  /** ArcGIS FeatureServer query endpoint, or the Overpass endpoint for `osm`. */
   endpoint: string;
-  /** Server-side filter, so we never download a whole state to discard it. */
+  /**
+   * Server-side filter, so we never download a whole state to discard it.
+   * Unused by the `osm` adapter, which filters by bounding box instead.
+   */
   where: string;
   attribution: string;
   /** Human-readable provenance, rendered in the UI. */
   label: string;
+  /**
+   * How much the coverage numbers for this region are worth.
+   *
+   * `agency`      a published heat-relief network: places that have AGREED to
+   *               take someone in, with staffed summer hours.
+   * `osm-derived` publicly mapped amenities that a worker could plausibly use.
+   *               Real places, but nobody has undertaken to be a relief site,
+   *               and hours are patchy.
+   *
+   * This is surfaced in the UI rather than kept in a comment, because a
+   * coverage percentage computed over the second kind means something weaker
+   * than one computed over the first, and a planner has to know which they are
+   * looking at.
+   */
+  dataQuality: 'agency' | 'osm-derived';
 }
 
 export interface Region {
@@ -54,10 +80,18 @@ export interface Region {
   center: [number, number];
   tiles: Tile[];
   relief: ReliefSource;
-  /** The date the committed snapshot describes. */
-  snapshotDate: string;
   /** Persona framing for this region's sample fleet. */
   workforce: string;
+  /**
+   * Local UTC offset, used to stamp `validAt` and to pick the weekday when
+   * checking relief opening hours.
+   *
+   * Per region rather than a single Arizona constant, because the product is no
+   * longer Arizona-only. Every current region reads -07:00 through the summer -
+   * Arizona does not observe DST and Nevada is on PDT - so today they agree,
+   * which is exactly the kind of coincidence that hides a bug until October.
+   */
+  utcOffset: string;
   /**
    * Regional temperature offset in degrees F for the modelled stand-in only
    * (src/lib/synthetic.ts). Ignored entirely when live FortyGuard data is
@@ -77,7 +111,7 @@ export const REGIONS: Region[] = [
       'Dense last-mile courier work across the downtown core, the Sky Harbor freight corridor and the midtown drop grid.',
     center: [-112.062, 33.462],
     workforce: 'Parcel couriers, postal carriers, utility and municipal crews',
-    snapshotDate: '2026-08-21',
+    utcOffset: '-07:00',
     syntheticOffsetF: 0,
     tiles: [
       {
@@ -110,6 +144,7 @@ export const REGIONS: Region[] = [
       attribution:
         'Maricopa Association of Governments (MAG) Heat Relief Network, public feature service. Locations, hours and services as published by MAG.',
       label: 'MAG Heat Relief Network',
+      dataQuality: 'agency',
     },
   },
   {
@@ -120,7 +155,7 @@ export const REGIONS: Region[] = [
       'One of the hottest cities in the US. Agricultural and municipal outdoor work across the city core and the Somerton field corridor, at roughly a tenth of Phoenix relief density.',
     center: [-114.635, 32.665],
     workforce: 'Agricultural crews, municipal and utility workers, delivery drivers',
-    snapshotDate: '2026-08-21',
+    utcOffset: '-07:00',
     // Yuma runs a few degrees above Phoenix through the summer afternoon.
     syntheticOffsetF: 2.5,
     tiles: [
@@ -150,6 +185,93 @@ export const REGIONS: Region[] = [
       attribution:
         'Arizona Department of Health Services Statewide Heat Preparedness Network, public feature service. Locations and services as published by ADHS.',
       label: 'AZDHS Heat Preparedness Network',
+      dataQuality: 'agency',
+    },
+  },
+
+  /* ------------------------------------------------------------------------ */
+  /* OSM-derived regions                                                      */
+  /* ------------------------------------------------------------------------ */
+  /*
+   * Cities with no agency relief feed the project could find, served by the
+   * OpenStreetMap adapter instead. They demonstrate the thing Addendum A3
+   * promised - that expansion is additive - across state lines and away from
+   * the two publishers the curated regions depend on.
+   *
+   * Their coverage numbers are deliberately NOT comparable with Phoenix's: see
+   * `dataQuality` above. The UI labels them, and the Planner says so on screen.
+   */
+  {
+    id: 'las-vegas',
+    name: 'Las Vegas, NV',
+    subtitle: 'Clark County',
+    blurb:
+      'Resort-corridor service work, warehousing along the I-15 spine and municipal crews, in a metro that regularly runs hotter than Phoenix on the same afternoon.',
+    center: [-115.155, 36.145],
+    workforce: 'Hospitality and resort-corridor crews, couriers, warehouse and municipal workers',
+    // Pacific: -07:00 through PDT, -08:00 in winter. The only region here that moves.
+    utcOffset: '-07:00',
+    syntheticOffsetF: 1,
+    tiles: [
+      {
+        id: 'strip-corridor',
+        label: 'Resort Corridor',
+        bbox: [-115.185, 36.095, -115.135, 36.135],
+        blurb:
+          'The resort spine and its service roads - dense pedestrian and delivery movement with almost unbroken hardstanding.',
+      },
+      {
+        id: 'downtown-vegas',
+        label: 'Downtown / Fremont',
+        bbox: [-115.16, 36.155, -115.11, 36.19],
+        blurb:
+          'The civic core, Fremont Street and the older commercial grid north of the corridor.',
+      },
+    ],
+    relief: {
+      kind: 'osm',
+      endpoint: 'https://overpass-api.de/api/interpreter',
+      where: '',
+      attribution:
+        'Amenity locations (c) OpenStreetMap contributors, ODbL, via Overpass API. Community-mapped amenities, not an agency-published heat-relief network.',
+      label: 'OpenStreetMap amenities',
+      dataQuality: 'osm-derived',
+    },
+  },
+  {
+    id: 'tucson',
+    name: 'Tucson, AZ',
+    subtitle: 'Pima County',
+    blurb:
+      'University, civic and industrial work across the Santa Cruz corridor, with a lower-density street grid than Phoenix and a different shade profile.',
+    center: [-110.965, 32.225],
+    workforce: 'Couriers, university and municipal crews, utility and landscaping workers',
+    utcOffset: '-07:00',
+    syntheticOffsetF: -1.5,
+    tiles: [
+      {
+        id: 'tucson-downtown',
+        label: 'Downtown / University',
+        bbox: [-110.985, 32.205, -110.935, 32.245],
+        blurb:
+          'The civic core, the university campus edge and the Fourth Avenue commercial strip.',
+      },
+      {
+        id: 'tucson-south-industrial',
+        label: 'South Industrial',
+        bbox: [-110.99, 32.165, -110.94, 32.205],
+        blurb:
+          'Rail-adjacent warehousing and the airport freight approach - low shade, high vehicle movement.',
+      },
+    ],
+    relief: {
+      kind: 'osm',
+      endpoint: 'https://overpass-api.de/api/interpreter',
+      where: '',
+      attribution:
+        'Amenity locations (c) OpenStreetMap contributors, ODbL, via Overpass API. Community-mapped amenities, not an agency-published heat-relief network.',
+      label: 'OpenStreetMap amenities',
+      dataQuality: 'osm-derived',
     },
   },
 ];

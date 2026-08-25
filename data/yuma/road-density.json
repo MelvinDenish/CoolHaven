@@ -5,9 +5,9 @@
  "source": "osm",
  "endpoint": "https://overpass-api.de/api/interpreter",
  "attribution": "Data (c) OpenStreetMap contributors, ODbL, via Overpass API.",
- "fetchedAt": "2026-08-21T17:20:35.969Z",
+ "fetchedAt": "2026-08-24T12:32:06.311Z",
  "roadWayCount": 2979,
- "greenWayCount": 705,
+ "greenWayCount": 730,
  "tiles": {
   "yuma-core": {
    "cols": 62,

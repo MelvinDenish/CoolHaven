@@ -197,6 +197,9 @@ count.
 | Cooling / hydration station | **0 °F** (coverage only) | 400 m | `directional` | $45k per station, first-year capital + seasonal staffing |
 | Tree canopy / shade corridor | **−2.5 °F** at centre | 250 m | `directional` | $380k per treated corridor-km |
 | Cool pavement | **−0.6 °F** at centre | 200 m | `measured` | $220k per treated lane-km |
+| Misting station | **−8 °F** at centre | **30 m** | `directional` | $18k per station, install + seasonal water |
+| Shade sail / structure | **−1.8 °F** at centre | 60 m | `directional` | $65k per structure, fabricated and installed |
+| Bus-shelter retrofit | **0 °F** (coverage only) | 400 m | `directional` | $12k per shelter, shade + water point |
 
 Stations are points. **Canopy and cool pavement are corridors** — an ordered
 line of vertices with `radiusM` as the treated half-width — because that is how
@@ -210,6 +213,43 @@ prettier but would imply a calibrated dispersion we do not have; linear falloff
 is the honest shape for an illustrative coefficient and is trivial for a
 reviewer to reason about. Stacked cooling from overlapping interventions is
 **capped at 6 °F per cell**.
+
+### Why misting has the biggest number and the smallest radius
+
+−8 °F is the largest coefficient in the palette and 30 m is the smallest radius
+by an order of magnitude. Both are deliberate, and they belong together.
+
+Evaporative cooling in dry air is genuinely powerful — published figures for
+outdoor misting in arid climates routinely report 10–20 °F at the nozzle, and we
+model the conservative end of that. But it acts on the air a person is standing
+in, and it stops almost immediately beyond the spray. A misting line modelled
+with a canopy-sized radius would show a district cooling by degrees, which is a
+fiction that would be easy to produce and hard to defend.
+
+**What this model does not represent:** effectiveness collapses as humidity
+rises. In a Phoenix monsoon week the real figure is far lower than −8 °F, and
+nothing here adjusts for that. The coefficient is a dry-afternoon figure.
+
+### Why the bus-shelter retrofit exists at all
+
+It came out of a data-quality bug, which is worth recording because the bug and
+the intervention point in opposite directions.
+
+The OpenStreetMap relief adapter initially counted `amenity=shelter` as relief
+infrastructure. In Tucson that returned 427 of 472 "relief sites" — almost all
+bus shelters, carrying stop names like *Grant/1st Avenue*. Coverage came out an
+order of magnitude better than Phoenix's agency network, which inverted the
+finding this product exists to make. They were excluded: a bare shelter has no
+water, no cooling and nobody responsible for you.
+
+But the *structures* are already standing, on exactly the corridors the demand
+layer flags. Retrofitting one with shade cloth, seating and a water point turns
+existing street furniture into real relief at roughly a quarter of a new
+station's cost. It is modelled identically to a station — zero degrees, 400 m
+access radius — because functionally that is what it becomes.
+
+Whether a given shelter can physically take the retrofit is a site question this
+model does not answer.
 
 ### Why a station cools nothing
 
@@ -258,6 +298,69 @@ not claim the larger radiant benefit — which means it **understates** what
 canopy does for a person standing under it.
 
 ---
+
+## 3b. Shade headroom, from measured segmentation
+
+`/v1/streetview` returns a semantic segmentation of the frame at a point: the
+share that is tree, sky, building, road, sidewalk, car. `canopyHeadroom()` in
+`assumptions.ts` interprets it, and the boundary it draws is the important part.
+
+**Measured:** the composition of the frame at that point, on the date the
+imagery was captured.
+
+**Not measured, and not derived:** how many degrees planting would buy. A
+photograph contains no temperature. Establishing a °F effect would need paired
+shaded and unshaded observations at the same hour and location, which this
+project does not have — so `tree_canopy.deltaF` remains the labelled assumption
+described above, and the panel says so on screen.
+
+**What it does add** is whether a site has room for more canopy at all. The
+bands below are ours, and they are working bands rather than a standard; the cut
+points sit where the answer changes rather than at round numbers.
+
+| Measured tree cover | Band | Headroom |
+|---|---|---|
+| under 5% | Effectively bare | high |
+| 5–15% | Sparse canopy | high |
+| 15–25% | Partial canopy | moderate |
+| over 25% | Already shaded | low |
+
+**One failure mode, guarded explicitly.** Street View has interior coverage in
+some places — shopping centres, transit halls, and notably Las Vegas casino
+floors, where the nearest panorama to a point on the Strip is a hotel lobby. An
+interior frame reports no sky and near-zero tree cover, which would read as
+"effectively bare, room to plant" for an atrium. Frames with no sky and a
+meaningful share of interior classes (`ceiling`, `floor`, `door`, `wall`) are
+detected and reported as interior views rather than given a canopy verdict.
+
+## 3c. The scenario solvers
+
+Two questions the siting ranking could not answer:
+
+- **Budget** — "I have $500k, what is the best mix?"
+- **Target** — "How many sites to reach 25% coverage, and what does it cost?"
+
+Both are handled by `solveCoverage()` in `src/lib/solve.ts`, which walks a pool
+of up to 40 candidate sites and picks **greedily by marginal coverage per
+dollar**, re-evaluating every remaining candidate after each pick because
+placements overlap — two stations 300 m apart cover much of the same ground.
+
+**Why greedy, stated plainly:** maximising coverage under a budget is a variant
+of maximum coverage, which is NP-hard. The objective is submodular, so greedy is
+provably within a constant factor of optimal. That is the theoretical
+justification; the practical one matters more here. A greedy pick is
+*followable* — "it bought this first because it covered the most uncovered
+ground per dollar" is defensible in a council meeting. An optimum reached by
+branch and bound, landing on a different set for reasons nobody can reconstruct,
+is not. The UI claims greedy rather than implying an optimum.
+
+**Only access interventions are placed.** Coverage is the objective, and a
+canopy corridor cools a street without giving anyone somewhere to stop. Mixing a
+temperature effect into a coverage objective would be comparing two different
+things and calling the result a plan.
+
+**When the target is unreachable** the solver stops and says where, rather than
+returning its best effort as though it had succeeded.
 
 ## 4. Exposure demand layer (base PRD FR7)
 

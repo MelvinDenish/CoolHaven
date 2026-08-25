@@ -16,8 +16,9 @@
  */
 import { useRef, useState } from 'react';
 import { measureRoute } from '@/lib/scoring';
-import { SectionLabel } from './ui';
-import type { HeatGrid, LonLat, RouteFeature, Tile } from '@/lib/types';
+import { importFormaGeoJson, type ImportedDesign } from '@/lib/forma-import';
+import { Chip, SectionLabel } from './ui';
+import type { HeatGrid, Intervention, LonLat, RouteFeature, Tile } from '@/lib/types';
 
 /* ========================================================================== */
 /* Live tile refresh                                                          */
@@ -243,6 +244,112 @@ export function FleetImport({
         is parsed in your browser - no upload, and no location data leaves this machine.
         This is the deliberate alternative to live fleet GPS: an operator brings the
         routes they already planned, rather than the product following anyone around.
+      </p>
+    </section>
+  );
+}
+
+/* ========================================================================== */
+/* Design import - the return leg of the Forma round trip                     */
+/* ========================================================================== */
+
+/**
+ * Bring a design back in and score it.
+ *
+ * The export sends our analysis out as site context; this takes a design and
+ * asks the question only this tool can answer about it - what is the heat
+ * exposure where you have put these things, and does it close a relief gap.
+ *
+ * It is a file reader, not an Autodesk integration. There is no account, no
+ * SDK and no extension; you export GeoJSON from Forma (or any GIS) and drop it
+ * here. The panel says exactly that, because "Forma integration" would imply
+ * something this is not.
+ */
+export function DesignImport({
+  regionBbox,
+  onImport,
+}: {
+  regionBbox: [number, number, number, number];
+  onImport: (interventions: Intervention[]) => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [result, setResult] = useState<ImportedDesign | null>(null);
+  const [error, setError] = useState(false);
+
+  async function handleFile(file: File) {
+    setError(false);
+    try {
+      const parsed = importFormaGeoJson(await file.text(), regionBbox);
+      setResult(parsed);
+      if (parsed.interventions.length === 0) {
+        setError(true);
+        return;
+      }
+      onImport(parsed.interventions);
+    } catch (err) {
+      setError(true);
+      setResult({
+        interventions: [],
+        footprints: [],
+        warnings: [],
+        note: err instanceof Error ? err.message : 'Could not read that file.',
+      });
+    }
+  }
+
+  return (
+    <section className="p-4 border-b border-[var(--color-hairline)]">
+      <SectionLabel right={<Chip tone="relief">round trip</Chip>}>
+        Import a design
+      </SectionLabel>
+
+      <input
+        ref={inputRef}
+        type="file"
+        accept=".geojson,.json"
+        className="sr-only"
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) void handleFile(f);
+          e.target.value = '';
+        }}
+      />
+      <button onClick={() => inputRef.current?.click()} className="btn w-full">
+        Choose a GeoJSON design file
+      </button>
+
+      {result ? (
+        <>
+          <p
+            className="text-[10.5px] leading-relaxed mt-2.5"
+            style={{ color: error ? 'var(--color-bad)' : 'var(--color-relief)' }}
+          >
+            {result.note}
+          </p>
+          {result.warnings.map((w) => (
+            <p
+              key={w}
+              className="text-[10.5px] leading-relaxed mt-1.5"
+              style={{ color: 'var(--color-warn)' }}
+            >
+              {w}
+            </p>
+          ))}
+        </>
+      ) : null}
+
+      <p className="text-[10.5px] leading-relaxed text-[var(--color-faint)] mt-2.5">
+        Export your proposal from Autodesk Forma — or any GIS — as GeoJSON in{' '}
+        <span className="num">EPSG:4326</span>, and it becomes scenario elements here:
+        scored against the heat field, costed, and folded into the before/after. Points
+        become facilities, lines become corridors, polygons become footprints. A file
+        this app exported round-trips exactly, because it carries its own{' '}
+        <span className="num">coolroute:kind</span>.
+      </p>
+      <p className="text-[10.5px] leading-relaxed text-[var(--color-faint)] mt-2">
+        Parsed entirely in your browser. This reads a file you exported — it is{' '}
+        <strong>not</strong> a certified Forma integration, and there is no Autodesk
+        account involved.
       </p>
     </section>
   );

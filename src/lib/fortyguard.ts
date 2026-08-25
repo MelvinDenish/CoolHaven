@@ -343,6 +343,104 @@ export class FortyGuardClient {
     };
   }
 
+  /**
+   * Street-level view with semantic segmentation (Addendum A2, "Streetview").
+   *
+   * The contract, established by probing because the handbook does not carry
+   * it. Required fields beyond the coordinate pair:
+   *
+   *   vertical_angle    camera pitch, 0 is level
+   *   horizontal_angle  bearing offset from the road direction
+   *   back_view         1 to also return the rearward view
+   *
+   * Returns a `front` and, with back_view, a `back` - each carrying the source
+   * photograph, a segmented overlay, and `segments`: the share of the frame
+   * occupied by building, sky, tree, road, sidewalk, car and so on.
+   *
+   * `segments.tree` and `segments.sky` are the interesting pair. Together they
+   * are a MEASURED description of how exposed a specific point on a specific
+   * street is - which is the one thing the canopy scenario previously had to
+   * assume. See groundCanopy() in assumptions.ts for exactly what that does and
+   * does not license us to claim.
+   */
+  async streetView(
+    req: { lat: number; lon: number; verticalAngle?: number; horizontalAngle?: number; backView?: boolean },
+    onTick?: (attempt: number, state: string) => void,
+  ): Promise<StreetViewResult> {
+    const activityId = await this.submitSimple('/v1/streetview', {
+      latitude: req.lat,
+      longitude: req.lon,
+      vertical_angle: req.verticalAngle ?? 0,
+      horizontal_angle: req.horizontalAngle ?? 0,
+      back_view: req.backView === false ? 0 : 1,
+    });
+    const json = await this.pollRaw(activityId, onTick);
+    const result = pick<Record<string, unknown>>(json, ['data.result']) ?? {};
+    return {
+      activityId,
+      lat: req.lat,
+      lon: req.lon,
+      front: viewFrom(result.front),
+      back: viewFrom(result.back),
+    };
+  }
+
+  /**
+   * Overhead imagery with land-cover segmentation (Addendum A2, "Satellite").
+   *
+   * Note the shape: `sat` and `date_time` are nested OBJECTS, not scalars, and
+   * `sat` repeats the coordinate pair. Passing them flat returns a 422 that
+   * names the field but not the nesting, which is what made this endpoint look
+   * unavailable rather than merely undocumented.
+   */
+  async satellite(
+    req: { lat: number; lon: number; date: string; filterType: FilterType },
+    onTick?: (attempt: number, state: string) => void,
+  ): Promise<SatelliteResult> {
+    const activityId = await this.submitSimple('/v1/satellite', {
+      latitude: req.lat,
+      longitude: req.lon,
+      sat: { latitude: req.lat, longitude: req.lon },
+      date_time: { start_date: req.date, filter_type: req.filterType },
+    });
+    const json = await this.pollRaw(activityId, onTick);
+    const result = pick<Record<string, unknown>>(json, ['data.result']) ?? {};
+    const seg = (result.segmentation ?? {}) as Record<string, unknown>;
+    const original = Array.isArray(result.original_image)
+      ? (result.original_image[0] as string)
+      : (result.original_image as string | undefined);
+
+    return {
+      activityId,
+      lat: req.lat,
+      lon: req.lon,
+      imageYear: (result.image_year as string | number | undefined) ?? null,
+      originalImage: original ?? null,
+      segmentedImage: (seg.image_content as string | undefined) ?? null,
+      segments: (seg.segments as Record<string, number> | undefined) ?? {},
+    };
+  }
+
+  /** Submit a body to an async endpoint and return its activity_id. */
+  private async submitSimple(path: string, body: unknown): Promise<string> {
+    const res = await fetch(`${this.cfg.baseUrl}${path}`, {
+      method: 'POST',
+      headers: this.headers(),
+      body: JSON.stringify(body),
+    });
+    const text = await res.text();
+    if (!res.ok) {
+      throw new FortyGuardError(
+        `${path} submit failed (${res.status})`,
+        res.status,
+        text.slice(0, 400),
+      );
+    }
+    const activityId = pick<string>(safeJson(text), ['data.activity_id', 'activity_id']);
+    if (!activityId) throw new FortyGuardError(`${path} returned no activity_id`);
+    return activityId;
+  }
+
   /** Poll to completion and hand back the raw payload. */
   private async pollRaw(
     activityId: string,
@@ -378,6 +476,48 @@ export class FortyGuardClient {
       delay = Math.min(delay * 2, 15_000);
     }
   }
+}
+
+/**
+ * One camera direction from /v1/streetview.
+ *
+ * `segments` values are percentages of the frame and sum to about 100.
+ * Images are base64 without a data: prefix - the caller adds one.
+ */
+export interface StreetViewFrame {
+  originalImage: string | null;
+  segmentedImage: string | null;
+  segments: Record<string, number>;
+  imageDate: string | null;
+}
+
+export interface StreetViewResult {
+  activityId: string;
+  lat: number;
+  lon: number;
+  front: StreetViewFrame | null;
+  back: StreetViewFrame | null;
+}
+
+export interface SatelliteResult {
+  activityId: string;
+  lat: number;
+  lon: number;
+  imageYear: string | number | null;
+  originalImage: string | null;
+  segmentedImage: string | null;
+  segments: Record<string, number>;
+}
+
+function viewFrom(raw: unknown): StreetViewFrame | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const v = raw as Record<string, unknown>;
+  return {
+    originalImage: (v.original_image as string | undefined) ?? null,
+    segmentedImage: (v.segmented_image as string | undefined) ?? null,
+    segments: (v.segments as Record<string, number> | undefined) ?? {},
+    imageDate: (v.image_date as string | undefined) ?? null,
+  };
 }
 
 /** One point's 24-hour environmental profile, temperatures in Fahrenheit. */

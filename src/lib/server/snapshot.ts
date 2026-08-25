@@ -80,6 +80,30 @@ export function loadManifest(regionId: string): SnapshotManifest {
   return manifest;
 }
 
+/**
+ * The date a region's committed snapshot describes.
+ *
+ * Read from the data rather than from a constant in regions.ts, so the client's
+ * idea of "day 0" is always whatever the ingest actually wrote. When the two
+ * were allowed to drift apart, the client asked /api/field for a date that no
+ * longer existed on disk and the field silently failed to load.
+ *
+ * Falls back to the earliest grid date for manifests written before the
+ * snapshotDate field existed.
+ */
+export function snapshotDateFor(regionId: string): string {
+  const manifest = loadManifest(regionId);
+  if (manifest.snapshotDate) return manifest.snapshotDate;
+  const dates = manifest.grids.map((g) => g.validAt.slice(0, 10)).sort();
+  if (dates.length === 0) {
+    throw new MissingSnapshotError(
+      `data/${regionId}/cache/manifest.json lists no grids`,
+      `npm run data:ingest -- --region=${regionId}`,
+    );
+  }
+  return dates[0];
+}
+
 /** Every cached grid for a region, keyed by filename. */
 export function loadGrids(regionId: string): Map<string, HeatGrid> {
   const hit = gridSets.get(regionId);
@@ -177,6 +201,32 @@ export function loadHourly(regionId: string): unknown | null {
 
 export function loadOsmContext(regionId: string): unknown | null {
   const path = resolve(regionDir(regionId), 'osm-context.geojson');
+  if (!existsSync(path)) return null;
+  return readJson<unknown>(path);
+}
+
+/**
+ * Road centrelines for the street-level readout, served by /api/streets.
+ *
+ * Kept out of the bootstrap for the same reason as the context layer: it is
+ * most of a megabyte that only matters once someone probes a street, and the
+ * bootstrap is on the critical path for first paint.
+ */
+export function loadStreets(regionId: string): unknown | null {
+  const path = resolve(regionDir(regionId), 'streets.geojson');
+  if (!existsSync(path)) return null;
+  return readJson<unknown>(path);
+}
+
+/**
+ * Ground-level segmentation from /v1/streetview and /v1/satellite.
+ *
+ * Optional: absent until `npm run data:ground` has run with a key. The Planner
+ * omits the section rather than showing an empty frame, the same way the Worker
+ * view handles a missing hourly profile.
+ */
+export function loadGround(regionId: string): unknown | null {
+  const path = resolve(regionDir(regionId), 'ground.json');
   if (!existsSync(path)) return null;
   return readJson<unknown>(path);
 }

@@ -289,6 +289,133 @@ async function fetchRegion(region: Region) {
   console.log(
     `[osm:${region.id}] wrote ${contextFeatures.length} context polygons -> ${outContext}`,
   );
+
+  writeStreets(region, roads, fetchedAt);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Street geometry - the per-street heat readout                              */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Persist the road centrelines we already fetched, so the map can answer
+ * "how hot is THIS street".
+ *
+ * The density pass above rasterises these ways into per-cell weights and then
+ * throws the geometry away, which is all the demand layer needs. A street-level
+ * readout needs the lines themselves.
+ *
+ * Deliberately NOT precomputing a temperature per street: the field changes
+ * with the forecast day and the day part, so a baked-in number would be wrong
+ * for five of the six combinations the UI offers. The client samples the same
+ * HeatField the routes are scored against, which keeps one source of truth.
+ *
+ * Three things keep the committed file small enough to ship to the browser:
+ * only ways that actually touch a measured tile, geometry simplified to ~15 m,
+ * and coordinates rounded to 5 dp (about a metre).
+ */
+function writeStreets(region: Region, roads: OverpassWay[], fetchedAt: string) {
+  const out = resolve(process.cwd(), `data/${region.id}/streets.geojson`);
+
+  const features = roads
+    .filter((wy) => wy.geometry && wy.geometry.length >= 2)
+    .filter((wy) => wy.geometry!.some((p) => insideAnyTile(region, p.lon, p.lat)))
+    .map((wy) => {
+      const line = simplify(
+        wy.geometry!.map((p) => [p.lon, p.lat] as [number, number]),
+        15,
+      );
+      return {
+        type: 'Feature' as const,
+        properties: {
+          name: wy.tags?.name ?? null,
+          highway: wy.tags?.highway ?? null,
+          osm: `way/${wy.id}`,
+        },
+        geometry: {
+          type: 'LineString' as const,
+          coordinates: line.map(([lon, lat]) => [round5(lon), round5(lat)]),
+        },
+      };
+    })
+    .filter((f) => f.geometry.coordinates.length >= 2);
+
+  writeFileSync(
+    out,
+    JSON.stringify({
+      type: 'FeatureCollection',
+      metadata: {
+        regionId: region.id,
+        source: 'osm',
+        attribution: 'Data (c) OpenStreetMap contributors, ODbL, via Overpass API.',
+        fetchedAt,
+        note:
+          'Road centrelines inside the measured tiles. Temperatures are NOT baked in - ' +
+          'the client samples the active heat field along each line, so a street readout ' +
+          'always matches the day and day part on screen.',
+      },
+      features,
+    }),
+  );
+  const kb = (JSON.stringify(features).length / 1024).toFixed(0);
+  console.log(`[osm:${region.id}] wrote ${features.length} streets (${kb} KB) -> ${out}`);
+}
+
+function insideAnyTile(region: Region, lon: number, lat: number): boolean {
+  return region.tiles.some(
+    (t) => lon >= t.bbox[0] && lon <= t.bbox[2] && lat >= t.bbox[1] && lat <= t.bbox[3],
+  );
+}
+
+/**
+ * Ramer-Douglas-Peucker, tolerance in metres.
+ *
+ * A residential street digitised with 40 vertices reads identically at 15 m
+ * tolerance with four, and the difference across a whole city is megabytes.
+ */
+function simplify(
+  pts: Array<[number, number]>,
+  toleranceM: number,
+): Array<[number, number]> {
+  if (pts.length <= 2) return pts;
+
+  let maxDist = 0;
+  let index = 0;
+  for (let i = 1; i < pts.length - 1; i++) {
+    const d = perpendicularM(pts[i], pts[0], pts[pts.length - 1]);
+    if (d > maxDist) {
+      maxDist = d;
+      index = i;
+    }
+  }
+
+  if (maxDist <= toleranceM) return [pts[0], pts[pts.length - 1]];
+
+  const left = simplify(pts.slice(0, index + 1), toleranceM);
+  const right = simplify(pts.slice(index), toleranceM);
+  return [...left.slice(0, -1), ...right];
+}
+
+/** Perpendicular distance from p to segment a-b, in metres. */
+function perpendicularM(
+  p: [number, number],
+  a: [number, number],
+  b: [number, number],
+): number {
+  const latScale = Math.cos((p[1] * Math.PI) / 180);
+  const px = (p[0] - a[0]) * latScale * 111_320;
+  const py = (p[1] - a[1]) * 110_574;
+  const bx = (b[0] - a[0]) * latScale * 111_320;
+  const by = (b[1] - a[1]) * 110_574;
+
+  const lenSq = bx * bx + by * by;
+  if (lenSq === 0) return Math.hypot(px, py);
+  const t = Math.max(0, Math.min(1, (px * bx + py * by) / lenSq));
+  return Math.hypot(px - t * bx, py - t * by);
+}
+
+function round5(n: number): number {
+  return Math.round(n * 1e5) / 1e5;
 }
 
 /**

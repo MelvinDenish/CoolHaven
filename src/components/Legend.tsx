@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { tempColor } from '@/lib/grid';
 import { INTERVENTIONS, THRESHOLDS } from '@/lib/assumptions';
 import type { MapLayers } from './MapCanvas';
+import { BASEMAPS, type BasemapId } from '@/lib/basemaps';
 import type { InterventionKind } from '@/lib/types';
 
 const RAMP_STOPS = [84, 88, 92, 96, 100, 104, 108, 112, 116];
@@ -24,6 +25,10 @@ interface Props {
   corridorPoints: number;
   onFinishCorridor: () => void;
   onCancelPlacing: () => void;
+  basemap: BasemapId;
+  onBasemapChange: (b: BasemapId) => void;
+  /** False while /api/streets is still in flight, so the hint can say so. */
+  streetsReady: boolean;
 }
 
 export default function Legend({
@@ -35,6 +40,9 @@ export default function Legend({
   corridorPoints,
   onFinishCorridor,
   onCancelPlacing,
+  basemap,
+  onBasemapChange,
+  streetsReady,
 }: Props) {
   const toggles: Array<{ key: keyof MapLayers; label: string; show: boolean }> = [
     { key: 'heat', label: 'Heat field (continuous)', show: true },
@@ -46,7 +54,7 @@ export default function Legend({
     { key: 'interventions', label: 'Scenario', show: true },
   ];
 
-  const drawingCorridor = placing !== null && placing !== 'cooling_station';
+  const drawingCorridor = placing !== null && INTERVENTIONS[placing].geometry === 'corridor';
   // Open on desktop, closed on a phone where it would cover the map.
   const [open, setOpen] = useState(true);
 
@@ -191,6 +199,35 @@ export default function Legend({
             </div>
           </>
         ) : null}
+
+        <div className="rule my-3" />
+
+        {/* --------------------------------------------------------- ground */}
+        <div className="label mb-2">Ground</div>
+        <div className="grid grid-cols-2 gap-1 mb-2">
+          {(Object.keys(BASEMAPS) as BasemapId[]).map((id) => (
+            <button
+              key={id}
+              onClick={() => onBasemapChange(id)}
+              aria-pressed={basemap === id}
+              className="btn py-1"
+              style={{
+                borderColor:
+                  basemap === id ? 'var(--color-ember)' : 'var(--color-hairline)',
+                color: basemap === id ? 'var(--color-ember)' : 'var(--color-muted)',
+                background:
+                  basemap === id ? 'var(--color-surface-3)' : 'var(--color-surface-2)',
+              }}
+            >
+              {BASEMAPS[id].label}
+            </button>
+          ))}
+        </div>
+        <p className="text-[10px] leading-relaxed text-[var(--color-faint)]">
+          {streetsReady
+            ? 'Click any street for its temperature along the whole length, at the day and part of day on screen.'
+            : 'Loading street centrelines...'}
+        </p>
       </div>
     </>
   );

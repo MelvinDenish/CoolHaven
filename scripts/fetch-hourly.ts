@@ -93,7 +93,9 @@ async function fetchRegion(region: Region, client: FortyGuardClient) {
   }
 
   const field = new HeatField(grids);
-  const date = grids[0].date ?? region.snapshotDate;
+  // The grid's own date, then the manifest's - both describe what was ingested,
+  // so the hourly profile can never be stamped with a day the field is not from.
+  const date = grids[0].date ?? manifest.snapshotDate ?? firstValidAt.slice(0, 10);
 
   // One profile per tile centre, plus the demo route's two ends. Small on
   // purpose - this samples the diurnal shape, it does not rebuild the field.

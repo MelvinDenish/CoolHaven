@@ -48,6 +48,16 @@ interface RegionRoutes {
   demo: { id: string; name: string; from: LonLat; to: LonLat };
 }
 
+/*
+ * Route sets are hand-authored per region, and that is a real cost of adding a
+ * city rather than an oversight.
+ *
+ * Every stop below sits inside one of the region's declared tiles, checked
+ * against the bboxes in regions.ts. That constraint matters: a run whose
+ * endpoints fall outside the measured field gets its temperature by
+ * extrapolation from the nearest tile edge, which the scorer reports honestly
+ * but which makes for a weak demo. `npm run verify:data` re-checks it.
+ */
 const ROUTE_SETS: Record<string, RegionRoutes> = {
   phoenix: {
     runs: [
@@ -258,12 +268,188 @@ const ROUTE_SETS: Record<string, RegionRoutes> = {
       to: [-114.6297, 32.6858], //  Yuma Regional Medical Center, in yuma-core
     },
   },
+
+  /* ------------------------------------------------------------------------ */
+  /* OSM-relief regions                                                       */
+  /* ------------------------------------------------------------------------ */
+
+  // strip-corridor  lon -115.185..-115.135, lat 36.095..36.135
+  // downtown-vegas  lon -115.160..-115.110, lat 36.155..36.190
+  // The two tiles do not touch, so - as in Yuma - the single scored demo trip
+  // stays inside one of them.
+  'las-vegas': {
+    runs: [
+      {
+        id: 'v1-resort-service',
+        name: 'Resort corridor service round',
+        persona: 'Hospitality supply courier',
+        shift: '11:00 - 15:00',
+        stops: [
+          [-115.1721, 36.0994],
+          [-115.1698, 36.1121],
+          [-115.1662, 36.1245],
+          [-115.1638, 36.1331],
+        ],
+      },
+      {
+        id: 'v2-strip-north',
+        name: 'North corridor parcel drops',
+        persona: 'Parcel courier - van',
+        shift: '12:00 - 16:00',
+        stops: [
+          [-115.1552, 36.0982],
+          [-115.1497, 36.1104],
+          [-115.1442, 36.1218],
+          [-115.1391, 36.1332],
+        ],
+      },
+      {
+        id: 'v3-fremont-civic',
+        name: 'Fremont and civic core round',
+        persona: 'Municipal crew',
+        shift: '10:00 - 14:00',
+        stops: [
+          [-115.1481, 36.1602],
+          [-115.1402, 36.1668],
+          [-115.1328, 36.1721],
+          [-115.1249, 36.1788],
+        ],
+      },
+      {
+        id: 'v4-downtown-grid',
+        name: 'Downtown residential drop grid',
+        persona: 'Parcel courier - van',
+        shift: '13:00 - 17:00',
+        stops: [
+          [-115.1571, 36.1721],
+          [-115.1448, 36.1759],
+          [-115.1322, 36.1802],
+          [-115.1201, 36.1846],
+        ],
+      },
+      {
+        id: 'v5-utility-west',
+        name: 'West downtown utility circuit',
+        persona: 'Utility / meter crew',
+        shift: '09:00 - 13:00',
+        stops: [
+          [-115.1588, 36.1588],
+          [-115.1552, 36.1671],
+          [-115.1509, 36.1755],
+          [-115.1461, 36.1841],
+        ],
+      },
+    ],
+    demo: {
+      id: 'worker-demo',
+      name: 'Fremont Street to the north downtown grid',
+      from: [-115.1441, 36.1699], // Fremont Street, in downtown-vegas
+      to: [-115.1288, 36.1855], //  north downtown grid, in downtown-vegas
+    },
+  },
+
+  // tucson-downtown        lon -110.985..-110.935, lat 32.205..32.245
+  // tucson-south-industrial lon -110.990..-110.940, lat 32.165..32.205
+  // These two tiles DO share an edge at lat 32.205, so a run can legitimately
+  // cross between them and stay on measured ground.
+  tucson: {
+    runs: [
+      {
+        id: 't1-downtown-university',
+        name: 'Downtown to university drop round',
+        persona: 'Parcel courier - van',
+        shift: '11:00 - 15:00',
+        stops: [
+          [-110.9712, 32.2214],
+          [-110.9628, 32.2262],
+          [-110.9518, 32.2311],
+          [-110.9421, 32.2358],
+        ],
+      },
+      {
+        id: 't2-fourth-avenue',
+        name: 'Fourth Avenue commercial strip',
+        persona: 'Bike courier',
+        shift: '13:00 - 17:00',
+        stops: [
+          [-110.9682, 32.2172],
+          [-110.9661, 32.2248],
+          [-110.9644, 32.2321],
+          [-110.9628, 32.2398],
+        ],
+      },
+      {
+        id: 't3-south-industrial',
+        name: 'South rail industrial circuit',
+        persona: 'Utility / meter crew',
+        shift: '10:00 - 14:00',
+        stops: [
+          [-110.9848, 32.1702],
+          [-110.9721, 32.1768],
+          [-110.9602, 32.1841],
+          [-110.9488, 32.1922],
+        ],
+      },
+      {
+        id: 't4-airport-approach',
+        name: 'Airport freight approach',
+        persona: 'Air cargo driver',
+        shift: '09:00 - 13:00',
+        stops: [
+          [-110.9881, 32.1988],
+          [-110.9764, 32.1902],
+          [-110.9641, 32.1811],
+          [-110.9522, 32.1724],
+        ],
+      },
+      {
+        id: 't5-civic-parks',
+        name: 'Civic and parks maintenance round',
+        persona: 'Municipal crew',
+        shift: '08:00 - 12:00',
+        stops: [
+          [-110.9802, 32.2098],
+          [-110.9721, 32.2162],
+          [-110.9638, 32.2231],
+          [-110.9551, 32.2298],
+        ],
+      },
+    ],
+    demo: {
+      id: 'worker-demo',
+      name: 'South industrial yard to the downtown civic core',
+      from: [-110.9744, 32.1852], // south industrial, in tucson-south-industrial
+      to: [-110.9662, 32.2242], //  downtown civic core, in tucson-downtown
+    },
+  },
 };
+
+/**
+ * Milliseconds between leg requests.
+ *
+ * This is one call PER LEG, not per route - a four-stop run is three requests -
+ * so a full four-region regeneration is roughly 90 calls. An ORS free key allows
+ * 40 requests per minute on Directions V2, and 350 ms spacing would fire those
+ * 90 calls in about 32 seconds: straight through the limit, at which point ORS
+ * starts answering 429 and the client quietly falls back to OSRM for the
+ * remainder. The result would be a snapshot with some legs from one router and
+ * some from another, which is precisely the inconsistency a key is added to fix.
+ *
+ * 1,600 ms keeps it under 40/min with margin. OSRM's public demo has no
+ * published per-minute figure and 350 ms has been fine against it, so the
+ * keyless path keeps the faster spacing.
+ */
+const ORS_LEG_DELAY_MS = 1_600;
+const OSRM_LEG_DELAY_MS = 350;
+
+let legDelayMs = OSRM_LEG_DELAY_MS;
 
 async function main() {
   const hasOrs = Boolean(process.env.ORS_API_KEY);
+  legDelayMs = hasOrs ? ORS_LEG_DELAY_MS : OSRM_LEG_DELAY_MS;
   console.log(
-    `[routes] router: ${hasOrs ? 'OpenRouteService (ORS_API_KEY present)' : 'public OSRM demo (no ORS_API_KEY)'}`,
+    `[routes] router: ${hasOrs ? 'OpenRouteService (ORS_API_KEY present)' : 'public OSRM demo (no ORS_API_KEY)'}` +
+      ` | ${legDelayMs} ms between legs`,
   );
   for (const region of regionsFromArgv()) {
     await buildRegion(region);
@@ -306,7 +492,7 @@ async function buildRegion(region: Region) {
       legs.push(i === 1 ? r.coords : r.coords.slice(1));
       distanceM += r.distanceM;
       durationS += r.durationS;
-      await sleep(350); // be polite to the public demo server
+      await sleep(legDelayMs);
     }
 
     if (!ok) continue;

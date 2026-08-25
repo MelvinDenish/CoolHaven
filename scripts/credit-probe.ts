@@ -28,6 +28,7 @@ import {
   GRANULARITY_M,
   assertTilesWithinAoiLimit,
   gridDimsFor,
+  resolveSnapshotDate,
   tileAreaMi2,
 } from '../src/lib/config';
 import { FortyGuardClient } from '../src/lib/fortyguard';
@@ -62,11 +63,11 @@ async function main() {
     .slice()
     .sort((a, b) => tileAreaMi2(a.bbox) - tileAreaMi2(b.bbox))[0];
   const { cols, rows } = gridDimsFor(tile.bbox, GRANULARITY_M);
-  const date = region.snapshotDate;
+  const date = resolveSnapshotDate(process.argv);
 
   console.log(
     `[probe] one call: ${tile.id}, ${tileAreaMi2(tile.bbox).toFixed(1)} mi2, ` +
-      `${GRANULARITY_M} m (${cols}x${rows} = ${cols * rows} cells), filter_type 1`,
+      `${GRANULARITY_M} m (${cols}x${rows} = ${cols * rows} cells), filter_type 3`,
   );
 
   const client = new FortyGuardClient({
