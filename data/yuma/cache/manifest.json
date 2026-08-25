@@ -2,9 +2,9 @@
  "schema": "coolroute.manifest.v2",
  "regionId": "yuma",
  "snapshotDate": "2026-08-25",
- "generatedAt": "2026-08-25T19:38:22.273Z",
+ "generatedAt": "2026-08-25T20:33:31.226Z",
  "liveApiUsed": true,
- "fetchedThisRun": 2,
+ "fetchedThisRun": 0,
  "unavailable": [
   "yuma-core|2026-08-25",
   "somerton-corridor|2026-08-25"
@@ -31,7 +31,7 @@
   }
  ],
  "notes": [
-  "Snapshot date 2026-08-25. 2 of 2 grids are FortyGuard data; all 2 were fetched this run.",
+  "Snapshot date 2026-08-25. 2 of 2 grids are FortyGuard data; none were fetched this run, every grid was already cached.",
   "The API does not report credit consumption in its response payload.",
   "Temperatures arrive in Celsius and are converted to Fahrenheit at the client boundary.",
   "API limitation: only filter_type 3 (forecast) succeeds on this key; 1, 2 and 4 return HTTP 500. The historic/forecast separation is still enforced in code.",
