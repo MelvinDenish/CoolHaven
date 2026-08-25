@@ -1,8 +1,7 @@
 {
  "schema": "coolroute.manifest.v2",
  "regionId": "phoenix",
- "snapshotDate": "2026-08-24",
- "generatedAt": "2026-08-24T14:06:16.747Z",
+ "generatedAt": "2026-08-25T15:43:11.093Z",
  "liveApiUsed": true,
  "fetchedThisRun": 0,
  "unavailable": [

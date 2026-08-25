@@ -1,8 +1,7 @@
 {
  "schema": "coolroute.manifest.v2",
  "regionId": "yuma",
- "snapshotDate": "2026-08-24",
- "generatedAt": "2026-08-24T17:09:17.011Z",
+ "generatedAt": "2026-08-25T15:43:11.098Z",
  "liveApiUsed": true,
  "fetchedThisRun": 2,
  "unavailable": [
