@@ -1,7 +1,7 @@
 {
  "schema": "coolroute.manifest.v2",
  "regionId": "phoenix",
- "generatedAt": "2026-08-25T02:40:10.848Z",
+ "generatedAt": "2026-08-25T03:50:12.211Z",
  "liveApiUsed": true,
  "sources": [
   "fortyguard"
