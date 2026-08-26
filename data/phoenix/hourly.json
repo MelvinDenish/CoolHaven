@@ -6,11 +6,11 @@
  "note": "Real 24-hour environmental profiles. env_params takes a dry-bulb temperature as input and returns apparent temperature, heat index, wet bulb, humidity, cloud cover and air quality as hourly series. This is the only hour-of-day resolution the API exposes - /v1/heatmap has no hour parameter.",
  "date": "2026-08-26",
  "filterType": 3,
- "fetchedAt": "2026-08-26T14:04:58.565Z",
+ "fetchedAt": "2026-08-26T14:51:58.834Z",
  "failures": [],
  "points": [
   {
-   "activityId": "f1e3f87b-8934-4b8a-8222-5e8ea5b158da",
+   "activityId": "60030069-477b-4331-8a6f-ec937efd0a45",
    "lat": 33.455,
    "lon": -112.0715,
    "elevationM": 332,
@@ -201,7 +201,7 @@
    "label": "Downtown Core"
   },
   {
-   "activityId": "8b25c610-1608-48f2-b4fa-fe01544161b9",
+   "activityId": "7cd44bc7-919a-4d97-9c8a-416cb5f88453",
    "lat": 33.435,
    "lon": -112.015,
    "elevationM": 341,
@@ -392,7 +392,7 @@
    "label": "Sky Harbor Logistics Corridor"
   },
   {
-   "activityId": "88b82f4a-1ef2-4710-bf89-a3b365f343fc",
+   "activityId": "59d04c31-8e3b-432e-b050-68d42883cb98",
    "lat": 33.495000000000005,
    "lon": -112.0715,
    "elevationM": 339,
@@ -583,7 +583,7 @@
    "label": "Midtown / Camelback"
   },
   {
-   "activityId": "ed9e8f67-03a1-4c09-9ec2-902b00cebad1",
+   "activityId": "d1b9bc10-373a-4092-99eb-11d1479a0d3a",
    "lat": 33.443704,
    "lon": -112.0736,
    "elevationM": 330,
@@ -774,7 +774,7 @@
    "label": "Demo route - start"
   },
   {
-   "activityId": "1267b3f7-abee-43ec-8911-b6cc0b2cf1ff",
+   "activityId": "d3179c6e-843d-46c5-b2a2-247c6ebd83e5",
    "lat": 33.509004,
    "lon": -112.06894,
    "elevationM": 347,

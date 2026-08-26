@@ -2,7 +2,7 @@
  "schema": "coolroute.manifest.v2",
  "regionId": "tucson",
  "snapshotDate": "2026-08-26",
- "generatedAt": "2026-08-26T14:04:31.148Z",
+ "generatedAt": "2026-08-26T14:51:15.167Z",
  "liveApiUsed": true,
  "fetchedThisRun": 0,
  "unavailable": [
@@ -36,7 +36,6 @@
   "Temperatures arrive in Celsius and are converted to Fahrenheit at the client boundary.",
   "API limitation: only filter_type 3 (forecast) succeeds on this key; 1, 2 and 4 return HTTP 500. The historic/forecast separation is still enforced in code.",
   "API limitation: no hour-of-day parameter exists, so slices are forecast DAYS. Intra-day variation comes from the min/average/max each cell carries.",
-  "The API completed but returned no data for: tucson-downtown|2026-08-27, tucson-south-industrial|2026-08-27. Those days are omitted from the snapshot rather than filled with a modelled stand-in, so the day selector only offers days the service actually served.",
-  "Pruned 3 grid file(s) describing dates outside this snapshot. The cache holds only the dates the UI can reach."
+  "The API completed but returned no data for: tucson-downtown|2026-08-27, tucson-south-industrial|2026-08-27. Those days are omitted from the snapshot rather than filled with a modelled stand-in, so the day selector only offers days the service actually served."
  ]
 }
