@@ -1,7 +1,7 @@
 {
  "schema": "coolroute.routes.v2",
  "regionId": "phoenix",
- "generatedAt": "2026-08-26T18:17:10.205Z",
+ "generatedAt": "2026-08-26T20:37:43.629Z",
  "provider": "ors",
  "note": "Routes follow the real road network, resolved once at build time and committed so the demo runs with no network. Depot and work-zone endpoints are real named locations inside the focus tiles; the runs themselves are representative, not an operator manifest.",
  "failures": [],
@@ -823,7 +823,7 @@
    "distanceM": 12401,
    "durationS": 1233,
    "provider": "ors",
-   "fetchedAt": "2026-08-26T18:16:33.318Z"
+   "fetchedAt": "2026-08-26T20:37:06.692Z"
   },
   {
    "id": "r2-warehouse-civic",
@@ -1422,7 +1422,7 @@
    "distanceM": 6024,
    "durationS": 872,
    "provider": "ors",
-   "fetchedAt": "2026-08-26T18:16:38.477Z"
+   "fetchedAt": "2026-08-26T20:37:11.864Z"
   },
   {
    "id": "r3-buckeye-industrial",
@@ -2665,7 +2665,7 @@
    "distanceM": 16698,
    "durationS": 1546,
    "provider": "ors",
-   "fetchedAt": "2026-08-26T18:16:43.636Z"
+   "fetchedAt": "2026-08-26T20:37:17.052Z"
   },
   {
    "id": "r4-central-spine",
@@ -3160,7 +3160,7 @@
    "distanceM": 6380,
    "durationS": 675,
    "provider": "ors",
-   "fetchedAt": "2026-08-26T18:16:48.791Z"
+   "fetchedAt": "2026-08-26T20:37:22.221Z"
   },
   {
    "id": "r5-midtown-grid",
@@ -4855,7 +4855,7 @@
    "distanceM": 12642,
    "durationS": 1615,
    "provider": "ors",
-   "fetchedAt": "2026-08-26T18:16:53.960Z"
+   "fetchedAt": "2026-08-26T20:37:27.401Z"
   },
   {
    "id": "r6-postal-loop",
@@ -5794,7 +5794,7 @@
    "distanceM": 8013,
    "durationS": 1131,
    "provider": "ors",
-   "fetchedAt": "2026-08-26T18:16:59.148Z"
+   "fetchedAt": "2026-08-26T20:37:32.568Z"
   },
   {
    "id": "r7-sky-harbor-perimeter",
@@ -6657,7 +6657,7 @@
    "distanceM": 9687,
    "durationS": 1226,
    "provider": "ors",
-   "fetchedAt": "2026-08-26T18:17:04.319Z"
+   "fetchedAt": "2026-08-26T20:37:37.737Z"
   },
   {
    "id": "r8-westside-connector",
@@ -7932,7 +7932,7 @@
    "distanceM": 10631,
    "durationS": 1153,
    "provider": "ors",
-   "fetchedAt": "2026-08-26T18:17:09.487Z"
+   "fetchedAt": "2026-08-26T20:37:42.913Z"
   }
  ],
  "workerDemo": {
@@ -8549,7 +8549,7 @@
    "distanceM": 7953,
    "durationS": 925,
    "provider": "ors",
-   "fetchedAt": "2026-08-26T18:17:10.204Z"
+   "fetchedAt": "2026-08-26T20:37:43.629Z"
   },
   "alternative": {
    "id": "worker-demo-alt",
@@ -9512,7 +9512,7 @@
    "distanceM": 8690,
    "durationS": 980,
    "provider": "ors",
-   "fetchedAt": "2026-08-26T18:17:10.204Z",
+   "fetchedAt": "2026-08-26T20:37:43.629Z",
    "alternativeOf": "worker-demo-primary"
   }
  }

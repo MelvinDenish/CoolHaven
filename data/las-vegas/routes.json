@@ -1,7 +1,7 @@
 {
  "schema": "coolroute.routes.v2",
  "regionId": "las-vegas",
- "generatedAt": "2026-08-26T18:18:04.626Z",
+ "generatedAt": "2026-08-26T20:38:38.163Z",
  "provider": "ors",
  "note": "Routes follow the real road network, resolved once at build time and committed so the demo runs with no network. Depot and work-zone endpoints are real named locations inside the focus tiles; the runs themselves are representative, not an operator manifest.",
  "failures": [],
@@ -539,7 +539,7 @@
    "distanceM": 5192,
    "durationS": 716,
    "provider": "ors",
-   "fetchedAt": "2026-08-26T18:17:43.757Z"
+   "fetchedAt": "2026-08-26T20:38:17.178Z"
   },
   {
    "id": "v2-strip-north",
@@ -1822,7 +1822,7 @@
    "distanceM": 17727,
    "durationS": 2404,
    "provider": "ors",
-   "fetchedAt": "2026-08-26T18:17:48.943Z"
+   "fetchedAt": "2026-08-26T20:38:22.417Z"
   },
   {
    "id": "v3-fremont-civic",
@@ -2054,8 +2054,24 @@
      36.1721
     ],
     [
+     -115.13271,
+     36.172235
+    ],
+    [
+     -115.132709,
+     36.172541
+    ],
+    [
      -115.132716,
      36.174039
+    ],
+    [
+     -115.132668,
+     36.174041
+    ],
+    [
+     -115.132024,
+     36.17404
     ],
     [
      -115.131388,
@@ -2066,6 +2082,14 @@
      36.173983
     ],
     [
+     -115.130668,
+     36.173982
+    ],
+    [
+     -115.130499,
+     36.173981
+    ],
+    [
      -115.129694,
      36.173978
     ],
@@ -2074,8 +2098,24 @@
      36.174027
     ],
     [
+     -115.129074,
+     36.174029
+    ],
+    [
+     -115.12819,
+     36.174027
+    ],
+    [
      -115.127104,
      36.174026
+    ],
+    [
+     -115.12652,
+     36.17402
+    ],
+    [
+     -115.126028,
+     36.174017
     ],
     [
      -115.125135,
@@ -2092,6 +2132,14 @@
     [
      -115.125342,
      36.174706
+    ],
+    [
+     -115.125349,
+     36.174909
+    ],
+    [
+     -115.125346,
+     36.175605
     ],
     [
      -115.125372,
@@ -2129,7 +2177,7 @@
    "distanceM": 3957,
    "durationS": 492,
    "provider": "ors",
-   "fetchedAt": "2026-08-26T18:17:54.102Z"
+   "fetchedAt": "2026-08-26T20:38:27.593Z"
   },
   {
    "id": "v4-downtown-grid",
@@ -2792,7 +2840,7 @@
    "distanceM": 8722,
    "durationS": 865,
    "provider": "ors",
-   "fetchedAt": "2026-08-26T18:17:59.263Z"
+   "fetchedAt": "2026-08-26T20:38:32.768Z"
   },
   {
    "id": "v5-utility-west",
@@ -3555,7 +3603,7 @@
    "distanceM": 9772,
    "durationS": 987,
    "provider": "ors",
-   "fetchedAt": "2026-08-26T18:18:04.455Z"
+   "fetchedAt": "2026-08-26T20:38:37.994Z"
   }
  ],
  "workerDemo": {
@@ -3848,7 +3896,7 @@
    "distanceM": 2817,
    "durationS": 336,
    "provider": "ors",
-   "fetchedAt": "2026-08-26T18:18:04.626Z"
+   "fetchedAt": "2026-08-26T20:38:38.163Z"
   },
   "alternative": {
    "id": "worker-demo-alt",
@@ -4179,7 +4227,7 @@
    "distanceM": 3108,
    "durationS": 390,
    "provider": "ors",
-   "fetchedAt": "2026-08-26T18:18:04.626Z",
+   "fetchedAt": "2026-08-26T20:38:38.163Z",
    "alternativeOf": "worker-demo-primary"
   }
  }
