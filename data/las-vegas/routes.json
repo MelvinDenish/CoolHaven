@@ -1,7 +1,7 @@
 {
  "schema": "coolroute.routes.v2",
  "regionId": "las-vegas",
- "generatedAt": "2026-08-26T14:50:42.494Z",
+ "generatedAt": "2026-08-26T16:20:45.504Z",
  "provider": "ors",
  "note": "Routes follow the real road network, resolved once at build time and committed so the demo runs with no network. Depot and work-zone endpoints are real named locations inside the focus tiles; the runs themselves are representative, not an operator manifest.",
  "failures": [],
@@ -216,44 +216,12 @@
      36.111671
     ],
     [
-     -115.172417,
-     36.111663
-    ],
-    [
      -115.172812,
      36.111662
     ],
     [
-     -115.172799,
-     36.112738
-    ],
-    [
-     -115.172794,
-     36.113112
-    ],
-    [
-     -115.172798,
-     36.113594
-    ],
-    [
-     -115.172795,
-     36.113703
-    ],
-    [
-     -115.172774,
-     36.114593
-    ],
-    [
      -115.172772,
      36.114762
-    ],
-    [
-     -115.17278,
-     36.115362
-    ],
-    [
-     -115.172798,
-     36.116486
     ],
     [
      -115.17281,
@@ -262,10 +230,6 @@
     [
      -115.17276,
      36.118144
-    ],
-    [
-     -115.172698,
-     36.118567
     ],
     [
      -115.172631,
@@ -284,40 +248,12 @@
      36.120926
     ],
     [
-     -115.171925,
-     36.121129
-    ],
-    [
-     -115.17183,
-     36.121324
-    ],
-    [
-     -115.171737,
-     36.121516
-    ],
-    [
      -115.17162,
      36.121756
     ],
     [
-     -115.171429,
-     36.122073
-    ],
-    [
-     -115.171289,
-     36.122294
-    ],
-    [
      -115.170981,
      36.122825
-    ],
-    [
-     -115.170586,
-     36.123369
-    ],
-    [
-     -115.170509,
-     36.123482
     ],
     [
      -115.170324,
@@ -348,20 +284,12 @@
      36.125006
     ],
     [
-     -115.167363,
-     36.124876
-    ],
-    [
      -115.167149,
      36.124695
     ],
     [
      -115.167069,
      36.124609
-    ],
-    [
-     -115.166888,
-     36.124717
     ],
     [
      -115.166604,
@@ -386,10 +314,6 @@
     [
      -115.166317,
      36.124571
-    ],
-    [
-     -115.166254,
-     36.124567
     ],
     [
      -115.166245,
@@ -539,7 +463,7 @@
    "distanceM": 5192,
    "durationS": 716,
    "provider": "ors",
-   "fetchedAt": "2026-08-26T14:50:21.740Z"
+   "fetchedAt": "2026-08-26T16:20:24.650Z"
   },
   {
    "id": "v2-strip-north",
@@ -1822,7 +1746,7 @@
    "distanceM": 17727,
    "durationS": 2404,
    "provider": "ors",
-   "fetchedAt": "2026-08-26T14:50:26.898Z"
+   "fetchedAt": "2026-08-26T16:20:29.831Z"
   },
   {
    "id": "v3-fremont-civic",
@@ -2177,7 +2101,7 @@
    "distanceM": 3957,
    "durationS": 492,
    "provider": "ors",
-   "fetchedAt": "2026-08-26T14:50:32.043Z"
+   "fetchedAt": "2026-08-26T16:20:35.010Z"
   },
   {
    "id": "v4-downtown-grid",
@@ -2840,7 +2764,7 @@
    "distanceM": 8722,
    "durationS": 865,
    "provider": "ors",
-   "fetchedAt": "2026-08-26T14:50:37.188Z"
+   "fetchedAt": "2026-08-26T16:20:40.174Z"
   },
   {
    "id": "v5-utility-west",
@@ -3603,7 +3527,7 @@
    "distanceM": 9772,
    "durationS": 987,
    "provider": "ors",
-   "fetchedAt": "2026-08-26T14:50:42.328Z"
+   "fetchedAt": "2026-08-26T16:20:45.334Z"
   }
  ],
  "workerDemo": {
@@ -3896,7 +3820,7 @@
    "distanceM": 2817,
    "durationS": 336,
    "provider": "ors",
-   "fetchedAt": "2026-08-26T14:50:42.494Z"
+   "fetchedAt": "2026-08-26T16:20:45.503Z"
   },
   "alternative": {
    "id": "worker-demo-alt",
@@ -4227,7 +4151,7 @@
    "distanceM": 3108,
    "durationS": 390,
    "provider": "ors",
-   "fetchedAt": "2026-08-26T14:50:42.494Z",
+   "fetchedAt": "2026-08-26T16:20:45.503Z",
    "alternativeOf": "worker-demo-primary"
   }
  }

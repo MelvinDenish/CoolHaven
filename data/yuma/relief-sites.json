@@ -6,7 +6,7 @@
  "endpoint": "https://services1.arcgis.com/mpVYz37anSdrK4d8/arcgis/rest/services/AZCoolingandHydration/FeatureServer/19/query",
  "where": "Year=2026 AND SeasonStatus='Active' AND County='Yuma County'",
  "attribution": "Arizona Department of Health Services Statewide Heat Preparedness Network, public feature service. Locations and services as published by ADHS.",
- "fetchedAt": "2026-08-26T14:48:49.976Z",
+ "fetchedAt": "2026-08-26T16:19:04.544Z",
  "totalCount": 21,
  "focusCount": 14,
  "focusBbox": [
