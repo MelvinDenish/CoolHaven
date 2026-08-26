@@ -6,14 +6,14 @@
  "note": "Real 24-hour environmental profiles. env_params takes a dry-bulb temperature as input and returns apparent temperature, heat index, wet bulb, humidity, cloud cover and air quality as hourly series. This is the only hour-of-day resolution the API exposes - /v1/heatmap has no hour parameter.",
  "date": "2026-08-25",
  "filterType": 3,
- "fetchedAt": "2026-08-26T01:42:25.103Z",
+ "fetchedAt": "2026-08-26T02:51:49.513Z",
  "failures": [
   "tucson-south-industrial: outside the cached field",
   "demo-start: outside the cached field"
  ],
  "points": [
   {
-   "activityId": "52f3c3ab-e4ba-4cad-b877-c663002aa8ae",
+   "activityId": "fe72a75a-79ba-4bd2-8ab1-867f32c450dd",
    "lat": 32.224999999999994,
    "lon": -110.96000000000001,
    "elevationM": 732,
@@ -204,7 +204,7 @@
    "label": "Downtown / University"
   },
   {
-   "activityId": "d1e5a073-eae7-4600-8588-772ef80cadfb",
+   "activityId": "4437f5df-6be8-4a72-a1ec-8047e7f2a0e5",
    "lat": 32.224093,
    "lon": -110.966327,
    "elevationM": 727,
