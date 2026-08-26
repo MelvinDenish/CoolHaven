@@ -6,7 +6,7 @@
  "note": "Real 24-hour environmental profiles. env_params takes a dry-bulb temperature as input and returns apparent temperature, heat index, wet bulb, humidity, cloud cover and air quality as hourly series. This is the only hour-of-day resolution the API exposes - /v1/heatmap has no hour parameter.",
  "date": "2026-08-25",
  "filterType": 3,
- "fetchedAt": "2026-08-26T02:51:37.848Z",
+ "fetchedAt": "2026-08-26T05:01:20.775Z",
  "failures": [
   "downtown-vegas: outside the cached field",
   "demo-start: outside the cached field",
@@ -14,7 +14,7 @@
  ],
  "points": [
   {
-   "activityId": "87c646a2-0649-4b68-8561-fc27642881d7",
+   "activityId": "9241c237-f159-4e22-afbc-28ce37f3ba18",
    "lat": 36.114999999999995,
    "lon": -115.16,
    "elevationM": 638,
