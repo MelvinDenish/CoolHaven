@@ -1,7 +1,7 @@
 {
  "schema": "coolroute.routes.v2",
  "regionId": "phoenix",
- "generatedAt": "2026-08-27T00:32:25.288Z",
+ "generatedAt": "2026-08-28T22:56:30.054Z",
  "provider": "ors",
  "note": "Routes follow the real road network, resolved once at build time and committed so the demo runs with no network. Depot and work-zone endpoints are real named locations inside the focus tiles; the runs themselves are representative, not an operator manifest.",
  "failures": [],
@@ -823,7 +823,7 @@
    "distanceM": 12401,
    "durationS": 1233,
    "provider": "ors",
-   "fetchedAt": "2026-08-27T00:31:47.862Z"
+   "fetchedAt": "2026-08-28T22:55:51.785Z"
   },
   {
    "id": "r2-warehouse-civic",
@@ -1422,7 +1422,7 @@
    "distanceM": 6024,
    "durationS": 872,
    "provider": "ors",
-   "fetchedAt": "2026-08-27T00:31:53.093Z"
+   "fetchedAt": "2026-08-28T22:55:57.119Z"
   },
   {
    "id": "r3-buckeye-industrial",
@@ -2665,7 +2665,7 @@
    "distanceM": 16698,
    "durationS": 1546,
    "provider": "ors",
-   "fetchedAt": "2026-08-27T00:31:58.328Z"
+   "fetchedAt": "2026-08-28T22:56:02.458Z"
   },
   {
    "id": "r4-central-spine",
@@ -3160,7 +3160,7 @@
    "distanceM": 6380,
    "durationS": 675,
    "provider": "ors",
-   "fetchedAt": "2026-08-27T00:32:03.556Z"
+   "fetchedAt": "2026-08-28T22:56:07.794Z"
   },
   {
    "id": "r5-midtown-grid",
@@ -4855,7 +4855,7 @@
    "distanceM": 12642,
    "durationS": 1615,
    "provider": "ors",
-   "fetchedAt": "2026-08-27T00:32:08.798Z"
+   "fetchedAt": "2026-08-28T22:56:13.142Z"
   },
   {
    "id": "r6-postal-loop",
@@ -5794,7 +5794,7 @@
    "distanceM": 8013,
    "durationS": 1131,
    "provider": "ors",
-   "fetchedAt": "2026-08-27T00:32:14.027Z"
+   "fetchedAt": "2026-08-28T22:56:18.478Z"
   },
   {
    "id": "r7-sky-harbor-perimeter",
@@ -5802,40 +5802,48 @@
    "persona": "Municipal crew | 12:00 - 16:00",
    "coords": [
     [
-     -112.02181,
-     33.435929
+     -112.021901,
+     33.435883
     ],
     [
-     -112.02197,
-     33.436007
+     -112.022503,
+     33.435879
     ],
     [
-     -112.022523,
-     33.436422
+     -112.023628,
+     33.435883
     ],
     [
-     -112.022099,
-     33.436677
+     -112.023719,
+     33.435918
     ],
     [
-     -112.021994,
-     33.436716
+     -112.023789,
+     33.435987
+    ],
+    [
+     -112.023809,
+     33.436065
+    ],
+    [
+     -112.02381,
+     33.436219
+    ],
+    [
+     -112.02383,
+     33.436763
+    ],
+    [
+     -112.023026,
+     33.436722
     ],
     [
      -112.021883,
      33.436719
     ],
     [
-     -112.021541,
-     33.436688
-    ],
-    [
-     -112.021146,
-     33.436686
-    ],
-    [
-     -112.020758,
-     33.436666
+     -112.020886,
+     33.436669
     ],
     [
      -112.019548,
@@ -6654,10 +6662,10 @@
      33.452254
     ]
    ],
-   "distanceM": 9687,
-   "durationS": 1226,
+   "distanceM": 9978,
+   "durationS": 1262,
    "provider": "ors",
-   "fetchedAt": "2026-08-27T00:32:19.264Z"
+   "fetchedAt": "2026-08-28T22:56:23.818Z"
   },
   {
    "id": "r8-westside-connector",
@@ -7932,7 +7940,7 @@
    "distanceM": 10631,
    "durationS": 1153,
    "provider": "ors",
-   "fetchedAt": "2026-08-27T00:32:24.500Z"
+   "fetchedAt": "2026-08-28T22:56:29.161Z"
   }
  ],
  "workerDemo": {
@@ -8549,7 +8557,7 @@
    "distanceM": 7953,
    "durationS": 925,
    "provider": "ors",
-   "fetchedAt": "2026-08-27T00:32:25.288Z"
+   "fetchedAt": "2026-08-28T22:56:30.054Z"
   },
   "alternative": {
    "id": "worker-demo-alt",
@@ -9512,7 +9520,7 @@
    "distanceM": 8690,
    "durationS": 980,
    "provider": "ors",
-   "fetchedAt": "2026-08-27T00:32:25.288Z",
+   "fetchedAt": "2026-08-28T22:56:30.054Z",
    "alternativeOf": "worker-demo-primary"
   }
  }
