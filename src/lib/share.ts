@@ -100,7 +100,11 @@ export function decodeScenario(encoded: string): SharedScenario | null {
   }
 }
 
-function toBase64Url(s: string): string {
+/*
+ * Exported so src/lib/draft-region.ts can put a drawn region in the same
+ * fragment with the same encoding, rather than inventing a second one.
+ */
+export function toBase64Url(s: string): string {
   const b64 =
     typeof window === 'undefined'
       ? Buffer.from(s, 'utf8').toString('base64')
@@ -108,7 +112,7 @@ function toBase64Url(s: string): string {
   return b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
-function fromBase64Url(s: string): string {
+export function fromBase64Url(s: string): string {
   const b64 = s.replace(/-/g, '+').replace(/_/g, '/');
   const padded = b64 + '='.repeat((4 - (b64.length % 4)) % 4);
   if (typeof window === 'undefined') {

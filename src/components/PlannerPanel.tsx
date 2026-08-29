@@ -43,11 +43,25 @@ import type {
   RouteScore,
   Scenario,
 } from '@/lib/types';
+import type { DayPart } from '@/lib/config';
+import type { StreetCollection } from '@/lib/basemaps';
+import { buildStreetIndex, placeOrCoords, sitableCells } from '@/lib/street-names';
 import type { Bootstrap } from './AppShell';
+import Link from 'next/link';
 import { DesignImport, FleetImport, RefreshPanel } from './PlannerTools';
 import { Chip, DeltaRow, Empty, Metric, SectionLabel, fmtUsd } from './ui';
+import ScenarioReport from './ScenarioReport';
 import GroundPanel, { type GroundFile } from './GroundPanel';
 import { solveForBudget, solveForTarget } from '@/lib/solve';
+
+/** What the three confidence labels actually claim. Rendered in the chip title. */
+const CONFIDENCE_MEANING: Record<string, string> = {
+  measured: 'Measured: taken from a published measurement of this effect.',
+  directional:
+    'Directional: the direction and rough magnitude are supported by published work; the exact coefficient is ours.',
+  illustrative:
+    'Illustrative: our own working figure, held for demonstration only.',
+};
 
 interface Props {
   boot: Bootstrap;
@@ -72,6 +86,12 @@ interface Props {
   onPlacing: (k: InterventionKind | null) => void;
   validAt: string;
   filterType: number;
+  /** Which of the day's min / average / max the field on screen reads. */
+  dayPart: DayPart;
+  /** Tiles re-fetched live this session, so the report can say so. */
+  liveTiles: number;
+  /** Road centrelines, used to name a recommended site rather than number it. */
+  streets: StreetCollection | null;
   /** Ground segmentation, or null until /api/ground resolves. */
   ground: GroundFile | null;
   onShowDemand: () => void;
@@ -101,6 +121,9 @@ export default function PlannerPanel({
   onPlacing,
   validAt,
   filterType,
+  dayPart,
+  liveTiles,
+  streets,
   ground,
   onShowDemand,
   onLiveGrid,
@@ -111,8 +134,8 @@ export default function PlannerPanel({
   const [solveMode, setSolveMode] = useState<'budget' | 'target'>('budget');
   const [budgetUsd, setBudgetUsd] = useState(500_000);
   const [targetPct, setTargetPct] = useState(25);
-  const [showMethod, setShowMethod] = useState(false);
   const [showCompare, setShowCompare] = useState(false);
+  const [showTools, setShowTools] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [exportNote, setExportNote] = useState<string | null>(null);
 
@@ -132,7 +155,7 @@ export default function PlannerPanel({
    * Treated-area temperature, reported alongside the district mean.
    *
    * A district-wide average barely moves for a handful of local interventions
-   * - one canopy corridor shifts it by roughly 0.003 degF - so on its own it
+   * - one canopy corridor shifts it by roughly 0.003 °F - so on its own it
    * reads as "the tool does nothing". Showing both keeps the honest district
    * figure while answering the question the planner actually asked: what did
    * this do where I put it?
@@ -145,9 +168,39 @@ export default function PlannerPanel({
     [baseField, scenarioField, interventions],
   );
 
+  /**
+   * The street index, built once per region rather than per candidate.
+   *
+   * Also what decides siting eligibility below, so it is memoised on `streets`
+   * alone - a scenario change must not rebuild 50,000 samples.
+   */
+  const streetIndex = useMemo(() => buildStreetIndex(streets), [streets]);
+
+  /**
+   * The pool a station may actually be placed in.
+   *
+   * Demand peaks on grade-separated highway, because the layer weights drivable
+   * road length and courier-route density and both max out there. Before this
+   * filter the top four Phoenix sites came back on the Maricopa and Papago
+   * Freeways - which is a true statement about exposure and a useless one about
+   * where to build, since nobody walks to a station on a freeway shoulder.
+   *
+   * Note this narrows CANDIDACY only. The demand layer the map paints is
+   * untouched, because the exposure on those cells is real and hiding it would
+   * be its own kind of dishonesty.
+   */
+  const sitableDemand = useMemo(
+    () => (demandBase ? sitableCells(demandBase, streetIndex) : null),
+    [demandBase, streetIndex],
+  );
+
+  /** How many candidate cells the motorway filter removed, for the UI note. */
+  const excludedCells =
+    demandBase && sitableDemand ? demandBase.length - sitableDemand.length : 0;
+
   const recommendations = useMemo(
-    () => (demandBase ? recommendStations(demandBase, recommendCount) : []),
-    [demandBase, recommendCount],
+    () => (sitableDemand ? recommendStations(sitableDemand, recommendCount) : []),
+    [sitableDemand, recommendCount],
   );
 
   /*
@@ -158,9 +211,25 @@ export default function PlannerPanel({
    * gets a much longer list of viable, spaced sites - and the solver, not the
    * ranking, decides how many of them get bought.
    */
+  /**
+   * The same ranked sites, with a name a person can act on.
+   *
+   * "33.4264, -112.0295" is exportable and unusable in a meeting. The street
+   * data is already in the browser for the temperature probe, so naming these
+   * costs one pass over geometry we have and no request at all.
+   */
+  const namedRecommendations = useMemo(
+    () =>
+      recommendations.map((r) => ({
+        ...r,
+        place: placeOrCoords(r.lon, r.lat, streets),
+      })),
+    [recommendations, streets],
+  );
+
   const solverCandidates = useMemo(
-    () => (demandBase ? recommendStations(demandBase, 40) : []),
-    [demandBase],
+    () => (sitableDemand ? recommendStations(sitableDemand, 40) : []),
+    [sitableDemand],
   );
 
   const solution = useMemo(() => {
@@ -208,13 +277,19 @@ export default function PlannerPanel({
   const uncovered = demandScenario
     ? demandScenario.filter((c) => c.gap > 0.5 && c.demand > 0.35).length
     : 0;
-
-  const activeSliceHour = Number(validAt.slice(11, 13)) || 15;
+  /*
+   * Denominators. "2,438 uncovered cells" and "17.2%" both floated free - a
+   * reader had no way to tell either from good or bad. Every headline figure
+   * now carries what it is a share OF.
+   */
+  const totalCells = demandScenario?.length ?? 0;
+  const uncoveredShare = totalCells ? Math.round((uncovered / totalCells) * 100) : 0;
+  const coveragePlain = plainShare(after.coverage);
 
   /**
    * How much the field actually varies across the focus area.
    *
-   * The live forecast average spans about 0.3 degF across 26 mi2 of Phoenix,
+   * The live forecast average spans about 0.3 °F across 26 mi² of Phoenix,
    * which paints as one flat colour. That is the data, not a rendering fault -
    * but a viewer's first reaction to a uniform map is "this is broken", so the
    * panel says which it is rather than leaving them to guess.
@@ -295,23 +370,42 @@ export default function PlannerPanel({
     <div className="rise">
       {/* -------------------------------------------------- where the gap is */}
       <section className="p-4 border-b border-[var(--color-hairline)]">
+        <StepLabel n={1} title="Where the gap is" />
         <SectionLabel right={<Chip tone="relief">{openSites.length} open in focus</Chip>}>
-          Exposure demand
+          Work exposure
         </SectionLabel>
 
         <div className="grid grid-cols-2 gap-4 mb-3">
+          {/*
+            The SCENARIO figure, not the baseline.
+
+            This read `before.coverage` regardless of what was placed, so the
+            headline sat frozen at the base number while the before/after table
+            further down reported the same metric moving. Two different values
+            under one label is the kind of thing that makes a user distrust
+            every other number on the page. The baseline is still shown - as
+            the delta hint, which is where a changed number belongs.
+          */}
           <Metric
             label="Relief coverage"
-            value={(before.coverage * 100).toFixed(1)}
+            value={(after.coverage * 100).toFixed(1)}
             unit="%"
             tone="relief"
-            hint={`of the focus area within a ${MOVEMENT.walkToReliefM} m walk of a site that is OPEN at this hour`}
+            hint={
+              interventions.length > 0
+                ? `${coveragePlain} - up from ${(before.coverage * 100).toFixed(1)}% before this option. Within a ${MOVEMENT.walkToReliefM} m walk of a site OPEN at this reading.`
+                : `${coveragePlain} of the focus area, within a ${MOVEMENT.walkToReliefM} m walk of a site that is OPEN at this reading`
+            }
           />
           <Metric
             label="Uncovered hot cells"
-            value={uncovered}
+            value={uncovered.toLocaleString()}
             tone="ember"
-            hint="hot, heavily worked, and beyond the walk radius"
+            hint={
+              totalCells
+                ? `of ${totalCells.toLocaleString()} cells (${uncoveredShare}%) - hot, heavily worked, and beyond the walk radius`
+                : 'hot, heavily worked, and beyond the walk radius'
+            }
           />
         </div>
 
@@ -337,11 +431,13 @@ export default function PlannerPanel({
           <p className="text-[10.5px] leading-relaxed mb-3 px-2.5 py-2 border border-[var(--color-hairline-bright)] text-[var(--color-muted)]">
             The heat layer looks flat because it is: FortyGuard reports a{' '}
             <span className="num text-[var(--color-bone)]">
-              {fieldSpread.toFixed(2)} degF
+              {fieldSpread.toFixed(2)} °F
             </span>{' '}
-            spread across this whole focus area for this reading. Switch the part of
-            day, or the region, to see the field move. Siting here is driven by where
-            work happens and where relief is missing, not by hot spots.
+            spread across this whole focus area for this reading. Switch the reading
+            (low / average / peak) on the status bar above, or change region, to see
+            the field move - the day&apos;s range here is about 17 °F. Siting is
+            driven by where work happens and where relief is missing, not by hot
+            spots.
           </p>
         ) : null}
 
@@ -356,6 +452,7 @@ export default function PlannerPanel({
 
       {/* ------------------------------------------------------- recommender */}
       <section className="p-4 border-b border-[var(--color-hairline)]">
+        <StepLabel n={2} title="What to build" />
         <SectionLabel
           right={
             <span className="flex items-center gap-1.5">
@@ -387,7 +484,7 @@ export default function PlannerPanel({
           <Empty>No candidate cells clear the demand and coverage-gap floor.</Empty>
         ) : (
           <ol className="flex flex-col gap-1.5 mb-3">
-            {recommendations.map((r) => (
+            {namedRecommendations.map((r) => (
               <li
                 key={r.id}
                 className="flex items-start gap-2.5 px-2.5 py-2 bg-[var(--color-surface-2)] border border-[var(--color-hairline)]"
@@ -396,18 +493,45 @@ export default function PlannerPanel({
                   {r.rank}
                 </span>
                 <span className="flex-1 min-w-0">
-                  <span className="num text-[10.5px] text-[var(--color-muted)] block">
+                  {/*
+                    The street, not the coordinate. Nobody argues for a station
+                    in decimal degrees; the numbers stay underneath for the GIS
+                    export and for anyone checking the work.
+                  */}
+                  <span className="text-[11.5px] text-[var(--color-bone)] block leading-snug">
+                    {r.place}
+                  </span>
+                  <span className="num text-[9.5px] text-[var(--color-faint)] block">
                     {r.lat.toFixed(4)}, {r.lon.toFixed(4)}
                   </span>
-                  <span className="block text-[10.5px] text-[var(--color-faint)] leading-snug mt-0.5">
-                    demand {r.demand.toFixed(2)} &middot; {r.tempF.toFixed(1)} degF
-                    &middot; gap {(r.gap * 100).toFixed(0)}%
+                  <span className="block text-[10.5px] text-[var(--color-faint)] leading-snug mt-1">
+                    <span title="Composite index, 0-1, highest cell in this focus area = 1.">
+                      exposure {r.demand.toFixed(2)}
+                    </span>{' '}
+                    &middot; {r.tempF.toFixed(1)} °F &middot;{' '}
+                    <span
+                      title={`Beyond the ${MOVEMENT.walkToReliefM} m walk radius, so this cell counts as uncovered.`}
+                    >
+                      {r.reliefDistanceM >= 1000
+                        ? `${(r.reliefDistanceM / 1000).toFixed(1)} km`
+                        : `${r.reliefDistanceM} m`}{' '}
+                      to relief
+                    </span>
                   </span>
                 </span>
               </li>
             ))}
           </ol>
         )}
+
+        {excludedCells > 0 ? (
+          <p className="text-[10px] leading-relaxed text-[var(--color-faint)] mb-2.5">
+            {excludedCells.toLocaleString()} cells sit closer to a freeway than to any
+            other street and are excluded from siting - work exposure is real there, but
+            nobody can walk to a station on a freeway shoulder. They still appear in the
+            map layer.
+          </p>
+        ) : null}
 
         <button
           className="btn w-full"
@@ -556,17 +680,10 @@ export default function PlannerPanel({
         <p className="text-[10.5px] leading-relaxed text-[var(--color-faint)] mt-3">
           Maximum coverage is NP-hard and placements overlap, so this picks
           greedily by new ground per dollar and says so rather than implying an
-          optimum. Only access interventions are placed — a canopy corridor cools
+          optimum. Only access moves are placed — a canopy corridor cools
           a street but gives nobody somewhere to stop.
         </p>
       </section>
-
-      {/*
-        Placed above the scenario studio on purpose: the canopy tool below
-        carries an assumed degF figure, and the honest order is to see what is
-        actually on the ground at a site before choosing a treatment for it.
-      */}
-      <GroundPanel ground={ground} />
 
       {/* --------------------------------------------------- scenario studio */}
       <section className="p-4 border-b border-[var(--color-hairline)]">
@@ -606,7 +723,14 @@ export default function PlannerPanel({
           ))}
         </div>
 
-        {/* Tool palette, each with its assumption inline (FR9) */}
+        {/* Tool palette. Hover a confidence chip for the assumption in full. */}
+        <p className="text-[10px] leading-relaxed text-[var(--color-faint)] mb-2">
+          Hover a <span className="text-[var(--color-muted)]">confidence</span> chip for
+          what that move is assumed to do. <em>Measured</em> comes from a published
+          measurement; <em>directional</em> has the right direction and rough scale
+          from published work but our coefficient; <em>illustrative</em> is our own
+          working figure.
+        </p>
         <div className="flex flex-col gap-1.5 mb-3">
           {INTERVENTION_KINDS.map((kind) => {
             const spec = INTERVENTIONS[kind];
@@ -629,14 +753,22 @@ export default function PlannerPanel({
                       {spec.label}
                     </span>
                     <span className="num text-[10.5px] text-[var(--color-muted)]">
-                      {spec.deltaF === 0 ? 'coverage' : `${spec.deltaF} degF`}
+                      {spec.deltaF === 0 ? 'coverage' : `${spec.deltaF} °F`}
                     </span>
                   </span>
-                  <span className="block text-[10px] leading-relaxed text-[var(--color-faint)] mt-1">
-                    {spec.assumption}
-                  </span>
+                  {/*
+                    The assumption used to print in full on every one of the six
+                    buttons - four lines each, exactly where someone is trying
+                    to click one thing. It is on the confidence chip now, and in
+                    full on /methodology.
+                  */}
                   <span className="flex items-center gap-2 mt-1.5">
-                    <Chip tone={spec.confidence === 'measured' ? 'relief' : 'warn'}>
+                    <Chip
+                      tone={spec.confidence === 'measured' ? 'relief' : 'warn'}
+                      title={`${spec.assumption}
+
+${CONFIDENCE_MEANING[spec.confidence]}`}
+                    >
                       {spec.confidence}
                     </Chip>
                     <span className="num text-[9.5px] text-[var(--color-faint)]">
@@ -707,6 +839,7 @@ export default function PlannerPanel({
 
       {/* ------------------------------------------------------ before/after */}
       <section className="p-4 border-b border-[var(--color-hairline)]">
+        <StepLabel n={3} title="What it buys" />
         <SectionLabel
           right={
             interventions.length ? (
@@ -718,7 +851,7 @@ export default function PlannerPanel({
         </SectionLabel>
 
         <DeltaRow
-          label="Mean route exposure (degree-min above 90 degF)"
+          label="Mean route exposure (degree-min above 90 °F)"
           before={before.meanExposure}
           after={after.meanExposure}
           betterWhen="lower"
@@ -739,7 +872,7 @@ export default function PlannerPanel({
         />
         {treated.before !== null && treated.after !== null ? (
           <DeltaRow
-            label="Mean temperature inside treated areas (degF)"
+            label="Mean temperature inside treated areas (°F)"
             before={treated.before}
             after={treated.after}
             betterWhen="lower"
@@ -747,18 +880,34 @@ export default function PlannerPanel({
           />
         ) : null}
         <DeltaRow
-          label="Mean temperature, whole focus area (degF)"
+          label="Mean temperature, whole focus area (°F)"
           before={before.meanTempF}
           after={after.meanTempF}
           betterWhen="lower"
           precision={1}
         />
         <DeltaRow
-          label="Worst relief gap, averaged over routes (m)"
+          label="Longest walk to relief, averaged over routes (m)"
           before={before.meanGapM}
           after={after.meanGapM}
           betterWhen="lower"
         />
+
+        {/*
+          Four rows reading "no change" looks like a broken tool. It is usually
+          the honest answer, and saying so here - not only in the printed
+          report - is the difference between a user trusting the table and
+          quietly discarding it.
+        */}
+        {interventions.length > 0 ? (
+          <p className="text-[10.5px] leading-relaxed text-[var(--color-faint)] mt-2.5">
+            Rows that say <span className="text-[var(--color-muted)]">no change</span> are
+            usually correct. A station changes relief <em>access</em>, not street
+            temperature. A canopy or pavement corridor does the reverse, and shows up in
+            the treated-area row rather than in a focus-wide average a few hundred metres
+            of street cannot move.
+          </p>
+        ) : null}
 
         {interventions.length > 0 ? (
           <div className="grid grid-cols-2 gap-4 mt-4 pt-3 border-t border-[var(--color-hairline)]">
@@ -898,7 +1047,7 @@ export default function PlannerPanel({
             Copy link
           </button>
           <button className="btn" onClick={() => window.print()}>
-            Print / PDF
+            Print report
           </button>
         </div>
         <p className="text-[10.5px] leading-relaxed text-[var(--color-faint)] mt-2.5">
@@ -907,7 +1056,10 @@ export default function PlannerPanel({
           buffered polygons, stations as points, each carrying its assumed effect,
           confidence level and unit cost. Forma-compatible, not a certified Forma
           integration. The share link encodes the whole scenario in the URL fragment - no
-          account, no server-side state.
+          account, no server-side state. <strong>Print report</strong> produces a
+          five-section assessment - provenance, the network as it stands, what this
+          option proposes and changes, the priority sites, and the limits - not a
+          screenshot of this tool.
         </p>
         {exportNote ? (
           <p className="text-[10.5px] text-[var(--color-relief)] mt-2 break-all">
@@ -916,68 +1068,163 @@ export default function PlannerPanel({
         ) : null}
       </section>
 
+      {/*
+        Ground truth sits after the three steps, not between them.
+
+        It is a site INSPECTION - what does this corner actually look like -
+        rather than part of the where/what/how-much sequence, and it used to
+        interrupt that sequence between siting and scenario-building.
+      */}
+      <GroundPanel ground={ground} />
+
       {/* ------------------------------------------------------------- tools */}
-      <RefreshPanel
-        regionId={regionId}
-        tiles={boot.tiles}
-        filterType={filterType}
-        hourLocal={activeSliceHour}
-        onGrid={onLiveGrid}
-      />
+      {/*
+        Power tools, behind one door.
 
-      <DesignImport
-        regionBbox={boot.region.bbox}
-        onImport={(imported) => onChangeInterventions([...interventions, ...imported])}
-      />
-
-      <FleetImport onRoutes={onAdHocRoutes} />
-
-      {/* ------------------------------------------------------- methodology */}
-      <section className="p-4">
+        Live tile refresh, design import and route import are each perfectly
+        good, and each was a full-width section with equal billing to the three
+        steps above - so the panel read as eleven things to do rather than
+        three. They are tools you reach for deliberately, which is exactly what
+        a disclosure is for.
+      */}
+      <section className="border-b border-[var(--color-hairline)] no-print">
         <button
-          onClick={() => setShowMethod((s) => !s)}
-          aria-expanded={showMethod}
-          className="label label-bright hover:text-[var(--color-bone)]"
+          onClick={() => setShowTools((t) => !t)}
+          aria-expanded={showTools}
+          className="w-full flex items-center justify-between gap-3 p-4 text-left hover:bg-[var(--color-surface-2)] transition-colors"
         >
-          {showMethod ? '- ' : '+ '}Methodology and assumptions
+          <span>
+            <span className="label label-bright block">Tools</span>
+            <span className="text-[10.5px] text-[var(--color-faint)] leading-snug">
+              Fetch a tile live, import a design, bring your own routes
+            </span>
+          </span>
+          <span className="num text-[15px] text-[var(--color-faint)]">
+            {showTools ? '-' : '+'}
+          </span>
         </button>
-        {showMethod ? (
-          <div className="mt-3 flex flex-col gap-2.5 text-[10.5px] leading-relaxed text-[var(--color-faint)]">
-            <p style={{ color: 'var(--color-warn)' }}>{ASSUMPTION_NOTES.headline}</p>
-            <p>{ASSUMPTION_NOTES.exposure}</p>
-            <p>{ASSUMPTION_NOTES.coverage}</p>
-            <p>{ASSUMPTION_NOTES.stacking}</p>
-            <p>{ASSUMPTION_NOTES.provenanceRule}</p>
-            <div className="rule my-1" />
-            {INTERVENTION_KINDS.map((k) => (
-              <p key={k}>
-                <span className="text-[var(--color-muted)]">{INTERVENTIONS[k].label}:</span>{' '}
-                {INTERVENTIONS[k].basis}
-              </p>
-            ))}
-            <div className="rule my-1" />
-            <p>
-              <span className="text-[var(--color-muted)]">Region:</span>{' '}
-              {boot.region.blurb} Workforce: {boot.region.workforce.toLowerCase()}.
-            </p>
-            <p>
-              <span className="text-[var(--color-muted)]">Relief network:</span>{' '}
-              {boot.relief.attribution} Fetched{' '}
-              {new Date(boot.relief.fetchedAt).toLocaleDateString()}.{' '}
-              {boot.relief.totalCount} sites published, {boot.relief.focusCount} inside
-              the focus tiles, {boot.relief.withKnownHours} with usable opening hours.
-            </p>
-            <p>
-              <span className="text-[var(--color-muted)]">Routes:</span> {boot.routes.note}
-            </p>
+
+        {showTools ? (
+          <div className="border-t border-[var(--color-hairline)]">
+            <RefreshPanel
+              regionId={regionId}
+              tiles={boot.tiles}
+              filterType={filterType}
+              onGrid={onLiveGrid}
+            />
+
+            <DesignImport
+              regionBbox={boot.region.bbox}
+              onImport={(imported) =>
+                onChangeInterventions([...interventions, ...imported])
+              }
+            />
+
+            <FleetImport onRoutes={onAdHocRoutes} />
           </div>
         ) : null}
       </section>
+
+      {/* ------------------------------------------------------- methodology */}
+      {/*
+        A link, not a disclosure.
+
+        This was ~20 collapsed paragraphs at the bottom of the sidebar, under
+        the file-import tools, in 10.5px grey - which is to say the product's
+        entire honesty argument lived where nobody scrolls, and every printout
+        inherited either all of it or none. It is /methodology now: reference
+        material, deliberately visited, and reachable from the one place a
+        reader is already asking "where do these numbers come from".
+      */}
+      <section className="p-4 no-print">
+        <SectionLabel>Method and assumptions</SectionLabel>
+        <p className="text-[10.5px] leading-relaxed text-[var(--color-faint)] mb-2.5">
+          {ASSUMPTION_NOTES.headline} Every coefficient behind these figures, its
+          confidence level, and the limits of each data source are set out in full.
+        </p>
+        <Link href="/methodology" className="btn w-full block text-center">
+          Read the methodology
+        </Link>
+      </section>
+
+
+      {/*
+        The printed deliverable. Hidden on screen, and the only thing that
+        reaches paper - see the @media print block in globals.css. Fed from the
+        same computed values the panel displays, so the two cannot disagree.
+      */}
+      <ScenarioReport
+        regionName={boot.region.name}
+        optionName={variants[activeVariant].name}
+        manifest={boot.manifest}
+        validAt={validAt}
+        filterType={filterType}
+        dayPart={dayPart}
+        liveTiles={liveTiles}
+        tileCount={boot.tiles.length}
+        areaMi2={boot.tiles.reduce((a, t) => a + t.areaMi2, 0)}
+        reliefLabel={boot.relief.sourceLabel}
+        routeProvider={boot.routes.provider}
+        routeCount={baseScores.length}
+        openSites={openSites.length}
+        closedCount={closedCount}
+        unknownHours={unknownHours}
+        fieldMinF={baseField.stats().minF}
+        fieldMaxF={baseField.stats().maxF}
+        before={before}
+        after={after}
+        treatedBefore={treated.before}
+        treatedAfter={treated.after}
+        interventions={interventions}
+        costUsd={cost.totalUsd}
+        uncoveredCells={uncovered}
+        recommendations={namedRecommendations}
+      />
     </div>
   );
 }
 
 /* -------------------------------------------------------------------------- */
+
+/**
+ * The step marker.
+ *
+ * The panel was twelve peer sections in one scroll - demand, recommendations,
+ * solver, ground truth, studio, performance, compare, export, refresh, two
+ * imports, method - all at identical weight. A planner's actual question runs
+ * in three: where is the gap, what do I build, what does it buy. Numbering
+ * them turns a list into a sequence without hiding anything.
+ */
+function StepLabel({ n, title }: { n: number; title: string }) {
+  return (
+    <div className="flex items-center gap-2 mb-3">
+      <span
+        className="num text-[10px] w-[18px] h-[18px] grid place-items-center shrink-0"
+        style={{ background: 'var(--color-ember)', color: 'var(--color-void)' }}
+      >
+        {n}
+      </span>
+      <span className="text-[12.5px] font-semibold text-[var(--color-bone)]">
+        {title}
+      </span>
+    </div>
+  );
+}
+
+/**
+ * "about 1 in 6" for a share.
+ *
+ * A percentage is precise and, on its own, hard to feel. The fraction is the
+ * sentence a person repeats afterwards, so it sits next to the number rather
+ * than replacing it.
+ */
+function plainShare(fraction: number): string {
+  if (fraction <= 0) return 'none of the focus area';
+  if (fraction >= 0.995) return 'effectively all of it';
+  const denom = Math.round(1 / fraction);
+  if (denom <= 1) return 'nearly all of it';
+  return `about 1 in ${denom} of the focus area`;
+}
 
 function summarise(field: HeatField, sites: ReliefSite[], scores: RouteScore[]) {
   const meanExposure = scores.length

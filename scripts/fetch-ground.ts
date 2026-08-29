@@ -33,6 +33,7 @@
  * Run:  npm run data:ground
  *       npm run data:ground -- --region=yuma --images=2
  */
+import { loadKeys, describeKeys } from '../src/lib/keys';
 import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { config as loadEnv } from 'dotenv';
@@ -64,7 +65,15 @@ interface GroundPoint {
 }
 
 async function main() {
-  const apiKey = process.env.FORTYGUARD_API_KEY?.trim();
+  /*
+   * Batch work starts at the FIRST key. The interactive endpoints start at the
+   * last, so a long backfill and a live demo do not drain the same quota.
+   */
+  const keyPool = loadKeys();
+  const apiKey = keyPool[0]?.value;
+  if (keyPool.length > 1) {
+    console.log(`[${'ground'}] ${describeKeys()}`);
+  }
   if (!apiKey) {
     console.error(
       '\n[ground] FORTYGUARD_API_KEY is not set.\n' +

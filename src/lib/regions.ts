@@ -71,6 +71,19 @@ export interface ReliefSource {
 
 export interface Region {
   id: string;
+  /**
+   * Where this region came from.
+   *
+   * `curated` (the default, and what every entry in REGIONS below is) means a
+   * bounding box someone chose for a reason, backed by a committed snapshot.
+   * `draft` means a user drew it in the browser: same code path, same scoring,
+   * but nobody vetted the box, there is no committed data behind it, and its
+   * coverage numbers are NOT comparable with a curated region's. See
+   * src/lib/draft-region.ts.
+   *
+   * Optional so the four entries below need no change - absent means curated.
+   */
+  origin?: 'curated' | 'draft';
   /** Shown in the region dropdown. */
   name: string;
   /** Second line in the dropdown - the administrative area. */

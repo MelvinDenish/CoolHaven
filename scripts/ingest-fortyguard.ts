@@ -33,6 +33,7 @@
  *       npm run data:ingest -- --region=yuma
  *       npm run data:ingest -- --force        (re-request even if cached)
  */
+import { loadKeys, describeKeys } from '../src/lib/keys';
 import { writeFileSync, readFileSync, existsSync, mkdirSync, readdirSync, unlinkSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { config as loadEnv } from 'dotenv';
@@ -62,7 +63,15 @@ interface RoadDensityFile {
 }
 
 async function main() {
-  const apiKey = process.env.FORTYGUARD_API_KEY?.trim();
+  /*
+   * Batch work starts at the FIRST key. The interactive endpoints start at the
+   * last, so a long backfill and a live demo do not drain the same quota.
+   */
+  const keyPool = loadKeys();
+  const apiKey = keyPool[0]?.value;
+  if (keyPool.length > 1) {
+    console.log(`[${'ingest'}] ${describeKeys()}`);
+  }
   const baseUrl =
     process.env.FORTYGUARD_BASE_URL?.trim() || 'https://api.fortyguard.com';
   const client = apiKey ? new FortyGuardClient({ apiKey, baseUrl }) : null;

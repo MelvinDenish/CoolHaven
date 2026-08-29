@@ -4,7 +4,7 @@
  * Worker view (base PRD section 6.5).
  *
  * FR18 sets the constraint that shaped this whole panel: it has to be usable
- * in a two-second glance, by someone standing next to a van in 112 degF heat,
+ * in a two-second glance, by someone standing next to a van in 112 °F heat,
  * not sitting at a desk. So the top of it is one number, one band, one
  * instruction - and everything analytical is below that, in the order a worker
  * would actually want it: what do I do, where do I stop, should I go a
@@ -152,7 +152,7 @@ export default function WorkerPanel({
    * must be cut rather than faked if the snapshots are not there. The API has
    * no hour parameter, so hourly slices genuinely are not there - but every
    * cell carries a min, an average and a max for the day, and on the snapshot
-   * day that is a real ~14 degF swing. So the run is re-scored against each of
+   * day that is a real ~14 °F swing. So the run is re-scored against each of
    * those three arrays. Same route, same scoring function, three real fields.
    */
   const partOptions = useMemo(() => {
@@ -256,7 +256,7 @@ export default function WorkerPanel({
             {primaryScore.peakTempF.toFixed(0)}
           </span>
           <span className="pb-2">
-            <span className="num text-[15px] text-[var(--color-muted)]">degF peak</span>
+            <span className="num text-[15px] text-[var(--color-muted)]">°F peak</span>
             <span className="block num text-[12px] text-[var(--color-faint)]">
               {primaryScore.meanTempF.toFixed(0)} average
             </span>
@@ -320,7 +320,7 @@ export default function WorkerPanel({
           <p className="text-[11px] text-[var(--color-muted)] leading-relaxed mt-3">
             The worst {primaryScore.peakSegment.lengthM} m of this run averages{' '}
             <span className="num text-[var(--color-ember)]">
-              {primaryScore.peakSegment.meanTempF.toFixed(1)} degF
+              {primaryScore.peakSegment.meanTempF.toFixed(1)} °F
             </span>
             . It is picked out in white on the map.
           </p>
@@ -441,7 +441,7 @@ export default function WorkerPanel({
                 <span
                   key={h}
                   className="flex-1 relative group"
-                  title={`${String(h).padStart(2, '0')}:00 — feels like ${v.toFixed(0)} degF`}
+                  title={`${String(h).padStart(2, '0')}:00 — feels like ${v.toFixed(0)} °F`}
                 >
                   <span
                     className="block w-full"
@@ -471,14 +471,14 @@ export default function WorkerPanel({
               value={`${String(hourly.coolest.h).padStart(2, '0')}:00`}
               tone="relief"
               size="sm"
-              hint={`feels like ${hourly.coolest.v.toFixed(0)} degF`}
+              hint={`feels like ${hourly.coolest.v.toFixed(0)} °F`}
             />
             <Metric
               label="Worst hour"
               value={`${String(hourly.hottest.h).padStart(2, '0')}:00`}
               tone="bad"
               size="sm"
-              hint={`feels like ${hourly.hottest.v.toFixed(0)} degF`}
+              hint={`feels like ${hourly.hottest.v.toFixed(0)} °F`}
             />
           </div>
 
@@ -486,7 +486,7 @@ export default function WorkerPanel({
             Running this at {String(hourly.coolest.h).padStart(2, '0')}:00 instead of{' '}
             {String(hourly.hottest.h).padStart(2, '0')}:00 is{' '}
             <span className="num">
-              {(hourly.hottest.v - hourly.coolest.v).toFixed(0)} degF
+              {(hourly.hottest.v - hourly.coolest.v).toFixed(0)} °F
             </span>{' '}
             less apparent heat.
           </p>
@@ -495,12 +495,12 @@ export default function WorkerPanel({
             <Metric
               label="Wet bulb at the worst hour"
               value={(hourly.point.wetBulbF?.[hourly.hottest.h] ?? 0).toFixed(0)}
-              unit="degF"
+              unit="°F"
               size="sm"
               tone={
                 (hourly.point.wetBulbF?.[hourly.hottest.h] ?? 0) >= 88 ? 'bad' : 'default'
               }
-              hint="Above ~88 degF the body cannot shed heat by sweating at all, whatever the shade."
+              hint="Above ~88 °F the body cannot shed heat by sweating at all, whatever the shade."
             />
             <Metric
               label="Air quality at the worst hour"
@@ -573,7 +573,7 @@ export default function WorkerPanel({
                   </span>
                   <span className="text-[10px] text-[var(--color-faint)]"> exposure</span>
                   <span className="block num text-[10.5px] text-[var(--color-faint)]">
-                    peak {score.peakTempF.toFixed(0)} degF &middot;{' '}
+                    peak {score.peakTempF.toFixed(0)} °F &middot;{' '}
                     {fmtMinutes(score.minutesInExtreme)} min extreme
                   </span>
                 </span>

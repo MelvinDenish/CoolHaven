@@ -721,7 +721,7 @@ in prose, so each row points at the thing that enforces it.
 - **[USER_MANUAL.md](docs/USER_MANUAL.md)** — click-by-click walkthrough of every feature
 - [METHODOLOGY.md](docs/METHODOLOGY.md) — every coefficient and where it came from
 - [IMPACT_ONEPAGER.md](docs/IMPACT_ONEPAGER.md) — the one-page summary
-- [DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) — 3–5 minute demo run sheet
+- [DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) — 3:25 demo run sheet, paced for a 3-minute cap
 - [source/](docs/source/) — the PRD and Addendum this was built against
 
 ## Attribution

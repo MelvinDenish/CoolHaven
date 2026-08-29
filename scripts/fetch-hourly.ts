@@ -31,6 +31,7 @@
  * Run:  npm run data:hourly
  *       npm run data:hourly -- --region=yuma
  */
+import { loadKeys, describeKeys } from '../src/lib/keys';
 import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { config as loadEnv } from 'dotenv';
@@ -51,7 +52,15 @@ interface SamplePoint {
 }
 
 async function main() {
-  const apiKey = process.env.FORTYGUARD_API_KEY?.trim();
+  /*
+   * Batch work starts at the FIRST key. The interactive endpoints start at the
+   * last, so a long backfill and a live demo do not drain the same quota.
+   */
+  const keyPool = loadKeys();
+  const apiKey = keyPool[0]?.value;
+  if (keyPool.length > 1) {
+    console.log(`[${'hourly'}] ${describeKeys()}`);
+  }
   if (!apiKey) {
     console.error(
       'FORTYGUARD_API_KEY is not set.\n' +

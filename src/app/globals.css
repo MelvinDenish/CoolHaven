@@ -468,20 +468,294 @@ input[type='range']::-moz-range-thumb {
   min-height: 260px;
 }
 
+/* ==========================================================================
+   The printed report
+
+   `.report` is authored here rather than in Tailwind utilities because it is
+   the one surface with a completely different design system from the app: ink
+   on paper, light background, no colour carrying meaning, and a page box
+   rather than a viewport.
+
+   Hidden on screen at all times. The print block below hides the entire
+   application and reveals only this.
+   ========================================================================== */
+.report {
+  display: none;
+}
+
 @media print {
-  /* Print is for the scenario report, not the instrument. */
+  /* ----------------------------------------------------------------------
+     Hide the instrument. Show the document.
+
+     The old rule hid only the header, so a printout carried a broken map
+     canvas, the legend overlay, the tool palette, file pickers and budget
+     sliders - six pages of an application, with the findings scattered
+     between controls that do nothing on paper. Everything is hidden now and
+     the report is the sole exception, which is why this is a blanket rule
+     rather than a list of .no-print classes that would have to be maintained
+     forever as sections are added.
+     ---------------------------------------------------------------------- */
+  html,
   body {
-    overflow: visible;
-    background: #fff;
-    color: #111;
+    height: auto !important;
+    overflow: visible !important;
+    background: #fff !important;
+    color: #14110e !important;
+    font-size: 10pt;
   }
+
+  body > * {
+    display: none !important;
+  }
+
+  /* Re-open only the chain of ancestors that leads to the report. */
+  main,
+  main > div,
+  main aside,
+  main aside > div {
+    display: block !important;
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    border: 0 !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    flex: none !important;
+  }
+
+  /* Every panel section, every control, the map, the overlays. */
+  main aside > div > section,
+  .map-pane,
+  header,
+  nav,
   .no-print,
+  .leaflet-container,
   .leaflet-control-container {
     display: none !important;
   }
-  aside {
-    width: 100% !important;
-    border: 0 !important;
-    overflow: visible !important;
+
+  /* The exception, stated last so it wins. */
+  .report {
+    display: block !important;
+  }
+
+  @page {
+    size: A4;
+    margin: 16mm 15mm;
+  }
+
+  /* ------------------------------------------------------------- document */
+  .report {
+    font-family: var(--font-body), Helvetica, Arial, sans-serif;
+    color: #14110e;
+    line-height: 1.5;
+  }
+
+  .report-head {
+    border-bottom: 2px solid #14110e;
+    padding-bottom: 10pt;
+    margin-bottom: 16pt;
+  }
+
+  .report-brand {
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #6d6459;
+    margin-bottom: 6pt;
+  }
+  .report-brand span {
+    color: #d94f0d;
+  }
+
+  .report-head h1 {
+    font-size: 21pt;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin: 0 0 5pt;
+  }
+  .report-sub {
+    font-weight: 500;
+    color: #6d6459;
+  }
+
+  .report-standfirst {
+    font-size: 10pt;
+    color: #443c34;
+    margin: 0 0 10pt;
+    max-width: 44em;
+  }
+
+  /* Provenance first: the reader should be able to check it before reading. */
+  .report-meta {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2pt 18pt;
+  }
+  .report-meta-row {
+    display: flex;
+    gap: 6pt;
+    font-size: 8.5pt;
+    border-top: 0.5pt solid #ddd6cc;
+    padding-top: 2.5pt;
+  }
+  .report-meta dt {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #6d6459;
+    flex: 0 0 34%;
+  }
+  .report-meta dd {
+    margin: 0;
+    color: #14110e;
+  }
+
+  /* ------------------------------------------------------------- sections */
+  .report-section {
+    margin-bottom: 15pt;
+    /* A finding split across a page break stops being a finding. */
+    break-inside: avoid;
+  }
+
+  .report-section h2 {
+    font-size: 12pt;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0 0 8pt;
+    padding-bottom: 3pt;
+    border-bottom: 0.75pt solid #14110e;
+  }
+
+  .report-body {
+    font-size: 9.5pt;
+    color: #2a241e;
+    margin: 0 0 7pt;
+    max-width: 46em;
+  }
+  .report-empty {
+    color: #6d6459;
+    font-style: italic;
+  }
+  .report-caption {
+    font-size: 8pt;
+    color: #6d6459;
+    margin: 4pt 0 0;
+    max-width: 46em;
+  }
+  .report-pointer {
+    border-left: 2pt solid #d94f0d;
+    padding-left: 7pt;
+  }
+
+  /* --------------------------------------------------------- figure strip */
+  .report-figures {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 9pt;
+    margin-bottom: 10pt;
+  }
+  .report-figures-2 {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 60%;
+  }
+  .report-figure {
+    border-top: 1.5pt solid #14110e;
+    padding-top: 4pt;
+    break-inside: avoid;
+  }
+  .report-figure-v {
+    font-family: var(--font-mono), monospace;
+    font-size: 16pt;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .report-figure-k {
+    font-size: 7.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: #6d6459;
+    margin-top: 3pt;
+  }
+  .report-figure-n {
+    font-size: 7.5pt;
+    color: #6d6459;
+    line-height: 1.35;
+    margin-top: 2pt;
+  }
+
+  /* --------------------------------------------------------------- tables */
+  .report-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 8.5pt;
+    margin-bottom: 3pt;
+  }
+  .report-table th {
+    text-align: left;
+    font-size: 7.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #6d6459;
+    border-bottom: 0.75pt solid #14110e;
+    padding: 0 6pt 3pt 0;
+    vertical-align: bottom;
+  }
+  .report-table td {
+    padding: 3.5pt 6pt 3.5pt 0;
+    border-bottom: 0.5pt solid #e5ded4;
+    vertical-align: top;
+    color: #2a241e;
+  }
+  .report-table .r {
+    text-align: right;
+    font-family: var(--font-mono), monospace;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .report-table td.mono {
+    font-family: var(--font-mono), monospace;
+    white-space: nowrap;
+  }
+  .report-total td {
+    border-top: 0.75pt solid #14110e;
+    border-bottom: none;
+    font-weight: 700;
+    color: #14110e;
+  }
+  .report-nil {
+    color: #8a8075;
+  }
+
+  /* --------------------------------------------------------------- caveat */
+  .report-caveat {
+    border: 0.75pt solid #14110e;
+    padding: 9pt 10pt;
+    background: #faf7f2;
+    break-inside: avoid;
+  }
+  .report-caveat h2 {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 5pt;
+    font-size: 10.5pt;
+  }
+
+  .report-foot {
+    margin-top: 12pt;
+    padding-top: 5pt;
+    border-top: 0.5pt solid #ddd6cc;
+    font-size: 7.5pt;
+    color: #6d6459;
   }
 }

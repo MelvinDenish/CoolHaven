@@ -5,7 +5,13 @@ without missing anything. Each step says **what to do**, **what you should
 see**, and **why it is there**.
 
 Allow ~40 minutes for the full pass across all four regions. Steps marked
-**[KEY]** need `FORTYGUARD_API_KEY`.
+**[KEY]** need a FortyGuard key.
+
+**Keys.** `FORTYGUARD_API_KEY` is the only required one. `FORTYGUARD_API_KEY_2`
+and `FORTYGUARD_API_KEY_3` are optional: with them configured, batch ingest
+starts at the first key and interactive calls (1.11) take the last, so a long
+backfill cannot drain the quota a demo depends on. With one key everything
+behaves exactly as it always did.
 
 ```bash
 npm install
@@ -138,6 +144,29 @@ empty is not re-attempted — that check alone saves three submissions of ~3.5
 minutes each per region, per run. `npm run data:ingest -- --force` overrides
 both.
 
+### 0.7 What each key is actually allowed to do **[KEY]**
+
+```bash
+npm run probe:keys
+```
+
+**Expect** a matrix per configured key: `filter_type` 1/2/4 against the
+known-good 3, and the forecast horizon from today+0 to today+7. Then a summary
+line per filter type reading either **KEY-SCOPED**, *works on every key*, or
+*fails on every key — a service limit*. Writes `docs/key-probe.json` (env var
+names only, never key material).
+
+**Why it exists.** Two limits shape this entire product — forecast-only, and a
+horizon of about one day — and both are currently inferences from a sample of
+one key. If historic turns out to work on *any* key, a feature that is already
+written switches on rather than having to be built. You cannot answer that
+question with one key, which is what `FORTYGUARD_API_KEY_2` and `_3` are for.
+
+It submits the smallest legal AOI it can construct, once per question, and does
+not poll to completion: the question is "is this accepted", and a request
+destined to 500 does so at submit time. With one key configured it still maps
+that key's limits and says plainly that it cannot determine scope.
+
 ---
 
 ## 1 · Planner — the default view
@@ -173,29 +202,66 @@ You land in **Planner / Phoenix**.
 
 **Look at:** the strip under the nav.
 
-**Expect:** a green pulsing dot and **`FORTYGUARD CACHED SNAPSHOT`**, then
-`FILTER_TYPE 3 (forecast)` · `READING Day average` · `VALID <today>, 3:00 PM MST`
-· `RELIEF LAYER MAG Heat Relief Network` · `OPEN NOW <n>/<total> sites in focus`
-· `ROUTING <the router that resolved this region's runs>`.
+**Expect three things, not seven:** a green pulsing dot with
+**`FORTYGUARD DATA`** and today's date; a **`READING`** control with
+**low / average / peak**; and **`<n>/<total> relief sites open`**.
 
-Every one of those is read from the data, not written into the UI — switch to
-Las Vegas and the relief layer reads *OpenStreetMap amenities* and the router
-may read *OSRM*, because that is what those files record.
+**Do:** click the source chip (the `i` at its right).
+
+**Expect** a popover with the full provenance — heat field and whether any tile
+was refetched live this session, `filter_type`, what "valid for" means, the
+relief network, the open/closed split, and the router. Every one of those is
+read from the data, not written into the UI: switch to Las Vegas and the relief
+layer reads *OpenStreetMap amenities* and the router may read *OSRM*, because
+that is what those files record.
+
+**Why only three on the bar.** It used to carry all seven at equal weight, as
+the first thing on screen, and it read as a debug line. What a person needs at a
+glance is: can I trust this, what am I looking at, and how much of the network
+is actually open. The rest is provenance you go and *check*, so it moved one
+click away rather than off the page.
 
 **Check the date.** It should be **today**, not a date from earlier in the week.
 The snapshot date rolls with each ingest and the client reads it from the
 manifest, so the two cannot drift apart.
 
+**Note there is no clock time.** It reads *valid for <date>*, not *3:00 PM*.
+The API's field is daily — it has no hour parameter and returns one
+min/average/max per calendar date — so the `15:00` inside `validAt` is a
+cache-key artefact, not a measurement. Printing it as a time asserted a
+precision the data does not have.
+
+**The reading control works here**, in every view. It used to exist only in
+Dispatcher and Worker, which meant the Planner displayed `READING Day average`
+as a label that looked exactly like a control and was not one. Click **peak**
+and watch every number on the page move.
+
 **Why:** provenance is a component, not a footnote. If the snapshot were
-modelled this bar turns **amber** and reads "Modelled stand-in — not FortyGuard
-data". You can prove that: move `.env` aside, delete one cache file, re-run
-`npm run data:ingest`, reload — the bar changes. Then restore and re-ingest.
+modelled this bar turns **amber** and reads "Modelled stand-in". You can prove
+that: move `.env` aside, delete one cache file, re-run `npm run data:ingest`,
+reload — the bar changes. Then restore and re-ingest.
 
-### 1.2 Exposure demand
+### 1.2 Step 1 — Work exposure
 
-**Expect:** `RELIEF COVERAGE` in the mid-teens percent, a five-figure
-`UNCOVERED HOT CELLS`, and an amber note naming how many sites are **shut at
-this hour and excluded from coverage**.
+The Planner is three numbered steps: **1 Where the gap is**, **2 What to
+build**, **3 What it buys**. It used to be twelve peer sections in one scroll,
+all at identical weight. Nothing was hidden by the change; the sequence was just
+made explicit.
+
+**Expect:** `RELIEF COVERAGE` in the mid-teens percent **with a plain-language
+comparator under it** ("about 1 in 6 of the focus area"), an `UNCOVERED HOT
+CELLS` count **with its denominator** ("of 6,712 cells (36%)"), and an amber
+note naming how many sites are **shut at this reading and excluded from
+coverage**.
+
+**Why the comparators:** a bare "17.2%" and a bare "2,438" gave a reader no way
+to tell either from good or bad. Every headline figure now carries what it is a
+share *of*.
+
+**Note the coverage figure is the SCENARIO number**, not the baseline. Place a
+station (1.5) and watch it move; the baseline appears underneath as "up from
+N%". It used to be pinned to the base value while the before/after table below
+reported the same metric changing — two different numbers under one label.
 
 Both figures move with every refresh as sites open and close, so check the
 *shape*, not the digits: coverage is well under a fifth of the focus area, and a
@@ -224,11 +290,18 @@ round-trips to the server, because the scenario is computed in the browser.
 
 ### 1.3 The demand layer
 
-**Do:** click **Show demand layer on map**. Tick/untick `Exposure demand` in the
-bottom-left legend.
+**Do:** look at the map — **work exposure is already the layer you land on.**
+Then open the legend and switch the colouring to **Temperature**, and back.
 
 **Expect:** an ember wash; the brightest cells are hot **and** heavily worked
 **and** beyond a walk of relief.
+
+**Why it is the default now:** the heat field across a focus area is genuinely
+almost flat (about 0.3 °F on the Phoenix average reading), so opening on
+temperature meant the first thing anyone saw was a solid rectangle plus a note
+apologising for it. Work exposure is the layer that actually varies, and it is
+what siting is driven by. **Show demand layer on map** is still there to bring
+it back if you have switched away.
 
 **Why:** heat alone would just redraw the temperature map. The formula is
 printed under the button — 0.45 heat + 0.25 OSM road length + 0.30 courier-route
@@ -238,8 +311,31 @@ density (FR7, which the PRD flagged as previously undefined).
 
 **Do:** try the `3 / 4 / 6` toggle.
 
-**Expect:** ranked candidates with coordinates, demand score, temperature and
-gap %. Recommendations respect a 700 m minimum separation.
+**Expect:** ranked candidates named by **street** — "South 24th Street near
+Maricopa Freeway" — with the coordinates on a second line, then work exposure,
+temperature, and **metres to the nearest open relief site**. Recommendations
+respect a 700 m minimum separation.
+
+**Two things here used to be wrong.**
+
+*The gap percentage read 100% on every row.* The internal `gap` ramps from 0 at
+the 400 m walk radius to 1 at 600 m — a 200 m window — so every candidate worth
+recommending saturated at 1.0 and the column discriminated between nothing. It
+now reports the distance, which across the top six Phoenix candidates spans
+778 m to 3.5 km.
+
+*The sites were on freeways.* Work exposure weights drivable road length and
+courier-route density, and both peak on grade-separated highway, so the top four
+Phoenix candidates came back on the Maricopa and Papago Freeways. True about
+exposure, useless about where to build. A cell whose nearest centreline is
+tagged `motorway` or `motorway_link` is now excluded from the candidate pool —
+about 4% of Phoenix cells, 5% of Tucson's — and a note under the list says how
+many. Arterials stay eligible; a station on a six-lane arterial is unpleasant
+but reachable on foot.
+
+**Note the exclusion is candidacy only.** Those cells still appear in the map
+layer, because the exposure there is real and hiding it would be its own kind of
+dishonesty.
 
 ### 1.4c Solve for a plan — budget and target
 
@@ -281,8 +377,15 @@ a plan.
 
 **Do:** open the scenario studio tool list.
 
-**Expect** six tools, each with its own coefficient, confidence chip and unit
-cost inline:
+**Expect** six tools, each with its coefficient, confidence chip and unit cost
+inline — and the **assumption on the chip's tooltip** rather than printed in
+full on the button. Hover a chip to read it.
+
+**Why it moved:** six tools x four lines of assumption prose each was a wall of
+text exactly where someone is trying to click one thing. The full basis for
+every coefficient is on **/methodology** (1.13). A line above the palette
+defines measured / directional / illustrative once.
+
 
 | Tool | Effect | Shape | Note |
 |---|---|---|---|
@@ -344,14 +447,23 @@ integration**: no account, no SDK, no extension, and the panel says so.
 
 ### 1.4b Ground truth — what the street actually looks like
 
-Scroll to **Ground truth**, between the recommendations and the scenario studio.
+Scroll to **Ground truth**, now **below step 3**, just above **Tools**.
 
 **Do:** click through the sampled points (tile centres, the demo run's two ends,
 a route midpoint).
 
 **Expect:** for the first two points, a **street-level photograph** with a
 **show photo / show segmentation** toggle; for the rest, the measurements
-without the picture. Under both, two stacked bars — *street frame composition*
+without the picture.
+
+**Two different absences, now reported differently.** A point with a street
+reading but no image simply had its frame dropped at build time —
+`DEFAULT_IMAGE_POINTS = 2` in `scripts/fetch-ground.ts`, because one segmented
+frame is larger than every heat grid in the region combined; the panel names the
+`--images=N` flag. A point with **no street reading at all** (Phoenix's Sky
+Harbor Logistics Corridor, Tucson's South Industrial) has no Street View
+panorama nearby, which is expected for airfield aprons and rail yards, and the
+panel now says that instead of implying a retention setting exists to change. Under both, two stacked bars — *street frame composition*
 and *land cover from above* — with the largest classes named and percentaged.
 
 **Expect** a canopy verdict underneath, e.g. *Effectively bare · high headroom*,
@@ -372,8 +484,10 @@ shaded/unshaded readings at the same hour, which this project does not have. So
 `tree_canopy.deltaF` remains the labelled assumption it always was, and the
 panel says so in its last line. Read [METHODOLOGY.md](METHODOLOGY.md) alongside.
 
-**Placement note:** this sits *above* the scenario studio on purpose — see what
-is on the ground before choosing a treatment for it.
+**Placement note:** this used to sit between the recommendations and the
+scenario studio. It moved below the three steps because it is a site
+*inspection* — "what does this corner actually look like" — rather than part of
+the where / what / how-much sequence, and it was interrupting that sequence.
 
 **If the section is missing or empty:** the region has no `ground.json`. Run
 `npm run data:ground -- --region=<id>` with a key. Unlike the heat field, there
@@ -461,15 +575,54 @@ than a bare shape. It is standard GeoJSON that Forma imports as site context —
 region. No account, no server state — it is encoded in the URL fragment, which
 never reaches the server.
 
-### 1.10 Print / PDF
+### 1.10 Print report
 
-**Do:** click **Print / PDF**.
+**Do:** click **Print report**.
 
-**Expect:** the browser print dialog for a council-paper style output.
+**Expect** a five-section document — **not a screenshot of the app**:
+
+1. A title block with full provenance: focus area, heat-field source and
+   `filter_type`, relief network, router, and when the report was generated.
+2. **The network as it stands** — coverage, uncovered cells, sites open at this
+   reading, longest walk to relief, each with its denominator.
+3. **What this option proposes** — moves grouped by kind, with unit cost,
+   subtotal, assumed effect and confidence, and a total row.
+4. **What it changes** — base vs option vs delta, plus capital cost and cost per
+   coverage point, and a paragraph explaining why some rows read *no change*.
+5. **Highest-priority sites**, named by street.
+6. **What this report does not establish** — the limits, boxed.
+
+**What it used to do:** `window.print()` against a fifteen-line stylesheet that
+hid only the header. The map canvas, the legend overlay, the tool palette, the
+file pickers and the budget sliders all went to paper — six pages of an
+application with the findings scattered between controls that do nothing when
+printed. The print stylesheet now hides the entire app and reveals only the
+report.
+
+**Check it without printing:** the browser's print preview (Ctrl/Cmd-P) shows
+the same output.
 
 ### 1.11 Live tile refresh **[KEY — the async contract, visible]**
 
-**Do:** pick a tile, click **Fetch this tile from the API now**.
+**Do:** open the **Tools** disclosure at the bottom of the panel, pick a tile,
+click **Fetch this tile from the API now**.
+
+**Note the three tools are collapsed now.** Live tile refresh, design import and
+route import were each a full-width section with equal billing to the three
+steps, which made the panel read as eleven things to do rather than three. They
+are tools you reach for deliberately.
+
+**Expect the button to count up in seconds**, a line stating that a submission
+normally takes 40–50 seconds, and on completion a cyan panel reading *"Live
+refresh complete — N cells in Xs"*. The status bar at the top also starts
+counting refreshed tiles.
+
+**Why that feedback was added:** the endpoint always worked — measured against
+production, time-to-first-byte 0.74 s and 43 s total, real activity IDs — but
+the success path was invisible. The "N tiles refreshed live" indicator sat in
+the `liveApiUsed === false` branch, which never runs because every committed
+snapshot *is* FortyGuard data. So a successful 45-second call changed nothing on
+screen and the button read as broken.
 
 **Expect a streamed log**, roughly:
 
@@ -501,6 +654,8 @@ rather than showing a simulated progress bar. Restore `.env`.
 
 ### 1.12 Import your own routes
 
+Also inside **Tools**.
+
 **Do:** create `test-routes.csv`:
 
 ```csv
@@ -531,28 +686,68 @@ Addendum A3's tiling strategy. "Cover Phoenix" was never achievable in one call
 — the AOI limit is ~50 mi² and the city is far larger — so the focus area is a
 named handful of district-scale tiles, and the header says which.
 
-### 1.13 Methodology
+### 1.13 Methodology — now its own page
 
-**Do:** click **+ Methodology and assumptions**.
+**Do:** at the bottom of the panel, click **Read the methodology**. Or go
+straight to **/methodology**.
 
-**Expect:** every coefficient with its basis and confidence level, the relief
-attribution with fetch date and site counts, and the route note.
+**Expect** six sections, server-rendered from `src/lib/assumptions.ts` and the
+committed manifests rather than transcribed: where the heat field comes from
+(with a per-region provenance table), exposure and risk, relief coverage and the
+demand layer, what each move is assumed to do, ground truth and what a
+photograph cannot tell you, and the limits.
+
+**Check it is derived, not written:** the provenance table lists all four
+regions with their real snapshot dates, grid counts and site counts. Change a
+manifest and the page changes.
+
+**Why it is a page.** It was a collapsed disclosure at the bottom of the
+sidebar, under the import tools, in 10.5 px grey — the product's entire honesty
+argument living in the one place nobody scrolls to. It is reference material,
+read deliberately and rarely: linked from everywhere, in the way nowhere.
+
+**Also linked from the printed report**, which cites `/methodology` rather than
+reproducing twenty paragraphs of coefficients.
 
 ---
 
 ## 2 · Map layers
 
-Bottom-left panel. Toggle each:
+Bottom-left panel, now split into **two groups that behave differently**.
+
+**Colour the map by** — pick exactly one (radio):
+
+| Colouring | Expect |
+|---|---|
+| **Work exposure** | Ember wash, the Planner default. Legend shows a 0–1 index scale |
+| **Temperature** | Smooth wash; legend shows the °F ramp |
+| **Risk bands** | Five discrete bands; legend swaps to the band list. Stored per cell at ingest, not derived on render |
+| **Nothing** | Basemap alone |
+
+**Also show** — independent checkboxes:
 
 | Layer | Expect |
 |---|---|
-| **Heat field (continuous)** | Smooth temperature wash |
-| **Risk classification** | Five discrete bands; legend swaps to the band list. Stored per cell at ingest, not derived on render |
-| **Exposure demand** | Ember wash (Planner only) |
-| **Parks and water** | Green/blue polygons from OSM |
-| **Relief network** | Cyan dots. **Hollow dashed = closed at this hour** |
+| **Relief network** | Cyan dots. **Hollow dashed = closed at this reading** |
 | **Routes** | Grey lines; the selected one is heat-coloured |
-| **Scenario** | Your placed interventions |
+| **Parks and water** | Green/blue polygons from OSM |
+| **Planned moves** | Whatever you have placed |
+
+**Why the split.** Those first three are three *different colour ramps painted
+over the same cells*. All three at once produced mud — and worse, mud that looks
+like data. Making them one-of-three removes a decision rather than adding one.
+The four overlays are distinct marks that read fine stacked, so they stayed
+checkboxes.
+
+**Do:** switch to Dispatcher with **Work exposure** selected.
+
+**Expect** it to fall back to **Temperature** automatically. The demand layer
+only exists in the Planner, so leaving it selected would paint nothing at all
+and look like a broken map.
+
+**Note the legend key follows the colouring** — pick Risk bands and the swatch
+list appears; pick Work exposure and you get the index scale with a line saying
+1.0 is the highest cell *in this focus area*, not an absolute.
 
 **Do:** click any relief dot.
 
@@ -588,6 +783,14 @@ two providers get different treatment.
 **Expect:** the street highlights, and a popup gives its **name**, road class,
 length, and **mean / peak / coolest** temperature along its whole length.
 
+**Try a freeway ramp.** 334 of Phoenix's 4,207 centrelines carry no `name` in
+OpenStreetMap, and 287 of those are motorway, primary or secondary *links* —
+ramps and slip roads, which genuinely have no name upstream. The probe now says
+what the thing *is* ("Freeway ramp", "Residential street") plus a line noting
+OSM does not name it, rather than the bare "Unnamed street" it used to show.
+That is a labelling fix; the missing names are OpenStreetMap's and are left
+alone.
+
 **Expect** a note if part of the street falls outside the measured tiles, and
 always a line saying the reading came from the field currently on screen.
 
@@ -620,9 +823,10 @@ useful if you can tell one street from the next.
 **Expect:** `N of 8 active routes` in high-exposure zones, crew-minutes above
 108 °F, and mean exposure.
 
-### 3.2 Part of day — the real intra-day axis
+### 3.2 Reading — the real intra-day axis
 
-**Do:** click **low**, **average**, **peak** in turn.
+**Do:** click **low**, **average**, **peak** in turn — here, or on the status
+bar, which now carries the same control in every view.
 
 **Expect the fleet headline to move.** On Phoenix day 0: `low` → 0 of 8;
 `average` → 0 of 8; **`peak` → 1 of 8**, and Buckeye Road flips Moderate → HIGH.
@@ -1013,6 +1217,8 @@ megabytes of tile assets to guard against a failure that leaves the tool usable.
 
 - **Historic data (`filter_type` 1)** — the API returns HTTP 500 on this key.
   The code path exists and is enforced; it activates when the service serves it.
+  Whether that limit belongs to the *key* or to the *service* is now testable:
+  see 0.7.
 - **`/v1/heat_intelligence`** — available and working: it submits, polls to
   `Completed`, and returns a signed link to a generated **PDF**. Not shipped
   because a PDF is a document for a person to read, not data this UI can compute

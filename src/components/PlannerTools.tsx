@@ -14,7 +14,7 @@
  * tracking infrastructure, and without the worker-surveillance framing a
  * live-location product would carry.
  */
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { measureRoute } from '@/lib/scoring';
 import { importFormaGeoJson, type ImportedDesign } from '@/lib/forma-import';
 import { Chip, SectionLabel } from './ui';
@@ -33,23 +33,44 @@ export function RefreshPanel({
   regionId,
   tiles,
   filterType,
-  hourLocal,
   onGrid,
 }: {
   regionId: string;
   tiles: Array<Tile & { areaMi2: number }>;
   filterType: number;
-  hourLocal: number;
   onGrid: (grid: HeatGrid) => void;
 }) {
   const [tileId, setTileId] = useState(tiles[0]?.id ?? '');
   const [log, setLog] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);
+  /**
+   * Elapsed seconds, and the reason this exists.
+   *
+   * A real heatmap submission takes 40-50 seconds end to end (measured: 45 s
+   * against production). The lifecycle log below streams correctly - time to
+   * first byte on Vercel is under a second - but it sits under the fold, so
+   * from the button's point of view the interaction was three quarters of a
+   * minute of a disabled control saying the same word. That reads as a dead
+   * button, and it is why this was reported as broken when the endpoint was
+   * in fact returning real data every time.
+   */
+  const [elapsed, setElapsed] = useState(0);
+  /** Set when a refresh finishes, so success is visible without reading NDJSON. */
+  const [done, setDone] = useState<{ points: number; seconds: number } | null>(null);
+
+  useEffect(() => {
+    if (!busy) return;
+    const started = Date.now();
+    setElapsed(0);
+    const id = setInterval(() => setElapsed((Date.now() - started) / 1000), 250);
+    return () => clearInterval(id);
+  }, [busy]);
 
   async function refresh() {
     setBusy(true);
     setFailed(false);
+    setDone(null);
     setLog([]);
     const append = (line: string) => setLog((prev) => [...prev, line]);
 
@@ -57,7 +78,7 @@ export function RefreshPanel({
       const res = await fetch('/api/admin/refresh-tile', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ region: regionId, tileId, filterType, hourLocal }),
+        body: JSON.stringify({ region: regionId, tileId, filterType }),
       });
 
       if (!res.ok || !res.body) {
@@ -87,7 +108,13 @@ export function RefreshPanel({
           if (!line.trim()) continue;
           const ev = JSON.parse(line) as RefreshEvent;
           append(describe(ev));
-          if (ev.event === 'complete' && ev.grid) onGrid(ev.grid as HeatGrid);
+          if (ev.event === 'complete' && ev.grid) {
+            onGrid(ev.grid as HeatGrid);
+            setDone({
+              points: Number(ev.pointsReturned ?? 0),
+              seconds: Number(ev.elapsedMs ?? 0) / 1000,
+            });
+          }
           if (ev.event === 'error') setFailed(true);
         }
       }
@@ -108,15 +135,42 @@ export function RefreshPanel({
         <select value={tileId} onChange={(e) => setTileId(e.target.value)}>
           {tiles.map((t) => (
             <option key={t.id} value={t.id}>
-              {t.label} ({t.areaMi2} mi2)
+              {t.label} ({t.areaMi2} mi²)
             </option>
           ))}
         </select>
       </label>
 
       <button onClick={refresh} disabled={busy || !tileId} className="btn w-full">
-        {busy ? 'Fetching from FortyGuard...' : 'Fetch this tile from the API now'}
+        {busy
+          ? `Fetching from FortyGuard... ${elapsed.toFixed(0)}s`
+          : 'Fetch this tile from the API now'}
       </button>
+
+      {/* Says up front what the button costs in time, so 45 seconds of polling
+          reads as the async contract working rather than as a hung control. */}
+      {busy ? (
+        <p className="text-[10.5px] leading-relaxed text-[var(--color-muted)] mt-2">
+          A heatmap submission is asynchronous and normally takes 40-50 seconds:
+          submit, then poll until the activity completes. The lifecycle streams
+          below as it happens.
+        </p>
+      ) : null}
+
+      {done ? (
+        <p
+          className="text-[10.5px] leading-relaxed mt-2 px-2.5 py-2 border"
+          style={{
+            color: 'var(--color-relief)',
+            borderColor: 'var(--color-relief-dim)',
+            background: 'color-mix(in oklab, var(--color-relief) 8%, transparent)',
+          }}
+        >
+          Live refresh complete - {done.points.toLocaleString()} cells in{' '}
+          {done.seconds.toFixed(1)}s. This tile now shows API data fetched just now,
+          and the status bar at the top of the app counts it.
+        </p>
+      ) : null}
 
       {log.length > 0 ? (
         <div
@@ -144,8 +198,9 @@ export function RefreshPanel({
       <p className="text-[10.5px] leading-relaxed text-[var(--color-faint)] mt-2.5">
         One tile, one timestamp, one <span className="num">POST /v1/heatmap</span> plus
         polling - triggered by this button and nothing else. The rest of the app never
-        calls the API; it reads the committed snapshot. Requires a server-side{' '}
-        <span className="num">FORTYGUARD_API_KEY</span>.
+        calls the API; it reads the committed snapshot. Requires a server-side FortyGuard key. With more than one configured this
+        button uses the LAST in the pool, so a long ingest cannot drain the quota a
+        demo depends on.
       </p>
     </section>
   );
@@ -154,7 +209,7 @@ export function RefreshPanel({
 function describe(ev: RefreshEvent): string {
   switch (ev.event) {
     case 'start':
-      return `> ${ev.tileId} - ${ev.areaMi2} mi2 at ${ev.granularityM} m, filter_type ${ev.filterType}`;
+      return `> ${ev.tileId} - ${ev.areaMi2} mi² at ${ev.granularityM} m, filter_type ${ev.filterType}`;
     case 'submit':
       return `> ${ev.message}`;
     case 'submitted':

@@ -45,7 +45,7 @@ export const BAND_META: Record<
  *
  * The exposure index is degree-minutes above the comfort threshold: for each
  * 50 m sample we know how long the courier spends there (from the assumed
- * effective speed) and how far above 90 degF it is, and we integrate. That
+ * effective speed) and how far above 90 °F it is, and we integrate. That
  * makes a long mild route and a short brutal route comparable on one number,
  * which is exactly what a dispatcher ranking eight runs needs.
  *
@@ -221,7 +221,7 @@ export function rankRoutes(scores: RouteScore[]): RouteScore[] {
 /**
  * Compare two candidate paths for the same trip (Addition 2: the router
  * returns real alternatives, and we pick the one a worker should actually take
- * on a 112 degF afternoon rather than the one that is 40 seconds faster).
+ * on a 112 °F afternoon rather than the one that is 40 seconds faster).
  */
 export interface RouteComparison {
   primary: RouteScore;

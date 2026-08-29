@@ -5,7 +5,7 @@
  *
  * This product had a presentation problem that is easy to miss from the inside:
  * every panel is dense, well-labelled, and carries the SAME visual weight. A
- * note about a 0.3 degF spread sat at the same size as the finding that a
+ * note about a 0.3 °F spread sat at the same size as the finding that a
  * 16.8 km industrial run has no relief anywhere along it. Someone opening it
  * cold got a wall of equally-important text and had to work out for themselves
  * which number was the point.

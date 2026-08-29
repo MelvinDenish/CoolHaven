@@ -83,7 +83,7 @@ export default function DispatcherPanel({
 
         <div className="grid grid-cols-2 gap-4">
           <Metric
-            label={`Crew-min above ${THRESHOLDS.extremeF} degF`}
+            label={`Crew-min above ${THRESHOLDS.extremeF} °F`}
             value={fmtMinutes(summary.totalMinutesInExtreme)}
             unit="min"
             tone={summary.totalMinutesInExtreme > 45 ? 'bad' : 'default'}
@@ -92,7 +92,7 @@ export default function DispatcherPanel({
           <Metric
             label="Mean exposure index"
             value={summary.meanExposure}
-            hint="degree-minutes above 90 degF per run"
+            hint="degree-minutes above 90 °F per run"
           />
         </div>
       </section>
@@ -214,7 +214,7 @@ export default function DispatcherPanel({
                     <span>
                       <span className="label block text-[8.5px] mb-0.5">Peak</span>
                       {score.peakTempF.toFixed(1)}
-                      <span className="text-[9px] text-[var(--color-faint)]"> degF</span>
+                      <span className="text-[9px] text-[var(--color-faint)]"> °F</span>
                     </span>
                     <span>
                       <span className="label block text-[8.5px] mb-0.5">Extreme</span>
@@ -235,7 +235,7 @@ export default function DispatcherPanel({
                         <div className="text-[10.5px] text-[var(--color-muted)] leading-snug">
                           Worst stretch: {score.peakSegment.lengthM} m averaging{' '}
                           <span className="num">
-                            {score.peakSegment.meanTempF.toFixed(1)} degF
+                            {score.peakSegment.meanTempF.toFixed(1)} °F
                           </span>
                           , highlighted on the map.
                         </div>

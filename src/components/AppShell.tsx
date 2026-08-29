@@ -24,7 +24,7 @@ import { applyInterventions, effectiveReliefSites } from '@/lib/whatif';
 import { scoreRoute } from '@/lib/scoring';
 import { buildDemandLayer } from '@/lib/recommend';
 import { filterOpenAt, localDayIndex } from '@/lib/relief';
-import { DAY_PARTS, addDays, type DayPart } from '@/lib/config';
+import { addDays, type DayPart } from '@/lib/config';
 import { decodeScenario, encodeScenario } from '@/lib/share';
 import type { RoadDensity } from '@/lib/recommend';
 import { ProvenanceBar } from './ui';
@@ -33,7 +33,7 @@ import type { GroundFile } from './GroundPanel';
 import Onboarding, { type HeadlineFacts } from './Onboarding';
 import DispatcherPanel from './DispatcherPanel';
 import WorkerPanel from './WorkerPanel';
-import Legend from './Legend';
+import Legend, { type ThemeKey } from './Legend';
 import type { MapLayers } from './MapCanvas';
 import type { BasemapId, StreetCollection } from '@/lib/basemaps';
 import type {
@@ -160,7 +160,7 @@ export default function AppShell() {
    *
    * This is the honest replacement for the hour slider the earlier build had.
    * FortyGuard exposes no hour parameter, but every cell carries a daily
-   * min/average/max, and on the snapshot day that is a real ~14 degF swing.
+   * min/average/max, and on the snapshot day that is a real ~14 °F swing.
    */
   const [dayPart, setDayPart] = useState<DayPart>('avg');
   const [contextGeoJson, setContextGeoJson] = useState<unknown | null>(null);
@@ -189,15 +189,51 @@ export default function AppShell() {
   } | null>(null);
   const [adHocRoutes, setAdHocRoutes] = useState<RouteFeature[]>([]);
 
+  /*
+   * The Planner opens on WORK EXPOSURE, not temperature.
+   *
+   * The heat field across a focus area is genuinely almost flat - about 0.3 °F
+   * of spread on the Phoenix average reading - so leading with it meant the
+   * first thing a new user saw was a solid rectangle plus a note apologising
+   * for it. Work exposure is the layer that actually varies, and it is what
+   * siting is driven by, so it is what the map opens on. Temperature is one
+   * click away and the flat-field note becomes a footnote instead of a first
+   * impression.
+   */
   const [layers, setLayers] = useState<MapLayers>({
-    heat: true,
+    heat: false,
     risk: false,
-    demand: false,
+    demand: true,
     context: false,
     relief: true,
     routes: true,
     interventions: true,
   });
+
+  /**
+   * Pick one cell painting. Heat, risk and demand are three different colour
+   * ramps over the same cells, so exactly one may be on - see the note in
+   * Legend.tsx for why stacking them was worse than useless.
+   */
+  const selectTheme = useCallback((t: ThemeKey | 'none') => {
+    setLayers((p) => ({
+      ...p,
+      heat: t === 'heat',
+      risk: t === 'risk',
+      demand: t === 'demand',
+    }));
+  }, []);
+
+  /*
+   * Work exposure exists only in the Planner - buildDemandLayer returns null
+   * for the other two views - so leaving the Planner with it selected would
+   * paint nothing at all and read as a broken map. Fall back to temperature.
+   */
+  useEffect(() => {
+    if (view !== 'planner') {
+      setLayers((p) => (p.demand ? { ...p, demand: false, heat: true } : p));
+    }
+  }, [view]);
 
   /**
    * Narrow-screen handling.
@@ -758,7 +794,7 @@ export default function AppShell() {
             <div className="label">Focus area</div>
             <div className="num text-[11px] text-[var(--color-muted)]">
               {boot.tiles.length} tiles &middot;{' '}
-              {boot.tiles.reduce((a, t) => a + t.areaMi2, 0).toFixed(1)} mi2
+              {boot.tiles.reduce((a, t) => a + t.areaMi2, 0).toFixed(1)} mi²
             </div>
           </div>
         </div>
@@ -774,7 +810,9 @@ export default function AppShell() {
           openCount={openState.open.length}
           totalCount={focusSites.length}
           liveTiles={Object.keys(liveGrids).length}
-          dayPart={DAY_PARTS.find((d) => d.key === dayPart)?.label ?? dayPart}
+          dayPart={dayPart}
+          onDayPartChange={setDayPart}
+          hasDayRange={baseField?.hasDayRange ?? false}
         />
       ) : null}
 
@@ -819,6 +857,7 @@ export default function AppShell() {
           <Legend
             layers={layers}
             onToggle={(k) => setLayers((p) => ({ ...p, [k]: !p[k] }))}
+            onTheme={selectTheme}
             showDemand={view === 'planner'}
             cellRiskBands={boot.cellRiskBands}
             basemap={basemap}
@@ -865,8 +904,11 @@ export default function AppShell() {
               }}
               validAt={validAt ?? ''}
               filterType={activeSlice?.filterType ?? 1}
+              dayPart={dayPart}
+              liveTiles={Object.keys(liveGrids).length}
+              streets={streets}
               ground={ground}
-              onShowDemand={() => setLayers((p) => ({ ...p, demand: true }))}
+              onShowDemand={() => selectTheme('demand')}
               onLiveGrid={onLiveGrid}
               onAdHocRoutes={setAdHocRoutes}
             />

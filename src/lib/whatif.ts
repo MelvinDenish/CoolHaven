@@ -165,7 +165,7 @@ export function applyInterventions(
       tempsMaxF: shift(g.tempsMaxF),
       provenance: {
         ...g.provenance,
-        note: `${g.provenance.note} | scenario applied: ${cooling.length} cooling intervention(s), stack capped at ${MAX_STACKED_COOLING_F} degF`,
+        note: `${g.provenance.note} | scenario applied: ${cooling.length} cooling intervention(s), stack capped at ${MAX_STACKED_COOLING_F} °F`,
       },
     };
   });
@@ -270,7 +270,7 @@ export function makeIntervention(
  *
  * Why this exists: the area-wide mean is nearly immune to local work. One
  * 250 m canopy corridor covers roughly 19 of the focus area's 6,776 cells, so
- * it moves the district average by about 0.003 degF - which rounds to "no
+ * it moves the district average by about 0.003 °F - which rounds to "no
  * change" and makes a working tool look broken.
  *
  * Reporting both is the honest answer, and the pair is the more useful reading

@@ -12,9 +12,10 @@
  *      snapshot manifest and says out loud whether the field on screen came
  *      from the FortyGuard API or from the local model.
  */
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import type { RiskBand, SnapshotManifest } from '@/lib/types';
 import { BAND_META } from '@/lib/scoring';
+import { DAY_PARTS, type DayPart } from '@/lib/config';
 
 export function SectionLabel({
   children,
@@ -217,6 +218,88 @@ export function BandPill({ band, big = false }: { band: RiskBand; big?: boolean 
 }
 
 /**
+ * The day-part control, in one place because it now appears in three.
+ *
+ * It used to live only inside DispatcherPanel and WorkerPanel, which meant the
+ * Planner - the view most people open first - displayed "reading: Day average"
+ * on the status bar with no way to change it. The reading was a label that
+ * looked exactly like a control, so the honest fix is to make it one
+ * everywhere rather than to restyle it into looking inert.
+ */
+export function DayPartSwitch({
+  value,
+  onChange,
+  hasDayRange,
+  size = 'md',
+}: {
+  value: DayPart;
+  onChange: (p: DayPart) => void;
+  /** False when min == average == max, i.e. the API gave no intra-day range. */
+  hasDayRange: boolean;
+  size?: 'sm' | 'md';
+}) {
+  return (
+    <span className="inline-flex items-center gap-1" role="group" aria-label="Day part">
+      {DAY_PARTS.map((p) => {
+        const active = value === p.key;
+        const disabled = !hasDayRange && p.key !== 'avg';
+        return (
+          <button
+            key={p.key}
+            onClick={() => onChange(p.key)}
+            aria-pressed={active}
+            disabled={disabled}
+            title={
+              disabled
+                ? 'This reading has no intra-day range - the API returned the same value for min, average and max.'
+                : p.blurb
+            }
+            className={`border transition-colors ${
+              size === 'sm' ? 'px-1.5 py-[1px] text-[9.5px]' : 'px-2 py-[3px] text-[10.5px]'
+            } font-semibold uppercase tracking-[0.1em]`}
+            style={{
+              borderColor: active ? 'var(--color-ember)' : 'var(--color-hairline)',
+              color: active
+                ? 'var(--color-ember)'
+                : disabled
+                  ? 'var(--color-faint)'
+                  : 'var(--color-muted)',
+              background: active ? 'var(--color-surface-3)' : 'transparent',
+              cursor: disabled ? 'not-allowed' : 'pointer',
+              opacity: disabled ? 0.45 : 1,
+            }}
+          >
+            {p.label.replace('Day ', '')}
+          </button>
+        );
+      })}
+    </span>
+  );
+}
+
+/**
+ * The date a field describes, WITHOUT a fabricated clock time.
+ *
+ * `validAt` carries a nominal 15:00 stamp that the ingest writes so the cache
+ * key is a full instant (scripts/ingest-fortyguard.ts). The API's field is
+ * daily - it returns a min, an average and a max for a calendar date and
+ * exposes no hour parameter at all - so rendering that stamp as "3:00 PM"
+ * asserted a precision the data does not have, and was read by users as the
+ * app simply showing the wrong time.
+ *
+ * The date is real. The hour never was. Only the date is shown.
+ */
+export function formatValidDay(validAt: string): string {
+  return new Date(validAt).toLocaleDateString('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'America/Phoenix',
+  });
+}
+
+/**
  * The provenance banner. Base PRD section 3 makes correct, non-mocked use of
  * the FortyGuard API the first success criterion, which cuts both ways: when
  * the committed snapshot was NOT fetched live, the app has to say so where
@@ -232,6 +315,8 @@ export function ProvenanceBar({
   totalCount,
   liveTiles,
   dayPart,
+  onDayPartChange,
+  hasDayRange,
 }: {
   manifest: SnapshotManifest;
   filterType: number;
@@ -244,20 +329,29 @@ export function ProvenanceBar({
   /** Tiles re-fetched live this session via the refresh button. */
   liveTiles: number;
   /** Which of the day's min / average / max is on screen. */
-  dayPart: string;
+  dayPart: DayPart;
+  onDayPartChange: (p: DayPart) => void;
+  hasDayRange: boolean;
 }) {
   const live = manifest.liveApiUsed || liveTiles > 0;
-  const stamp = new Date(validAt).toLocaleString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    timeZone: 'America/Phoenix',
-  });
+  const stamp = formatValidDay(validAt);
+  const [showDetail, setShowDetail] = useState(false);
 
+  /*
+   * Three facts, not seven.
+   *
+   * This bar carried source, filter_type, reading, valid date, relief layer,
+   * open count and routing, all at equal weight, as the very first thing on
+   * screen. It was accurate and it read like a debug line - and being first,
+   * it set the tone for everything under it.
+   *
+   * What a person needs at a glance is: can I trust this, what am I looking
+   * at, and how much of the network is actually open. The rest is provenance
+   * you go and check, so it moved one click away rather than off the page.
+   */
   return (
     <div
-      className="flex flex-wrap items-center gap-x-5 gap-y-2 px-4 py-2 border-b"
+      className="relative flex flex-wrap items-center gap-x-5 gap-y-2 px-4 py-2 border-b"
       style={{
         borderColor: live ? 'var(--color-hairline)' : 'var(--color-warn)',
         background: live
@@ -265,7 +359,13 @@ export function ProvenanceBar({
           : 'color-mix(in oklab, var(--color-warn) 11%, var(--color-surface))',
       }}
     >
-      <span className="flex items-center gap-2">
+      {/* 1 - can I trust this, and how fresh is it */}
+      <button
+        onClick={() => setShowDetail((s) => !s)}
+        aria-expanded={showDetail}
+        className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+        title="Show the full provenance of what is on screen"
+      >
         <span
           className="live-dot inline-block w-[7px] h-[7px]"
           style={{ background: live ? 'var(--color-good)' : 'var(--color-warn)' }}
@@ -274,46 +374,35 @@ export function ProvenanceBar({
           className="label"
           style={{ color: live ? undefined : 'var(--color-warn)' }}
         >
-          {manifest.liveApiUsed
-            ? 'FortyGuard cached snapshot'
-            : liveTiles > 0
-              ? `Modelled snapshot + ${liveTiles} tile${liveTiles === 1 ? '' : 's'} refreshed live`
-              : 'Modelled stand-in - not FortyGuard data'}
+          {/*
+            The refreshed-tile count used to sit in the FALSE branch of
+            `liveApiUsed`, which is the branch that never runs - every
+            committed snapshot is FortyGuard data, so a successful 45-second
+            live refresh changed nothing on screen and the button read as
+            broken. The count now applies to whichever base label is true.
+          */}
+          {manifest.liveApiUsed ? 'FortyGuard data' : 'Modelled stand-in'}
+          {liveTiles > 0 ? ` + ${liveTiles} tile${liveTiles === 1 ? '' : 's'} live` : ''}
+          <span className="ml-1.5 normal-case tracking-normal text-[var(--color-faint)]">
+            {stamp}
+          </span>
         </span>
+        <span className="label text-[var(--color-faint)]">{showDetail ? '-' : 'i'}</span>
+      </button>
+
+      {/* 2 - what am I looking at */}
+      <span className="label flex items-center gap-2">
+        reading
+        <DayPartSwitch
+          value={dayPart}
+          onChange={onDayPartChange}
+          hasDayRange={hasDayRange}
+          size="sm"
+        />
       </span>
 
+      {/* 3 - how much of the network is actually usable at this reading */}
       <span className="label">
-        filter_type{' '}
-        <span className="num text-[var(--color-bone)] text-[11px]">{filterType}</span>
-        <span className="ml-1 normal-case tracking-normal">
-          {filterType === 1 ? '(historic)' : '(forecast)'}
-        </span>
-      </span>
-
-      <span className="label">
-        reading{' '}
-        <span className="text-[var(--color-ember)] normal-case tracking-normal">
-          {dayPart}
-        </span>
-      </span>
-
-      <span className="label">
-        valid{' '}
-        <span className="num text-[var(--color-bone)] text-[11px]">{stamp} MST</span>
-      </span>
-
-      <span className="label">
-        relief layer{' '}
-        <span className="text-[var(--color-relief)] normal-case tracking-normal">
-          {reliefSource}
-        </span>
-      </span>
-
-      {/* Coverage that ignores opening hours overstates the network exactly
-          when the heat is worst, so the split is stated on the status bar
-          rather than buried in a methodology note. */}
-      <span className="label">
-        open now{' '}
         <span
           className="num text-[11px]"
           style={{
@@ -322,19 +411,64 @@ export function ProvenanceBar({
         >
           {openCount}/{totalCount}
         </span>
-        <span className="ml-1 normal-case tracking-normal">sites in focus</span>
+        <span className="ml-1 normal-case tracking-normal">relief sites open</span>
       </span>
 
-      <span className="label">
-        routing{' '}
-        <span className="text-[var(--color-bone)] normal-case tracking-normal">
-          {routeProvider === 'ors'
-            ? 'OpenRouteService'
-            : routeProvider === 'osrm'
-              ? 'OSRM'
-              : routeProvider}
-        </span>
-      </span>
+      {showDetail ? (
+        <div
+          className="absolute left-3 top-full z-[1300] mt-1 panel px-3.5 py-3 w-[330px] bg-[var(--color-void)] rise"
+          role="region"
+          aria-label="Provenance detail"
+        >
+          <DetailRow k="Heat field">
+            {manifest.liveApiUsed
+              ? 'FortyGuard /v1/heatmap, cached'
+              : 'Modelled stand-in - not FortyGuard data'}
+            {liveTiles > 0
+              ? `, plus ${liveTiles} tile${
+                  liveTiles === 1 ? '' : 's'
+                } refetched live this session`
+              : ''}
+          </DetailRow>
+          <DetailRow k="filter_type">
+            {filterType} {filterType === 1 ? '(historic)' : '(forecast)'}
+          </DetailRow>
+          {/*
+            A date, not a clock time. The API's field is daily - it has no hour
+            parameter and returns one min/average/max per calendar date - so
+            the 15:00 in `validAt` is a cache-key artefact, not a measurement.
+          */}
+          <DetailRow k="Valid for">
+            {stamp} - the whole day. The API returns one field per calendar date and
+            exposes no hour, so the reading picks that day&apos;s minimum, average or
+            maximum.
+          </DetailRow>
+          <DetailRow k="Relief network">{reliefSource}</DetailRow>
+          <DetailRow k="Open sites">
+            {openCount} of {totalCount} in the focus area are open at this reading.
+            Coverage counts only those - a site that shut at 3 PM does not help a crew
+            at 4 PM.
+          </DetailRow>
+          <DetailRow k="Routing">
+            {routeProvider === 'ors'
+              ? 'OpenRouteService'
+              : routeProvider === 'osrm'
+                ? 'OSRM'
+                : routeProvider}
+          </DetailRow>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function DetailRow({ k, children }: { k: string; children: ReactNode }) {
+  return (
+    <div className="py-1.5 border-b border-[var(--color-hairline)] last:border-b-0">
+      <div className="label mb-0.5">{k}</div>
+      <div className="text-[11px] leading-relaxed text-[var(--color-muted)]">
+        {children}
+      </div>
     </div>
   );
 }
@@ -342,7 +476,7 @@ export function ProvenanceBar({
 /**
  * Says out loud when part of a scored route sits outside measured coverage.
  *
- * The AOI is a handful of tiles, not a continuous surface - the API's ~50 mi2
+ * The AOI is a handful of tiles, not a continuous surface - the API's ~50 mi²
  * cap forces that - so a run leaving the tiles gets its temperature from the
  * nearest tile edge. `scoreRoute` deliberately keeps those samples in the
  * denominator, because dropping them would flatter exactly the runs that
@@ -382,14 +516,11 @@ export function Empty({ children }: { children: ReactNode }) {
   );
 }
 
-export function fmtMinutes(m: number): string {
-  if (m < 1) return '<1';
-  if (m < 60) return `${Math.round(m)}`;
-  return `${Math.floor(m / 60)}h ${Math.round(m % 60)}`;
-}
-
-export function fmtUsd(n: number): string {
-  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(2)}M`;
-  if (n >= 1_000) return `$${Math.round(n / 1000)}k`;
-  return `$${n}`;
-}
+/*
+ * Re-exported, not redefined.
+ *
+ * They now live in lib/format.ts because this module is 'use client' and a
+ * server component (the methodology page) needs them. Keeping the names
+ * available here means no consumer had to change its import.
+ */
+export { fmtMinutes, fmtUsd } from '@/lib/format';

@@ -19,7 +19,8 @@
     "verify:coverage": "tsx scripts/verify-coverage.ts",
     "verify:data": "tsx scripts/verify-data.ts",
     "verify": "npm run typecheck && npm run verify:data && npm run verify:coverage",
-    "data:hourly": "tsx scripts/fetch-hourly.ts"
+    "data:hourly": "tsx scripts/fetch-hourly.ts",
+    "probe:keys": "tsx scripts/probe-keys.ts"
   },
   "dependencies": {
     "leaflet": "^1.9.4",

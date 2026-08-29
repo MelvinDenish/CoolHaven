@@ -34,16 +34,16 @@ import {
   FORECAST_DAYS,
   GRANULARITY_M,
   addDays,
-  cellRiskThresholds,
-  classifyCell,
-  gridDimsFor,
   tileAreaMi2,
 } from '@/lib/config';
 import { FortyGuardClient } from '@/lib/fortyguard';
+import { interactiveKey } from '@/lib/keys';
+// Shared with the draft-region field endpoint, so a grid fetched for a drawn
+// bbox is the same shape as one fetched for a committed tile.
+import { rasteriseHeatGrid } from '@/lib/rasterise';
 import { DEFAULT_REGION_ID, getRegion } from '@/lib/regions';
 import { snapshotDateFor } from '@/lib/server/snapshot';
-import type { FilterType, HeatGrid, Tile } from '@/lib/types';
-import type { HeatmapCell } from '@/lib/fortyguard';
+import type { FilterType } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
 // One heatmap submission plus polling can legitimately take minutes.
@@ -93,11 +93,17 @@ export async function POST(req: Request) {
       ? body.dayOffset
       : (FORECAST_DAYS[0]?.dayOffset ?? 0);
 
-  const apiKey = process.env.FORTYGUARD_API_KEY?.trim();
+  /*
+   * Interactive traffic takes the LAST key in the pool, so a demo cannot be
+   * killed by a backfill that drained the first one. With a single key
+   * configured this resolves to exactly the same key as before.
+   */
+  const key = interactiveKey();
+  const apiKey = key?.value;
   if (!apiKey) {
     return NextResponse.json(
       {
-        error: 'FORTYGUARD_API_KEY is not configured on the server.',
+        error: 'No FortyGuard API key is configured on the server.',
         detail:
           'This endpoint exists to demonstrate the live async contract. It deliberately ' +
           'does nothing without a real key rather than showing a simulated lifecycle - ' +
@@ -168,7 +174,14 @@ export async function POST(req: Request) {
           return;
         }
 
-        const grid = rasterise(regionId, tile, result.cells, filterType, validAt, date);
+        const grid = rasteriseHeatGrid(
+          regionId,
+          tile,
+          result.cells,
+          filterType,
+          validAt,
+          date,
+        );
         grid.provenance = {
           note: `Live refresh via POST /v1/heatmap, polled to completion. ${result.cells.length} cells returned (Celsius, converted to F).`,
           endpoint: `${baseUrl}/v1/heatmap`,
@@ -222,102 +235,4 @@ export async function POST(req: Request) {
       'x-accel-buffering': 'no',
     },
   });
-}
-
-/** Same rasterisation the ingest script uses, kept deliberately identical. */
-function rasterise(
-  regionId: string,
-  tile: Tile,
-  cells: HeatmapCell[],
-  filterType: FilterType,
-  validAt: string,
-  date: string,
-): HeatGrid {
-  const { cols, rows } = gridDimsFor(tile.bbox, GRANULARITY_M);
-  const n = cols * rows;
-  const sum = new Float64Array(n);
-  const sumMin = new Float64Array(n);
-  const sumMax = new Float64Array(n);
-  const count = new Int32Array(n);
-
-  const dLon = (tile.bbox[2] - tile.bbox[0]) / cols;
-  const dLat = (tile.bbox[3] - tile.bbox[1]) / rows;
-
-  for (const c of cells) {
-    const cx = Math.floor((c.lon - tile.bbox[0]) / dLon);
-    const ry = Math.floor((c.lat - tile.bbox[1]) / dLat);
-    if (cx < 0 || ry < 0 || cx >= cols || ry >= rows) continue;
-    const i = ry * cols + cx;
-    sum[i] += c.tempF;
-    sumMin[i] += c.minTempF;
-    sumMax[i] += c.maxTempF;
-    count[i] += 1;
-  }
-
-  const tempsF = new Array<number>(n);
-  const tempsMinF = new Array<number>(n);
-  const tempsMaxF = new Array<number>(n);
-  const missing: number[] = [];
-
-  for (let i = 0; i < n; i++) {
-    if (count[i] > 0) {
-      tempsF[i] = Math.round((sum[i] / count[i]) * 10) / 10;
-      tempsMinF[i] = Math.round((sumMin[i] / count[i]) * 10) / 10;
-      tempsMaxF[i] = Math.round((sumMax[i] / count[i]) * 10) / 10;
-    } else {
-      missing.push(i);
-    }
-  }
-
-  for (const idx of missing) {
-    const r0 = Math.floor(idx / cols);
-    const c0 = idx % cols;
-    let filled = false;
-    for (let radius = 1; radius < Math.max(cols, rows) && !filled; radius++) {
-      let a = 0;
-      let mn = 0;
-      let mx = 0;
-      let k = 0;
-      for (let r = r0 - radius; r <= r0 + radius; r++) {
-        for (let c = c0 - radius; c <= c0 + radius; c++) {
-          if (r < 0 || c < 0 || r >= rows || c >= cols) continue;
-          const j = r * cols + c;
-          if (count[j] > 0) {
-            a += sum[j] / count[j];
-            mn += sumMin[j] / count[j];
-            mx += sumMax[j] / count[j];
-            k++;
-          }
-        }
-      }
-      if (k > 0) {
-        tempsF[idx] = Math.round((a / k) * 10) / 10;
-        tempsMinF[idx] = Math.round((mn / k) * 10) / 10;
-        tempsMaxF[idx] = Math.round((mx / k) * 10) / 10;
-        filled = true;
-      }
-    }
-  }
-
-  return {
-    schema: 'coolroute.heatgrid.v3',
-    regionId,
-    tileId: tile.id,
-    filterType,
-    validAt,
-    date,
-    granularityM: GRANULARITY_M,
-    bbox: tile.bbox,
-    cols,
-    rows,
-    unit: 'F',
-    source: 'fortyguard',
-    fetchedAt: new Date().toISOString(),
-    provenance: { note: 'set by caller' },
-    tempsF,
-    tempsMinF,
-    tempsMaxF,
-    riskBands: tempsF.map(classifyCell),
-    riskThresholds: cellRiskThresholds(),
-  };
 }

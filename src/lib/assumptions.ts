@@ -36,12 +36,12 @@ export const THRESHOLDS = {
 /**
  * exposureIndex (degree-minutes above comfortF) -> risk band cut points.
  *
- * Anchored on time spent at 110 degF, which is 20 degrees over the comfort
+ * Anchored on time spent at 110 °F, which is 20 degrees over the comfort
  * threshold and an ordinary Phoenix summer afternoon:
  *
- *   moderate  400  ~ 20 minutes at 110 degF
- *   high      800  ~ 40 minutes at 110 degF
- *   extreme  1200  ~ 60 minutes at 110 degF
+ *   moderate  400  ~ 20 minutes at 110 °F
+ *   high      800  ~ 40 minutes at 110 °F
+ *   extreme  1200  ~ 60 minutes at 110 °F
  *
  * These are calibrated for a desert summer, deliberately. Cut points tuned for
  * a temperate city saturate here - every single route in the focus area comes
@@ -132,9 +132,9 @@ export const INTERVENTIONS: Record<InterventionKind, InterventionSpec> = {
     radiusM: 250,
     confidence: 'directional',
     assumption:
-      'Assumed effect: -2.5 degF ambient at the centre of the treated corridor, decaying linearly to 0 at 250 m. Illustrative magnitude.',
+      'Assumed effect: -2.5 °F ambient at the centre of the treated corridor, decaying linearly to 0 at 250 m. Illustrative magnitude.',
     basis:
-      'Direction and rough scale follow Phoenix / ASU urban-canopy work reporting roughly 2-4 degF of daytime air-temperature reduction under mature canopy. Canopy reduces radiant (mean radiant) temperature far more than air temperature; this model represents only the air-temperature term and does not claim the larger radiant benefit. The exact coefficient is ours.',
+      'Direction and rough scale follow Phoenix / ASU urban-canopy work reporting roughly 2-4 °F of daytime air-temperature reduction under mature canopy. Canopy reduces radiant (mean radiant) temperature far more than air temperature; this model represents only the air-temperature term and does not claim the larger radiant benefit. The exact coefficient is ours.',
     unitCostUsd: 380_000,
     costUnit: 'per treated corridor-km, planting + 3-year establishment',
     color: '#16a34a',
@@ -148,7 +148,7 @@ export const INTERVENTIONS: Record<InterventionKind, InterventionSpec> = {
     radiusM: 200,
     confidence: 'measured',
     assumption:
-      'Assumed effect: -0.6 degF ambient at 2 m over the treated area, decaying to 0 at 200 m. Deliberately small - cool pavement mostly changes SURFACE temperature, not the air a worker breathes.',
+      'Assumed effect: -0.6 °F ambient at 2 m over the treated area, decaying to 0 at 200 m. Deliberately small - cool pavement mostly changes SURFACE temperature, not the air a worker breathes.',
     basis:
       'The City of Phoenix / ASU Cool Pavement Pilot measured large surface-temperature reductions but only a fraction of a degree of daytime ambient air-temperature difference at ~6 ft, alongside slightly warmer night-time surfaces. We model the conservative daytime ambient figure and do not model the night-time penalty.',
     unitCostUsd: 220_000,
@@ -167,9 +167,9 @@ export const INTERVENTIONS: Record<InterventionKind, InterventionSpec> = {
     radiusM: 30,
     confidence: 'directional',
     assumption:
-      'Assumed effect: -8 degF within 30 m, decaying to 0 at the edge. Large but tiny in extent - evaporative cooling works on the person standing in it, not on the block.',
+      'Assumed effect: -8 °F within 30 m, decaying to 0 at the edge. Large but tiny in extent - evaporative cooling works on the person standing in it, not on the block.',
     basis:
-      'Direction and scale follow published evaporative-cooling figures for outdoor misting in arid climates, where 10-20 degF at the nozzle is routinely reported. We model the conservative end and a deliberately short radius. Effectiveness collapses as humidity rises, which this model does NOT represent - in a Phoenix monsoon week the real figure is far lower. The exact coefficient is ours.',
+      'Direction and scale follow published evaporative-cooling figures for outdoor misting in arid climates, where 10-20 °F at the nozzle is routinely reported. We model the conservative end and a deliberately short radius. Effectiveness collapses as humidity rises, which this model does NOT represent - in a Phoenix monsoon week the real figure is far lower. The exact coefficient is ours.',
     unitCostUsd: 18_000,
     costUnit: 'per station, install + seasonal water and maintenance',
     color: '#0891b2',
@@ -185,7 +185,7 @@ export const INTERVENTIONS: Record<InterventionKind, InterventionSpec> = {
     radiusM: 60,
     confidence: 'directional',
     assumption:
-      'Assumed effect: -1.8 degF ambient under and immediately around the structure, decaying to 0 at 60 m. Smaller than canopy in reach, and available the day it is installed.',
+      'Assumed effect: -1.8 °F ambient under and immediately around the structure, decaying to 0 at 60 m. Smaller than canopy in reach, and available the day it is installed.',
     basis:
       'Built shade removes direct solar load immediately, with no establishment period and no irrigation - which is why cities use it at stops and yards where a tree cannot go. As with canopy, the radiant benefit to a person underneath is far larger than this air-temperature figure; we model only the ambient term. The exact coefficient is ours.',
     unitCostUsd: 65_000,
@@ -298,7 +298,7 @@ const INDOOR_CLASSES = ['ceiling', 'floor', 'door', 'wall', 'windowpane', 'stair
  * this point, on the date the imagery was captured.
  *
  * NOT MEASURED, and not derived here: how many degrees planting would buy. A
- * photograph contains no temperature. Deriving a degF figure from a canopy
+ * photograph contains no temperature. Deriving a °F figure from a canopy
  * percentage would require paired shaded/unshaded observations at the same
  * hour, which this project does not have - so `tree_canopy.deltaF` stays the
  * labelled assumption it always was.
@@ -359,7 +359,7 @@ export const DEMAND_WEIGHTS = {
 };
 
 export const DEMAND_NOTE =
-  'Exposure demand = 0.45 x normalised heat above 90 degF + 0.25 x normalised OSM drivable road length + 0.30 x normalised courier-route density. Road and route weights come from OpenStreetMap and from routes generated on the real road network between real depot and delivery-zone points. They are a documented proxy for where outdoor work happens, not a measured count of workers.';
+  'Work exposure = 0.45 × normalised heat above 90 °F + 0.25 × normalised OSM drivable road length + 0.30 × normalised courier-route density. Road and route weights come from OpenStreetMap and from routes generated on the real road network between real depot and delivery-zone points. They are a documented proxy for where outdoor work happens, not a measured count of workers.';
 
 /** A cell only counts as a siting candidate if it is this far from relief. */
 export const COVERAGE_GAP_M = 600;
@@ -373,8 +373,8 @@ export const RECOMMENDATION_SPACING_M = 700;
 export const ASSUMPTION_NOTES = {
   headline:
     'Scenario effects are modelling assumptions, not measured outcomes for these specific sites.',
-  exposure: `Exposure index = degree-minutes above ${THRESHOLDS.comfortF} degF accumulated along the route, at an effective courier speed of ${MOVEMENT.courierKph} km/h including stops.`,
-  stacking: `Stacked cooling from overlapping interventions is capped at ${MAX_STACKED_COOLING_F} degF per cell.`,
+  exposure: `Exposure index = degree-minutes above ${THRESHOLDS.comfortF} °F accumulated along the route, at an effective courier speed of ${MOVEMENT.courierKph} km/h including stops.`,
+  stacking: `Stacked cooling from overlapping moves is capped at ${MAX_STACKED_COOLING_F} °F per cell.`,
   demand: DEMAND_NOTE,
   provenanceRule:
     'Historic data (filter_type 1) drives the Planner view. Forecast data (filter_type 3) drives Dispatcher and Worker. The two are never blended, and every panel states which it is using.',

@@ -150,6 +150,18 @@ function routeDensityIndex(field: HeatField, routes: RouteFeature[]): Map<string
 export interface Recommendation extends Intervention {
   demand: number;
   gap: number;
+  /**
+   * Metres to the nearest OPEN relief site.
+   *
+   * This is carried alongside `gap` because `gap` cannot be shown to a user on
+   * its own. It is a ramp normalised over walkToReliefM -> COVERAGE_GAP_M,
+   * which is a 200 m window, so every candidate worth recommending saturates
+   * at 1.0 and the ranked list reads "gap 100%" all the way down. The distance
+   * is the number that actually discriminates - measured across the committed
+   * Phoenix snapshot, the top six candidates span 778 m to 3,525 m while all
+   * six report the same 100%.
+   */
+  reliefDistanceM: number;
   tempF: number;
   rank: number;
 }
@@ -182,15 +194,16 @@ export function recommendStations(cells: DemandCell[], count: number): Recommend
       recommended: true,
       label: `Recommended station #${rank}`,
       note:
-        `Exposure demand ${cand.cell.demand.toFixed(2)}, ` +
+        `Work exposure ${cand.cell.demand.toFixed(2)}, ` +
         `${cand.cell.reliefDistanceM} m from the nearest existing Heat Relief Network site, ` +
-        `baseline ${cand.cell.tempF.toFixed(1)} degF.`,
+        `baseline ${cand.cell.tempF.toFixed(1)} °F.`,
     });
 
     picked.push({
       ...iv,
       demand: cand.cell.demand,
       gap: cand.cell.gap,
+      reliefDistanceM: cand.cell.reliefDistanceM,
       tempF: cand.cell.tempF,
       rank,
     });

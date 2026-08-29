@@ -189,8 +189,19 @@ export default function MapCanvas({
       { color: tempColor(mean), weight: 3.5, opacity: 1, interactive: false },
     ).addTo(group);
 
-    const name = best.feature.properties.name ?? 'Unnamed street';
-    const cls = (best.feature.properties.highway ?? '').replace(/_/g, ' ');
+    /*
+     * "Unnamed street" was accurate and useless.
+     *
+     * 334 of Phoenix's 4,207 centrelines carry no `name` tag, and 287 of those
+     * are motorway_link / primary_link / secondary_link - freeway ramps and
+     * slip roads, which genuinely have no name in OpenStreetMap. That is
+     * upstream data, not something this app can fix. What it CAN do is say
+     * what the thing is instead of only what it lacks, so a ramp reads as a
+     * ramp rather than as missing data.
+     */
+    const highway = best.feature.properties.highway ?? '';
+    const cls = highway.replace(/_/g, ' ');
+    const name = best.feature.properties.name ?? describeUnnamed(highway);
 
     L.popup({ className: 'street-probe', maxWidth: 260 })
       .setLatLng([lat, lon])
@@ -205,9 +216,34 @@ export default function MapCanvas({
                 (outside / samples.length) * 100,
               )}% of this street is outside the measured tiles - those samples take the nearest tile-edge value.</div>`
             : '') +
-          `<div class="probe-note">Sampled from the field currently on screen, at the selected day and part of day.</div>`,
+          (best.feature.properties.name
+            ? ''
+            : `<div class="probe-note">This segment carries no name in OpenStreetMap - typical for ramps and slip roads. The geometry and the temperatures are unaffected.</div>`) +
+          `<div class="probe-note">Sampled from the field currently on screen, for the selected day and reading.</div>`,
       )
       .openOn(map);
+  };
+
+  /** A readable label for a centreline OSM never named. */
+  const describeUnnamed = (highway: string): string => {
+    if (highway.endsWith('_link')) {
+      const parent = highway.replace('_link', '');
+      return parent === 'motorway' ? 'Freeway ramp' : `${cap(parent)} road ramp`;
+    }
+    const known: Record<string, string> = {
+      residential: 'Residential street',
+      service: 'Service road',
+      unclassified: 'Minor road',
+      living_street: 'Living street',
+      track: 'Track',
+      footway: 'Footway',
+      path: 'Path',
+      tertiary: 'Tertiary road',
+      secondary: 'Secondary road',
+      primary: 'Primary road',
+      motorway: 'Freeway',
+    };
+    return known[highway] ?? 'Unnamed road';
   };
 
   /* ---------------------------------------------------------------- setup */
@@ -578,7 +614,7 @@ export default function MapCanvas({
           `<div style="font-size:11px">
              <strong style="font-size:12px">${escapeHtml(iv.label)}</strong><br/>
              ${escapeHtml(spec.label)}<br/>
-             assumed ${iv.deltaF} degF at centre, ${iv.radiusM} m radius<br/>
+             assumed ${iv.deltaF} °F at centre, ${iv.radiusM} m radius<br/>
              <span style="color:#a2978a">${escapeHtml(spec.confidence)} confidence</span>
              ${iv.note ? `<br/><span style="color:#a2978a">${escapeHtml(iv.note)}</span>` : ''}
            </div>`,
@@ -757,6 +793,10 @@ function hexToRgb(hex: string): [number, number, number] {
     parseInt(hex.slice(3, 5), 16),
     parseInt(hex.slice(5, 7), 16),
   ];
+}
+
+function cap(w: string): string {
+  return w.charAt(0).toUpperCase() + w.slice(1);
 }
 
 function escapeHtml(s: string): string {

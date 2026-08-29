@@ -11,7 +11,7 @@
  * only measurement in the app that speaks to whether a canopy intervention is
  * even possible at a site. `canopyHeadroom` draws that line explicitly, and the
  * panel repeats it - segmentation measures COVER, not degrees, so the
- * intervention's degF figure stays the labelled assumption it has always been.
+ * intervention's °F figure stays the labelled assumption it has always been.
  */
 import { useMemo, useState } from 'react';
 import { canopyHeadroom } from '@/lib/assumptions';
@@ -146,10 +146,38 @@ export default function GroundPanel({ ground }: { ground: GroundFile | null }) {
               </figcaption>
             </figure>
           ) : (
+            /*
+              Two different absences, which the old copy merged into one and
+              got wrong for half the points.
+
+              A point with `street: null` has NO street-level reading at all -
+              the API found no Street View panorama near it, which is normal
+              for an airport cargo apron like Sky Harbor. A point WITH a street
+              reading but no image simply had its frame dropped at build time:
+              `DEFAULT_IMAGE_POINTS = 2` in scripts/fetch-ground.ts, because
+              one segmented frame is larger than every heat grid in the region
+              combined. Telling a user "imagery is kept for the first few
+              points" when the truth is "there is no imagery here at all" sends
+              them looking for a setting that does not exist.
+            */
             <p className="text-[10.5px] text-[var(--color-faint)] mb-3 leading-relaxed">
-              Composition measured here; imagery is kept for the first few points only,
-              because a segmented frame is larger than every heat grid in this region
-              combined.
+              {selected.street ? (
+                <>
+                  Composition below is measured at this point. The frame itself is not
+                  stored: imagery is retained for the first{' '}
+                  <span className="num">2</span> points per region only, because one
+                  segmented frame is larger than every heat grid in this region
+                  combined. Re-run <span className="num">npm run data:ground</span> with{' '}
+                  <span className="num">--images=N</span> to keep more.
+                </>
+              ) : (
+                <>
+                  No street-level imagery exists at this point - the segmentation API
+                  found no Street View panorama nearby, which is expected for airfield
+                  aprons, rail yards and private freight land. Only the overhead reading
+                  below is available here.
+                </>
+              )}
             </p>
           )}
 
