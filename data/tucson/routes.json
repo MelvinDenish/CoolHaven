@@ -1,7 +1,7 @@
 {
  "schema": "coolroute.routes.v2",
  "regionId": "tucson",
- "generatedAt": "2026-08-29T19:57:26.495Z",
+ "generatedAt": "2026-08-29T22:29:50.257Z",
  "provider": "osrm",
  "note": "Routes follow the real road network, resolved once at build time and committed so the demo runs with no network. Depot and work-zone endpoints are real named locations inside the focus tiles; the runs themselves are representative, not an operator manifest.",
  "failures": [],
@@ -951,7 +951,7 @@
    "distanceM": 5041,
    "durationS": 682,
    "provider": "osrm",
-   "fetchedAt": "2026-08-29T19:57:04.626Z"
+   "fetchedAt": "2026-08-29T22:29:28.435Z"
   },
   {
    "id": "t2-fourth-avenue",
@@ -1682,7 +1682,7 @@
    "distanceM": 3382,
    "durationS": 486,
    "provider": "osrm",
-   "fetchedAt": "2026-08-29T19:57:10.041Z"
+   "fetchedAt": "2026-08-29T22:29:33.855Z"
   },
   {
    "id": "t3-south-industrial",
@@ -2841,7 +2841,7 @@
    "distanceM": 7277,
    "durationS": 831,
    "provider": "osrm",
-   "fetchedAt": "2026-08-29T19:57:15.456Z"
+   "fetchedAt": "2026-08-29T22:29:39.255Z"
   },
   {
    "id": "t4-airport-approach",
@@ -3948,7 +3948,7 @@
    "distanceM": 7067,
    "durationS": 722,
    "provider": "osrm",
-   "fetchedAt": "2026-08-29T19:57:20.872Z"
+   "fetchedAt": "2026-08-29T22:29:44.656Z"
   },
   {
    "id": "t5-civic-parks",
@@ -5159,7 +5159,7 @@
    "distanceM": 5811,
    "durationS": 585,
    "provider": "osrm",
-   "fetchedAt": "2026-08-29T19:57:26.288Z"
+   "fetchedAt": "2026-08-29T22:29:50.057Z"
   }
  ],
  "workerDemo": {
@@ -6160,7 +6160,7 @@
    "distanceM": 6071,
    "durationS": 471,
    "provider": "osrm",
-   "fetchedAt": "2026-08-29T19:57:26.495Z"
+   "fetchedAt": "2026-08-29T22:29:50.257Z"
   },
   "alternative": null
  }

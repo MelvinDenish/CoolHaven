@@ -6,7 +6,7 @@
  "endpoint": "https://overpass-api.de/api/interpreter",
  "where": "",
  "attribution": "Amenity locations (c) OpenStreetMap contributors, ODbL, via Overpass API. Community-mapped amenities, not an agency-published heat-relief network.",
- "fetchedAt": "2026-08-29T19:55:17.932Z",
+ "fetchedAt": "2026-08-29T22:27:42.376Z",
  "totalCount": 45,
  "focusCount": 29,
  "focusBbox": [
