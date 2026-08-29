@@ -2,9 +2,9 @@
  "schema": "coolroute.manifest.v2",
  "regionId": "phoenix",
  "snapshotDate": "2026-08-28",
- "generatedAt": "2026-08-28T23:01:00.657Z",
+ "generatedAt": "2026-08-29T04:05:42.020Z",
  "liveApiUsed": true,
- "fetchedThisRun": 6,
+ "fetchedThisRun": 0,
  "unavailable": [],
  "sources": [
   "fortyguard"
@@ -60,11 +60,10 @@
   }
  ],
  "notes": [
-  "Snapshot date 2026-08-28. 6 of 6 grids are FortyGuard data; all 6 were fetched this run.",
+  "Snapshot date 2026-08-28. 6 of 6 grids are FortyGuard data; none were fetched this run, every grid was already cached.",
   "The API does not report credit consumption in its response payload.",
   "Temperatures arrive in Celsius and are converted to Fahrenheit at the client boundary.",
   "API limitation: only filter_type 3 (forecast) succeeds on this key; 1, 2 and 4 return HTTP 500. The historic/forecast separation is still enforced in code.",
-  "API limitation: no hour-of-day parameter exists, so slices are forecast DAYS. Intra-day variation comes from the min/average/max each cell carries.",
-  "Pruned 3 grid file(s) describing dates outside this snapshot. The cache holds only the dates the UI can reach."
+  "API limitation: no hour-of-day parameter exists, so slices are forecast DAYS. Intra-day variation comes from the min/average/max each cell carries."
  ]
 }

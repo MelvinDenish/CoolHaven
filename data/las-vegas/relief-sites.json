@@ -6,7 +6,7 @@
  "endpoint": "https://overpass-api.de/api/interpreter",
  "where": "",
  "attribution": "Amenity locations (c) OpenStreetMap contributors, ODbL, via Overpass API. Community-mapped amenities, not an agency-published heat-relief network.",
- "fetchedAt": "2026-08-28T22:55:42.736Z",
+ "fetchedAt": "2026-08-29T04:03:29.075Z",
  "totalCount": 67,
  "focusCount": 31,
  "focusBbox": [
@@ -50,7 +50,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-366088018",
@@ -80,7 +80,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-366088041",
@@ -110,7 +110,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-2746582838",
@@ -140,7 +140,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-3163897115",
@@ -170,7 +170,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-3163897123",
@@ -200,7 +200,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-3163901229",
@@ -230,7 +230,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-3271196834",
@@ -260,7 +260,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-5105129021",
@@ -290,7 +290,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-5250921239",
@@ -320,7 +320,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-5741951925",
@@ -350,7 +350,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-5741952024",
@@ -380,7 +380,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-5741952036",
@@ -410,7 +410,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-6275993986",
@@ -440,7 +440,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-6759810493",
@@ -470,7 +470,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-9115710113",
@@ -500,7 +500,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-9115710115",
@@ -530,7 +530,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-9128454376",
@@ -560,7 +560,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-9128454384",
@@ -590,7 +590,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-9194498277",
@@ -620,7 +620,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-9194498286",
@@ -650,7 +650,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-9211175018",
@@ -680,7 +680,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-9238629712",
@@ -710,7 +710,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-9254494683",
@@ -740,7 +740,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-9254494684",
@@ -770,7 +770,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-9400493860",
@@ -800,7 +800,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-10289092742",
@@ -845,7 +845,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-11510304072",
@@ -875,7 +875,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-11806425989",
@@ -905,7 +905,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-12009026057",
@@ -935,7 +935,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-12009026058",
@@ -965,7 +965,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-12113068104",
@@ -995,7 +995,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-12423622376",
@@ -1025,7 +1025,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-12423622381",
@@ -1055,7 +1055,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-12910882947",
@@ -1085,7 +1085,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-13124189095",
@@ -1115,7 +1115,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-13124189115",
@@ -1145,7 +1145,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-13338981404",
@@ -1175,7 +1175,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-13991572854",
@@ -1205,7 +1205,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-node-13991572859",
@@ -1235,7 +1235,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-way-27525255",
@@ -1265,7 +1265,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-way-27989848",
@@ -1295,7 +1295,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-way-129477701",
@@ -1325,7 +1325,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-way-130208309",
@@ -1355,7 +1355,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-way-137276793",
@@ -1385,7 +1385,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-way-255442251",
@@ -1415,7 +1415,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-way-263131411",
@@ -1445,7 +1445,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-way-314669478",
@@ -1475,7 +1475,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-way-331347708",
@@ -1505,7 +1505,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-way-370282921",
@@ -1535,7 +1535,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-way-436605038",
@@ -1565,7 +1565,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-way-847021124",
@@ -1595,7 +1595,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-way-864027140",
@@ -1625,7 +1625,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-way-965826317",
@@ -1655,7 +1655,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-way-1001518453",
@@ -1685,7 +1685,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-way-1017040232",
@@ -1715,7 +1715,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-way-1017457837",
@@ -1745,7 +1745,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-way-1017968810",
@@ -1775,7 +1775,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-way-1204784065",
@@ -1805,7 +1805,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-way-1235845676",
@@ -1835,7 +1835,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-way-1236678758",
@@ -1880,7 +1880,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-way-1243923313",
@@ -1910,7 +1910,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-way-1244102244",
@@ -1961,7 +1961,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-way-1381310953",
@@ -1991,7 +1991,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-way-1506125774",
@@ -2021,7 +2021,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-relation-11833807",
@@ -2051,7 +2051,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   },
   {
    "id": "osm-relation-19544847",
@@ -2081,7 +2081,7 @@
    "seasonStart": null,
    "seasonEnd": null,
    "source": "osm",
-   "verifiedDate": "2026-08-28"
+   "verifiedDate": "2026-08-29"
   }
  ]
 }
