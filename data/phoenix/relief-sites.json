@@ -6,8 +6,8 @@
  "endpoint": "https://services1.arcgis.com/MdyCMZnX1raZ7TS3/arcgis/rest/services/HRN_Public_view/FeatureServer/0/query",
  "where": "1=1",
  "attribution": "Maricopa Association of Governments (MAG) Heat Relief Network, public feature service. Locations, hours and services as published by MAG.",
- "fetchedAt": "2026-08-29T04:03:28.456Z",
- "totalCount": 252,
+ "fetchedAt": "2026-08-29T11:18:05.942Z",
+ "totalCount": 251,
  "focusCount": 48,
  "focusBbox": [
   -112.098,
@@ -15,10 +15,10 @@
   -111.985,
   33.515
  ],
- "withKnownHours": 250,
+ "withKnownHours": 249,
  "byKind": {
   "cooling_center": 94,
-  "hydration_station": 142,
+  "hydration_station": 141,
   "respite_center": 16
  },
  "sites": [
@@ -10195,51 +10195,6 @@
    "adaAccessible": null,
    "seasonStart": "2026-06-03",
    "seasonEnd": "2026-09-30",
-   "source": "magHRN",
-   "verifiedDate": "2026-08-29"
-  },
-  {
-   "id": "hrn-578",
-   "name": "Pascua Yaqui Tribe Main Office",
-   "org": "Pascua Yaqui Tribe",
-   "kind": "hydration_station",
-   "lon": -111.962045,
-   "lat": 33.360405,
-   "address": "9405 S. Avenida del Yaqui Guadalupe AZ 85283",
-   "city": "Guadalupe",
-   "phone": "480-755-2517",
-   "hours": "Mo-Fr 8am-5pm",
-   "hoursByDay": [
-    null,
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    null
-   ],
-   "open24": false,
-   "hoursKnown": true,
-   "services": null,
-   "pets": null,
-   "adaAccessible": null,
-   "seasonStart": "2026-06-08",
-   "seasonEnd": "2026-08-28",
    "source": "magHRN",
    "verifiedDate": "2026-08-29"
   },
