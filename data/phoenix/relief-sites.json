@@ -6,7 +6,7 @@
  "endpoint": "https://services1.arcgis.com/MdyCMZnX1raZ7TS3/arcgis/rest/services/HRN_Public_view/FeatureServer/0/query",
  "where": "1=1",
  "attribution": "Maricopa Association of Governments (MAG) Heat Relief Network, public feature service. Locations, hours and services as published by MAG.",
- "fetchedAt": "2026-08-30T00:36:49.177Z",
+ "fetchedAt": "2026-08-30T06:18:29.073Z",
  "totalCount": 251,
  "focusCount": 48,
  "focusBbox": [
@@ -3248,6 +3248,141 @@
    "verifiedDate": "2026-08-30"
   },
   {
+   "id": "hrn-181",
+   "name": "Phoenix Maryvale Corps",
+   "org": "The Salvation Army",
+   "kind": "cooling_center",
+   "lon": -112.15228,
+   "lat": 33.49182,
+   "address": "4318 W. Clarendon Ave. Phoenix AZ 85031",
+   "city": "Phoenix",
+   "phone": "602-267-4193",
+   "hours": "Mo-Fr 8am-4:30pm",
+   "hoursByDay": [
+    null,
+    {
+     "openMin": 480,
+     "closeMin": 990
+    },
+    {
+     "openMin": 480,
+     "closeMin": 990
+    },
+    {
+     "openMin": 480,
+     "closeMin": 990
+    },
+    {
+     "openMin": 480,
+     "closeMin": 990
+    },
+    {
+     "openMin": 480,
+     "closeMin": 990
+    },
+    null
+   ],
+   "open24": false,
+   "hoursKnown": true,
+   "services": null,
+   "pets": true,
+   "adaAccessible": true,
+   "seasonStart": "2026-05-01",
+   "seasonEnd": "2026-09-30",
+   "source": "magHRN",
+   "verifiedDate": "2026-08-30"
+  },
+  {
+   "id": "hrn-182",
+   "name": "Apache Junction Corps",
+   "org": "The Salvation Army",
+   "kind": "cooling_center",
+   "lon": -111.539353,
+   "lat": 33.407749,
+   "address": "605 E. Broadway Ave. Apache Junction AZ 85119",
+   "city": "Apache Junction",
+   "phone": "602-267-4193",
+   "hours": "Mo-Fr 9am-3pm",
+   "hoursByDay": [
+    null,
+    {
+     "openMin": 540,
+     "closeMin": 900
+    },
+    {
+     "openMin": 540,
+     "closeMin": 900
+    },
+    {
+     "openMin": 540,
+     "closeMin": 900
+    },
+    {
+     "openMin": 540,
+     "closeMin": 900
+    },
+    {
+     "openMin": 540,
+     "closeMin": 900
+    },
+    null
+   ],
+   "open24": false,
+   "hoursKnown": true,
+   "services": "Hygiene items",
+   "pets": true,
+   "adaAccessible": true,
+   "seasonStart": "2026-05-01",
+   "seasonEnd": "2026-09-30",
+   "source": "magHRN",
+   "verifiedDate": "2026-08-30"
+  },
+  {
+   "id": "hrn-183",
+   "name": "Chandler Corps",
+   "org": "The Salvation Army",
+   "kind": "cooling_center",
+   "lon": -111.83993,
+   "lat": 33.29455,
+   "address": "85 E. Saragosa St. Chandler AZ 85225",
+   "city": "Chandler",
+   "phone": "602-267-4193",
+   "hours": "Mo-Fr 8:30am-4pm (closed 11:30am-1pm)",
+   "hoursByDay": [
+    null,
+    {
+     "openMin": 510,
+     "closeMin": 960
+    },
+    {
+     "openMin": 510,
+     "closeMin": 960
+    },
+    {
+     "openMin": 510,
+     "closeMin": 960
+    },
+    {
+     "openMin": 510,
+     "closeMin": 960
+    },
+    {
+     "openMin": 510,
+     "closeMin": 960
+    },
+    null
+   ],
+   "open24": false,
+   "hoursKnown": true,
+   "services": null,
+   "pets": true,
+   "adaAccessible": true,
+   "seasonStart": "2026-05-01",
+   "seasonEnd": "2026-09-30",
+   "source": "magHRN",
+   "verifiedDate": "2026-08-30"
+  },
+  {
    "id": "hrn-184",
    "name": "Glendale Corps",
    "org": "The Salvation Army",
@@ -3287,6 +3422,141 @@
    "services": null,
    "pets": null,
    "adaAccessible": null,
+   "seasonStart": "2026-05-01",
+   "seasonEnd": "2026-09-30",
+   "source": "magHRN",
+   "verifiedDate": "2026-08-30"
+  },
+  {
+   "id": "hrn-186",
+   "name": "Phoenix Citadel Corps",
+   "org": "The Salvation Army",
+   "kind": "cooling_center",
+   "lon": -112.07809,
+   "lat": 33.45526,
+   "address": "628 N. 3rd Ave. Phoenix AZ 85003",
+   "city": "Phoenix",
+   "phone": "602-267-4193",
+   "hours": "Mo-Fr 8am-4:30pm",
+   "hoursByDay": [
+    null,
+    {
+     "openMin": 480,
+     "closeMin": 990
+    },
+    {
+     "openMin": 480,
+     "closeMin": 990
+    },
+    {
+     "openMin": 480,
+     "closeMin": 990
+    },
+    {
+     "openMin": 480,
+     "closeMin": 990
+    },
+    {
+     "openMin": 480,
+     "closeMin": 990
+    },
+    null
+   ],
+   "open24": false,
+   "hoursKnown": true,
+   "services": null,
+   "pets": true,
+   "adaAccessible": true,
+   "seasonStart": "2026-05-01",
+   "seasonEnd": "2026-09-30",
+   "source": "magHRN",
+   "verifiedDate": "2026-08-30"
+  },
+  {
+   "id": "hrn-187",
+   "name": "Mesa Corps",
+   "org": "The Salvation Army",
+   "kind": "cooling_center",
+   "lon": -111.82563,
+   "lat": 33.42486,
+   "address": "241 E. 6th St. Mesa AZ 85201",
+   "city": "Mesa",
+   "phone": "602-267-4139",
+   "hours": "Mo-Fr 8am-11:30am",
+   "hoursByDay": [
+    null,
+    {
+     "openMin": 480,
+     "closeMin": 690
+    },
+    {
+     "openMin": 480,
+     "closeMin": 690
+    },
+    {
+     "openMin": 480,
+     "closeMin": 690
+    },
+    {
+     "openMin": 480,
+     "closeMin": 690
+    },
+    {
+     "openMin": 480,
+     "closeMin": 690
+    },
+    null
+   ],
+   "open24": false,
+   "hoursKnown": true,
+   "services": null,
+   "pets": true,
+   "adaAccessible": true,
+   "seasonStart": "2026-05-01",
+   "seasonEnd": "2026-09-30",
+   "source": "magHRN",
+   "verifiedDate": "2026-08-30"
+  },
+  {
+   "id": "hrn-188",
+   "name": "Warren Ledbetter Service Center",
+   "org": "The Salvation Army",
+   "kind": "cooling_center",
+   "lon": -112.023429,
+   "lat": 33.448632,
+   "address": "2702 E. Washington St. Phoenix AZ 85034",
+   "city": "Phoenix",
+   "phone": "602-267-4193",
+   "hours": "Mo-Fr 8am-4pm",
+   "hoursByDay": [
+    null,
+    {
+     "openMin": 480,
+     "closeMin": 960
+    },
+    {
+     "openMin": 480,
+     "closeMin": 960
+    },
+    {
+     "openMin": 480,
+     "closeMin": 960
+    },
+    {
+     "openMin": 480,
+     "closeMin": 960
+    },
+    {
+     "openMin": 480,
+     "closeMin": 960
+    },
+    null
+   ],
+   "open24": false,
+   "hoursKnown": true,
+   "services": "Homeless services, Food, Hygiene items, Utility Assistance",
+   "pets": true,
+   "adaAccessible": true,
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
@@ -3380,6 +3650,51 @@
    "services": null,
    "pets": null,
    "adaAccessible": null,
+   "seasonStart": "2026-05-01",
+   "seasonEnd": "2026-09-30",
+   "source": "magHRN",
+   "verifiedDate": "2026-08-30"
+  },
+  {
+   "id": "hrn-191",
+   "name": "North West Valley Corps",
+   "org": "The Salvation Army",
+   "kind": "cooling_center",
+   "lon": -112.305794,
+   "lat": 33.642222,
+   "address": "17420 N. Avenue of the Arts Blvd. Surprise AZ 85378",
+   "city": "Surprise",
+   "phone": "602-267-4193",
+   "hours": "Mo-Fr 9am-4pm",
+   "hoursByDay": [
+    null,
+    {
+     "openMin": 540,
+     "closeMin": 960
+    },
+    {
+     "openMin": 540,
+     "closeMin": 960
+    },
+    {
+     "openMin": 540,
+     "closeMin": 960
+    },
+    {
+     "openMin": 540,
+     "closeMin": 960
+    },
+    {
+     "openMin": 540,
+     "closeMin": 960
+    },
+    null
+   ],
+   "open24": false,
+   "hoursKnown": true,
+   "services": null,
+   "pets": true,
+   "adaAccessible": true,
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
@@ -4937,6 +5252,54 @@
    "verifiedDate": "2026-08-30"
   },
   {
+   "id": "hrn-396",
+   "name": "AZCEND",
+   "org": "AZCEND",
+   "kind": "respite_center",
+   "lon": -111.84344,
+   "lat": 33.29804,
+   "address": "345 S. California St. Chandler AZ 85225",
+   "city": "Chandler",
+   "phone": "480-963-1423",
+   "hours": "Su-Fr 9am-7pm",
+   "hoursByDay": [
+    {
+     "openMin": 540,
+     "closeMin": 1140
+    },
+    {
+     "openMin": 540,
+     "closeMin": 1140
+    },
+    {
+     "openMin": 540,
+     "closeMin": 1140
+    },
+    {
+     "openMin": 540,
+     "closeMin": 1140
+    },
+    {
+     "openMin": 540,
+     "closeMin": 1140
+    },
+    {
+     "openMin": 540,
+     "closeMin": 1140
+    },
+    null
+   ],
+   "open24": false,
+   "hoursKnown": true,
+   "services": "Homeless services, Food, Clothing, Hygiene items, Showers, Laundry, Utility Assistance",
+   "pets": true,
+   "adaAccessible": true,
+   "seasonStart": "2026-05-01",
+   "seasonEnd": "2026-10-31",
+   "source": "magHRN",
+   "verifiedDate": "2026-08-30"
+  },
+  {
    "id": "hrn-397",
    "name": "University Presbyterian Church Tempe",
    "org": "University Presbyterian Church Tempe",
@@ -5029,57 +5392,6 @@
    "adaAccessible": false,
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
-   "source": "magHRN",
-   "verifiedDate": "2026-08-30"
-  },
-  {
-   "id": "hrn-399",
-   "name": "AZCEND",
-   "org": "AZCEND",
-   "kind": "respite_center",
-   "lon": -111.84344,
-   "lat": 33.29804,
-   "address": "345 S. California St. Chandler AZ 85225",
-   "city": "Chandler",
-   "phone": "480-963-1423",
-   "hours": "Mo-Su 9am-7pm",
-   "hoursByDay": [
-    {
-     "openMin": 540,
-     "closeMin": 1140
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1140
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1140
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1140
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1140
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1140
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1140
-    }
-   ],
-   "open24": false,
-   "hoursKnown": true,
-   "services": "Homeless services, Food, Clothing, Hygiene items, Showers, Laundry, Utility Assistance",
-   "pets": true,
-   "adaAccessible": true,
-   "seasonStart": "2026-05-01",
-   "seasonEnd": "2026-10-31",
    "source": "magHRN",
    "verifiedDate": "2026-08-30"
   },
@@ -5855,6 +6167,39 @@
    "verifiedDate": "2026-08-30"
   },
   {
+   "id": "hrn-447",
+   "name": "Scottsdale Congregational United Church of Christ",
+   "org": "Community House",
+   "kind": "respite_center",
+   "lon": -111.900178,
+   "lat": 33.500932,
+   "address": "4425 N. Granite Reef Rd. Scottsdale AZ 85251",
+   "city": "Scottsdale",
+   "phone": "303-887-0574",
+   "hours": "Mo 10am-6pm",
+   "hoursByDay": [
+    null,
+    {
+     "openMin": 600,
+     "closeMin": 1080
+    },
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   "open24": false,
+   "hoursKnown": true,
+   "services": null,
+   "pets": true,
+   "adaAccessible": true,
+   "seasonStart": "2026-05-01",
+   "seasonEnd": "2026-09-30",
+   "source": "magHRN",
+   "verifiedDate": "2026-08-30"
+  },
+  {
    "id": "hrn-449",
    "name": "Glendale City Court",
    "org": "City of Glendale",
@@ -5939,39 +6284,6 @@
    "services": null,
    "pets": null,
    "adaAccessible": null,
-   "seasonStart": "2026-05-01",
-   "seasonEnd": "2026-09-30",
-   "source": "magHRN",
-   "verifiedDate": "2026-08-30"
-  },
-  {
-   "id": "hrn-451",
-   "name": "Scottsdale Congregational United Church of Christ",
-   "org": "Community House",
-   "kind": "respite_center",
-   "lon": -111.900178,
-   "lat": 33.500932,
-   "address": "4425 N. Granite Reef Rd. Scottsdale AZ 85251",
-   "city": "Scottsdale",
-   "phone": "303-887-0574",
-   "hours": "Mo 9am-7pm",
-   "hoursByDay": [
-    null,
-    {
-     "openMin": 540,
-     "closeMin": 1140
-    },
-    null,
-    null,
-    null,
-    null,
-    null
-   ],
-   "open24": false,
-   "hoursKnown": true,
-   "services": null,
-   "pets": true,
-   "adaAccessible": true,
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
@@ -10506,321 +10818,6 @@
    "pets": null,
    "adaAccessible": null,
    "seasonStart": "2026-07-02",
-   "seasonEnd": "2026-09-30",
-   "source": "magHRN",
-   "verifiedDate": "2026-08-30"
-  },
-  {
-   "id": "hrn-589",
-   "name": "Phoenix Maryvale Corps",
-   "org": "The Salvation Army",
-   "kind": "cooling_center",
-   "lon": -112.15228,
-   "lat": 33.49182,
-   "address": "4318 W. Clarendon Ave. Phoenix AZ 85031",
-   "city": "Phoenix",
-   "phone": "602-267-4193",
-   "hours": "Mo-Fr 8am-5pm",
-   "hoursByDay": [
-    null,
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    null
-   ],
-   "open24": false,
-   "hoursKnown": true,
-   "services": null,
-   "pets": true,
-   "adaAccessible": true,
-   "seasonStart": "2026-05-01",
-   "seasonEnd": "2026-09-30",
-   "source": "magHRN",
-   "verifiedDate": "2026-08-30"
-  },
-  {
-   "id": "hrn-590",
-   "name": "Apache Junction Corps",
-   "org": "The Salvation Army",
-   "kind": "cooling_center",
-   "lon": -111.539353,
-   "lat": 33.407749,
-   "address": "605 E. Broadway Ave. Apache Junction AZ 85119",
-   "city": "Apache Junction",
-   "phone": "602-267-4193",
-   "hours": "Mo-Fr 9am-5pm",
-   "hoursByDay": [
-    null,
-    {
-     "openMin": 540,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1020
-    },
-    null
-   ],
-   "open24": false,
-   "hoursKnown": true,
-   "services": "Hygiene items",
-   "pets": true,
-   "adaAccessible": true,
-   "seasonStart": "2026-05-01",
-   "seasonEnd": "2026-09-30",
-   "source": "magHRN",
-   "verifiedDate": "2026-08-30"
-  },
-  {
-   "id": "hrn-591",
-   "name": "Chandler Corps",
-   "org": "The Salvation Army",
-   "kind": "cooling_center",
-   "lon": -111.83993,
-   "lat": 33.29455,
-   "address": "85 E. Saragosa St. Chandler AZ 85225",
-   "city": "Chandler",
-   "phone": "602-267-4193",
-   "hours": "Mo-Fr 8:30am-5pm",
-   "hoursByDay": [
-    null,
-    {
-     "openMin": 510,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 510,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 510,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 510,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 510,
-     "closeMin": 1020
-    },
-    null
-   ],
-   "open24": false,
-   "hoursKnown": true,
-   "services": null,
-   "pets": true,
-   "adaAccessible": true,
-   "seasonStart": "2026-05-01",
-   "seasonEnd": "2026-09-30",
-   "source": "magHRN",
-   "verifiedDate": "2026-08-30"
-  },
-  {
-   "id": "hrn-592",
-   "name": "Phoenix Citadel Corps",
-   "org": "The Salvation Army",
-   "kind": "cooling_center",
-   "lon": -112.07809,
-   "lat": 33.45526,
-   "address": "628 N. 3rd Ave. Phoenix AZ 85003",
-   "city": "Phoenix",
-   "phone": "602-267-4193",
-   "hours": "Mo-Fr 8am-5pm",
-   "hoursByDay": [
-    null,
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    null
-   ],
-   "open24": false,
-   "hoursKnown": true,
-   "services": null,
-   "pets": true,
-   "adaAccessible": true,
-   "seasonStart": "2026-05-01",
-   "seasonEnd": "2026-09-30",
-   "source": "magHRN",
-   "verifiedDate": "2026-08-30"
-  },
-  {
-   "id": "hrn-593",
-   "name": "Mesa Corps",
-   "org": "The Salvation Army",
-   "kind": "cooling_center",
-   "lon": -111.82563,
-   "lat": 33.42486,
-   "address": "241 E. 6th St. Mesa AZ 85201",
-   "city": "Mesa",
-   "phone": "602-267-4139",
-   "hours": "Mo-Fr 8am-5pm",
-   "hoursByDay": [
-    null,
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    null
-   ],
-   "open24": false,
-   "hoursKnown": true,
-   "services": null,
-   "pets": true,
-   "adaAccessible": true,
-   "seasonStart": "2026-05-01",
-   "seasonEnd": "2026-09-30",
-   "source": "magHRN",
-   "verifiedDate": "2026-08-30"
-  },
-  {
-   "id": "hrn-594",
-   "name": "Warren Ledbetter Service Center",
-   "org": "The Salvation Army",
-   "kind": "cooling_center",
-   "lon": -112.023429,
-   "lat": 33.448632,
-   "address": "2702 E. Washington St. Phoenix AZ 85034",
-   "city": "Phoenix",
-   "phone": "602-267-4193",
-   "hours": "Mo-Fr 8am-5pm",
-   "hoursByDay": [
-    null,
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    null
-   ],
-   "open24": false,
-   "hoursKnown": true,
-   "services": "Homeless services, Food, Hygiene items, Utility Assistance",
-   "pets": true,
-   "adaAccessible": true,
-   "seasonStart": "2026-05-01",
-   "seasonEnd": "2026-09-30",
-   "source": "magHRN",
-   "verifiedDate": "2026-08-30"
-  },
-  {
-   "id": "hrn-595",
-   "name": "North West Valley Corps",
-   "org": "The Salvation Army",
-   "kind": "cooling_center",
-   "lon": -112.305794,
-   "lat": 33.642222,
-   "address": "17420 N. Avenue of the Arts Blvd. Surprise AZ 85378",
-   "city": "Surprise",
-   "phone": "602-267-4193",
-   "hours": "Mo-Fr 9am-5pm",
-   "hoursByDay": [
-    null,
-    {
-     "openMin": 540,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1020
-    },
-    null
-   ],
-   "open24": false,
-   "hoursKnown": true,
-   "services": null,
-   "pets": true,
-   "adaAccessible": true,
-   "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
    "verifiedDate": "2026-08-30"

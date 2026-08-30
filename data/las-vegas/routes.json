@@ -1,7 +1,7 @@
 {
  "schema": "coolroute.routes.v2",
  "regionId": "las-vegas",
- "generatedAt": "2026-08-30T00:38:28.804Z",
+ "generatedAt": "2026-08-30T06:20:12.534Z",
  "provider": "ors",
  "note": "Routes follow the real road network, resolved once at build time and committed so the demo runs with no network. Depot and work-zone endpoints are real named locations inside the focus tiles; the runs themselves are representative, not an operator manifest.",
  "failures": [],
@@ -539,7 +539,7 @@
    "distanceM": 5192,
    "durationS": 716,
    "provider": "ors",
-   "fetchedAt": "2026-08-30T00:38:07.907Z"
+   "fetchedAt": "2026-08-30T06:19:51.154Z"
   },
   {
    "id": "v2-strip-north",
@@ -1822,7 +1822,7 @@
    "distanceM": 17727,
    "durationS": 2404,
    "provider": "ors",
-   "fetchedAt": "2026-08-30T00:38:13.074Z"
+   "fetchedAt": "2026-08-30T06:19:56.457Z"
   },
   {
    "id": "v3-fremont-civic",
@@ -2177,7 +2177,7 @@
    "distanceM": 3957,
    "durationS": 492,
    "provider": "ors",
-   "fetchedAt": "2026-08-30T00:38:18.324Z"
+   "fetchedAt": "2026-08-30T06:20:01.748Z"
   },
   {
    "id": "v4-downtown-grid",
@@ -2840,7 +2840,7 @@
    "distanceM": 8722,
    "durationS": 865,
    "provider": "ors",
-   "fetchedAt": "2026-08-30T00:38:23.498Z"
+   "fetchedAt": "2026-08-30T06:20:07.023Z"
   },
   {
    "id": "v5-utility-west",
@@ -3603,7 +3603,7 @@
    "distanceM": 9772,
    "durationS": 987,
    "provider": "ors",
-   "fetchedAt": "2026-08-30T00:38:28.638Z"
+   "fetchedAt": "2026-08-30T06:20:12.328Z"
   }
  ],
  "workerDemo": {
@@ -3896,7 +3896,7 @@
    "distanceM": 2817,
    "durationS": 336,
    "provider": "ors",
-   "fetchedAt": "2026-08-30T00:38:28.803Z"
+   "fetchedAt": "2026-08-30T06:20:12.533Z"
   },
   "alternative": {
    "id": "worker-demo-alt",
@@ -4227,7 +4227,7 @@
    "distanceM": 3108,
    "durationS": 390,
    "provider": "ors",
-   "fetchedAt": "2026-08-30T00:38:28.803Z",
+   "fetchedAt": "2026-08-30T06:20:12.534Z",
    "alternativeOf": "worker-demo-primary"
   }
  }
