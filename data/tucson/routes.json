@@ -1,7 +1,7 @@
 {
  "schema": "coolroute.routes.v2",
  "regionId": "tucson",
- "generatedAt": "2026-09-04T21:43:51.541Z",
+ "generatedAt": "2026-09-04T23:50:07.576Z",
  "provider": "osrm",
  "note": "Routes follow the real road network, resolved once at build time and committed so the demo runs with no network. Depot and work-zone endpoints are real named locations inside the focus tiles; the runs themselves are representative, not an operator manifest.",
  "failures": [],
@@ -516,6 +516,10 @@
      32.228467
     ],
     [
+     -110.956663,
+     32.228511
+    ],
+    [
      -110.956706,
      32.228573
     ],
@@ -905,9 +909,9 @@
     ]
    ],
    "distanceM": 4874,
-   "durationS": 642,
+   "durationS": 644,
    "provider": "osrm",
-   "fetchedAt": "2026-09-04T21:43:28.089Z"
+   "fetchedAt": "2026-09-04T23:49:42.866Z"
   },
   {
    "id": "t2-fourth-avenue",
@@ -1636,9 +1640,9 @@
     ]
    ],
    "distanceM": 3382,
-   "durationS": 486,
+   "durationS": 488,
    "provider": "osrm",
-   "fetchedAt": "2026-09-04T21:43:33.864Z"
+   "fetchedAt": "2026-09-04T23:49:48.937Z"
   },
   {
    "id": "t3-south-industrial",
@@ -2797,7 +2801,7 @@
    "distanceM": 7277,
    "durationS": 831,
    "provider": "osrm",
-   "fetchedAt": "2026-09-04T21:43:39.651Z"
+   "fetchedAt": "2026-09-04T23:49:55.007Z"
   },
   {
    "id": "t4-airport-approach",
@@ -3190,6 +3194,10 @@
     ],
     [
      -110.9768,
+     32.177813
+    ],
+    [
+     -110.976445,
      32.177813
     ],
     [
@@ -3902,9 +3910,9 @@
     ]
    ],
    "distanceM": 7067,
-   "durationS": 722,
+   "durationS": 723,
    "provider": "osrm",
-   "fetchedAt": "2026-09-04T21:43:45.430Z"
+   "fetchedAt": "2026-09-04T23:50:01.082Z"
   },
   {
    "id": "t5-civic-parks",
@@ -5060,6 +5068,10 @@
      32.228467
     ],
     [
+     -110.956663,
+     32.228511
+    ],
+    [
      -110.956706,
      32.228573
     ],
@@ -5113,9 +5125,9 @@
     ]
    ],
    "distanceM": 5811,
-   "durationS": 585,
+   "durationS": 586,
    "provider": "osrm",
-   "fetchedAt": "2026-09-04T21:43:51.207Z"
+   "fetchedAt": "2026-09-04T23:50:07.151Z"
   }
  ],
  "workerDemo": {
@@ -6114,9 +6126,9 @@
     ]
    ],
    "distanceM": 6071,
-   "durationS": 471,
+   "durationS": 473,
    "provider": "osrm",
-   "fetchedAt": "2026-09-04T21:43:51.541Z"
+   "fetchedAt": "2026-09-04T23:50:07.576Z"
   },
   "alternative": {
    "id": "worker-demo-alt",
@@ -7397,9 +7409,9 @@
     ]
    ],
    "distanceM": 5583,
-   "durationS": 501,
+   "durationS": 502,
    "provider": "osrm",
-   "fetchedAt": "2026-09-04T21:43:51.541Z",
+   "fetchedAt": "2026-09-04T23:50:07.576Z",
    "alternativeOf": "worker-demo-primary"
   }
  }
