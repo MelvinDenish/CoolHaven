@@ -2,9 +2,9 @@
  "schema": "coolroute.manifest.v2",
  "regionId": "phoenix",
  "snapshotDate": "2026-09-04",
- "generatedAt": "2026-09-04T19:23:27.943Z",
+ "generatedAt": "2026-09-04T21:43:51.949Z",
  "liveApiUsed": true,
- "fetchedThisRun": 1,
+ "fetchedThisRun": 0,
  "unavailable": [
   "sky-harbor-corridor|2026-09-05",
   "midtown-camelback|2026-09-05"
@@ -47,7 +47,7 @@
   }
  ],
  "notes": [
-  "Snapshot date 2026-09-04. 4 of 4 grids are FortyGuard data; 1 of them were fetched this run, the rest were already cached.",
+  "Snapshot date 2026-09-04. 4 of 4 grids are FortyGuard data; none were fetched this run, every grid was already cached.",
   "The API does not report credit consumption in its response payload.",
   "Temperatures arrive in Celsius and are converted to Fahrenheit at the client boundary.",
   "API limitation: only filter_type 3 (forecast) succeeds on this key; 1, 2 and 4 return HTTP 500. The historic/forecast separation is still enforced in code.",
