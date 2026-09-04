@@ -2,7 +2,7 @@
  "schema": "coolroute.manifest.v2",
  "regionId": "tucson",
  "snapshotDate": "2026-09-04",
- "generatedAt": "2026-09-04T16:58:26.525Z",
+ "generatedAt": "2026-09-04T19:24:28.259Z",
  "liveApiUsed": true,
  "fetchedThisRun": 1,
  "unavailable": [
@@ -14,6 +14,14 @@
  ],
  "grids": [
   {
+   "file": "tucson-downtown__ft3__2026-09-04.json",
+   "tileId": "tucson-downtown",
+   "filterType": 3,
+   "validAt": "2026-09-04T15:00:00-07:00",
+   "source": "fortyguard",
+   "granularityM": 100
+  },
+  {
    "file": "tucson-south-industrial__ft3__2026-09-04.json",
    "tileId": "tucson-south-industrial",
    "filterType": 3,
@@ -23,13 +31,12 @@
   }
  ],
  "notes": [
-  "Snapshot date 2026-09-04. 1 of 1 grids are FortyGuard data; all 1 were fetched this run.",
+  "Snapshot date 2026-09-04. 2 of 2 grids are FortyGuard data; 1 of them were fetched this run, the rest were already cached.",
   "The API does not report credit consumption in its response payload.",
   "Temperatures arrive in Celsius and are converted to Fahrenheit at the client boundary.",
   "API limitation: only filter_type 3 (forecast) succeeds on this key; 1, 2 and 4 return HTTP 500. The historic/forecast separation is still enforced in code.",
   "API limitation: no hour-of-day parameter exists, so slices are forecast DAYS. Intra-day variation comes from the min/average/max each cell carries.",
   "The API completed but returned no data for: tucson-downtown|2026-09-05, tucson-south-industrial|2026-09-05. Those days are omitted from the snapshot rather than filled with a modelled stand-in, so the day selector only offers days the service actually served.",
-  "Failed calls this run: tucson-downtown 2026-09-04: status check failed (404)",
-  "Incomplete or fallback run: older grid files were NOT pruned, so the previous snapshot stays on disk rather than leaving a gap."
+  "Pruned 2 grid file(s) describing dates outside this snapshot. The cache holds only the dates the UI can reach."
  ]
 }

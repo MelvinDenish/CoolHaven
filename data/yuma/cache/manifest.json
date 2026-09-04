@@ -2,9 +2,9 @@
  "schema": "coolroute.manifest.v2",
  "regionId": "yuma",
  "snapshotDate": "2026-09-04",
- "generatedAt": "2026-09-04T16:54:50.832Z",
+ "generatedAt": "2026-09-04T19:23:27.946Z",
  "liveApiUsed": true,
- "fetchedThisRun": 2,
+ "fetchedThisRun": 0,
  "unavailable": [
   "yuma-core|2026-09-05",
   "somerton-corridor|2026-09-05"
@@ -31,12 +31,11 @@
   }
  ],
  "notes": [
-  "Snapshot date 2026-09-04. 2 of 2 grids are FortyGuard data; all 2 were fetched this run.",
+  "Snapshot date 2026-09-04. 2 of 2 grids are FortyGuard data; none were fetched this run, every grid was already cached.",
   "The API does not report credit consumption in its response payload.",
   "Temperatures arrive in Celsius and are converted to Fahrenheit at the client boundary.",
   "API limitation: only filter_type 3 (forecast) succeeds on this key; 1, 2 and 4 return HTTP 500. The historic/forecast separation is still enforced in code.",
   "API limitation: no hour-of-day parameter exists, so slices are forecast DAYS. Intra-day variation comes from the min/average/max each cell carries.",
-  "The API completed but returned no data for: yuma-core|2026-09-05, somerton-corridor|2026-09-05. Those days are omitted from the snapshot rather than filled with a modelled stand-in, so the day selector only offers days the service actually served.",
-  "Pruned 2 grid file(s) describing dates outside this snapshot. The cache holds only the dates the UI can reach."
+  "The API completed but returned no data for: yuma-core|2026-09-05, somerton-corridor|2026-09-05. Those days are omitted from the snapshot rather than filled with a modelled stand-in, so the day selector only offers days the service actually served."
  ]
 }
