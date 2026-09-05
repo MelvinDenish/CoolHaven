@@ -6,8 +6,8 @@
  "endpoint": "https://services1.arcgis.com/MdyCMZnX1raZ7TS3/arcgis/rest/services/HRN_Public_view/FeatureServer/0/query",
  "where": "1=1",
  "attribution": "Maricopa Association of Governments (MAG) Heat Relief Network, public feature service. Locations, hours and services as published by MAG.",
- "fetchedAt": "2026-09-05T03:26:59.072Z",
- "totalCount": 249,
+ "fetchedAt": "2026-09-05T20:15:20.173Z",
+ "totalCount": 248,
  "focusCount": 47,
  "focusBbox": [
   -112.098,
@@ -15,11 +15,11 @@
   -111.985,
   33.515
  ],
- "withKnownHours": 247,
+ "withKnownHours": 246,
  "byKind": {
   "cooling_center": 94,
   "hydration_station": 141,
-  "respite_center": 14
+  "respite_center": 13
  },
  "sites": [
   {
@@ -5251,57 +5251,6 @@
    "adaAccessible": true,
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-10-31",
-   "source": "magHRN",
-   "verifiedDate": "2026-09-05"
-  },
-  {
-   "id": "hrn-397",
-   "name": "University Presbyterian Church Tempe",
-   "org": "University Presbyterian Church Tempe",
-   "kind": "respite_center",
-   "lon": -111.935917,
-   "lat": 33.399681,
-   "address": "139 E. Alameda Dr. Tempe AZ 85282",
-   "city": "Tempe",
-   "phone": "602-363-4119",
-   "hours": "Mo, We, Th & Sa 11am-7pm; Tu 11am-2pm; Fr 11am-3pm, Su 12pm-7pm",
-   "hoursByDay": [
-    {
-     "openMin": 720,
-     "closeMin": 1140
-    },
-    {
-     "openMin": 660,
-     "closeMin": 1140
-    },
-    {
-     "openMin": 660,
-     "closeMin": 840
-    },
-    {
-     "openMin": 660,
-     "closeMin": 1140
-    },
-    {
-     "openMin": 660,
-     "closeMin": 1140
-    },
-    {
-     "openMin": 660,
-     "closeMin": 900
-    },
-    {
-     "openMin": 660,
-     "closeMin": 1140
-    }
-   ],
-   "open24": false,
-   "hoursKnown": true,
-   "services": "Food, Showers",
-   "pets": true,
-   "adaAccessible": true,
-   "seasonStart": "2026-08-01",
-   "seasonEnd": "2026-09-15",
    "source": "magHRN",
    "verifiedDate": "2026-09-05"
   },
