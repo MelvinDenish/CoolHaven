@@ -6,7 +6,7 @@
  "endpoint": "https://services1.arcgis.com/MdyCMZnX1raZ7TS3/arcgis/rest/services/HRN_Public_view/FeatureServer/0/query",
  "where": "1=1",
  "attribution": "Maricopa Association of Governments (MAG) Heat Relief Network, public feature service. Locations, hours and services as published by MAG.",
- "fetchedAt": "2026-09-06T04:57:59.934Z",
+ "fetchedAt": "2026-09-06T16:01:10.442Z",
  "totalCount": 248,
  "focusCount": 47,
  "focusBbox": [
@@ -18,8 +18,8 @@
  "withKnownHours": 246,
  "byKind": {
   "cooling_center": 94,
-  "hydration_station": 141,
-  "respite_center": 13
+  "hydration_station": 140,
+  "respite_center": 14
  },
  "sites": [
   {
@@ -4178,42 +4178,6 @@
    "verifiedDate": "2026-09-06"
   },
   {
-   "id": "hrn-275",
-   "name": "Mom's Pantry",
-   "org": "Mom's Pantry",
-   "kind": "hydration_station",
-   "lon": -112.036551,
-   "lat": 33.609561,
-   "address": "13440 N. Cave Creek Rd. Phoenix AZ 85022",
-   "city": "Phoenix",
-   "phone": "602-810-7521",
-   "hours": "Sa 10am-2pm, Su 10am-1pm",
-   "hoursByDay": [
-    {
-     "openMin": 600,
-     "closeMin": 780
-    },
-    null,
-    null,
-    null,
-    null,
-    null,
-    {
-     "openMin": 600,
-     "closeMin": 840
-    }
-   ],
-   "open24": false,
-   "hoursKnown": true,
-   "services": "Food, Hygiene items",
-   "pets": null,
-   "adaAccessible": null,
-   "seasonStart": "2026-05-02",
-   "seasonEnd": "2026-09-30",
-   "source": "magHRN",
-   "verifiedDate": "2026-09-06"
-  },
-  {
    "id": "hrn-283",
    "name": "Cholla Health Center",
    "org": "Neighborhood Outreach Access to Health",
@@ -5251,6 +5215,57 @@
    "adaAccessible": true,
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-10-31",
+   "source": "magHRN",
+   "verifiedDate": "2026-09-06"
+  },
+  {
+   "id": "hrn-397",
+   "name": "University Presbyterian Church Tempe",
+   "org": "University Presbyterian Church Tempe",
+   "kind": "respite_center",
+   "lon": -111.935917,
+   "lat": 33.399681,
+   "address": "139 E. Alameda Dr. Tempe AZ 85282",
+   "city": "Tempe",
+   "phone": "602-363-4119",
+   "hours": "Mo, We, Th & Sa 11am-7pm; Tu 11am-2pm; Fr 11am-3pm, Su 12pm-7pm",
+   "hoursByDay": [
+    {
+     "openMin": 720,
+     "closeMin": 1140
+    },
+    {
+     "openMin": 660,
+     "closeMin": 1140
+    },
+    {
+     "openMin": 660,
+     "closeMin": 840
+    },
+    {
+     "openMin": 660,
+     "closeMin": 1140
+    },
+    {
+     "openMin": 660,
+     "closeMin": 1140
+    },
+    {
+     "openMin": 660,
+     "closeMin": 900
+    },
+    {
+     "openMin": 660,
+     "closeMin": 1140
+    }
+   ],
+   "open24": false,
+   "hoursKnown": true,
+   "services": "Food, Showers",
+   "pets": true,
+   "adaAccessible": true,
+   "seasonStart": "2026-08-01",
+   "seasonEnd": "2026-09-15",
    "source": "magHRN",
    "verifiedDate": "2026-09-06"
   },
