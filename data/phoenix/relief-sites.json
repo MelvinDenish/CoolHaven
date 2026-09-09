@@ -6,7 +6,7 @@
  "endpoint": "https://services1.arcgis.com/MdyCMZnX1raZ7TS3/arcgis/rest/services/HRN_Public_view/FeatureServer/0/query",
  "where": "1=1",
  "attribution": "Maricopa Association of Governments (MAG) Heat Relief Network, public feature service. Locations, hours and services as published by MAG.",
- "fetchedAt": "2026-09-08T22:54:01.437Z",
+ "fetchedAt": "2026-09-09T01:05:07.624Z",
  "totalCount": 242,
  "focusCount": 46,
  "focusBbox": [
@@ -68,7 +68,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-2",
@@ -110,7 +110,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-3",
@@ -161,7 +161,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-4",
@@ -209,7 +209,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-12",
@@ -254,7 +254,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-13",
@@ -299,7 +299,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-14",
@@ -344,7 +344,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-15",
@@ -389,7 +389,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-16",
@@ -434,7 +434,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-17",
@@ -479,7 +479,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-18",
@@ -524,7 +524,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-19",
@@ -569,7 +569,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-20",
@@ -614,7 +614,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-21",
@@ -659,7 +659,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-22",
@@ -704,7 +704,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-23",
@@ -749,7 +749,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-24",
@@ -794,7 +794,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-25",
@@ -839,7 +839,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-37",
@@ -887,7 +887,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-38",
@@ -929,7 +929,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-39",
@@ -974,7 +974,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-41",
@@ -1019,7 +1019,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-42",
@@ -1064,7 +1064,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-43",
@@ -1109,7 +1109,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-44",
@@ -1154,7 +1154,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-48",
@@ -1199,7 +1199,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-55",
@@ -1244,7 +1244,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-65",
@@ -1292,7 +1292,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-66",
@@ -1340,7 +1340,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-67",
@@ -1388,7 +1388,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-68",
@@ -1439,7 +1439,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-27",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-69",
@@ -1487,7 +1487,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-70",
@@ -1535,7 +1535,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-71",
@@ -1583,7 +1583,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-72",
@@ -1631,7 +1631,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-73",
@@ -1679,7 +1679,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-74",
@@ -1727,7 +1727,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-75",
@@ -1775,7 +1775,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-76",
@@ -1823,7 +1823,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-77",
@@ -1871,7 +1871,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-78",
@@ -1919,7 +1919,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-80",
@@ -1967,7 +1967,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-81",
@@ -2015,7 +2015,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-82",
@@ -2063,7 +2063,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-83",
@@ -2108,7 +2108,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-84",
@@ -2153,7 +2153,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-86",
@@ -2198,7 +2198,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-87",
@@ -2243,7 +2243,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-97",
@@ -2291,7 +2291,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-98",
@@ -2339,7 +2339,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-99",
@@ -2387,7 +2387,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-100",
@@ -2435,7 +2435,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-101",
@@ -2483,7 +2483,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-103",
@@ -2528,7 +2528,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-104",
@@ -2579,7 +2579,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-137",
@@ -2624,7 +2624,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-138",
@@ -2669,7 +2669,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-140",
@@ -2717,7 +2717,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-141",
@@ -2765,7 +2765,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-145",
@@ -2816,7 +2816,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-147",
@@ -2867,7 +2867,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-151",
@@ -2912,7 +2912,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-152",
@@ -2957,7 +2957,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-159",
@@ -3008,7 +3008,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-167",
@@ -3053,7 +3053,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-168",
@@ -3104,7 +3104,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-176",
@@ -3149,7 +3149,142 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
+  },
+  {
+   "id": "hrn-181",
+   "name": "Phoenix Maryvale Corps",
+   "org": "The Salvation Army",
+   "kind": "cooling_center",
+   "lon": -112.15228,
+   "lat": 33.49182,
+   "address": "4318 W. Clarendon Ave. Phoenix AZ 85031",
+   "city": "Phoenix",
+   "phone": "602-267-4193",
+   "hours": "Mo-Fr 8am-4:30pm",
+   "hoursByDay": [
+    null,
+    {
+     "openMin": 480,
+     "closeMin": 990
+    },
+    {
+     "openMin": 480,
+     "closeMin": 990
+    },
+    {
+     "openMin": 480,
+     "closeMin": 990
+    },
+    {
+     "openMin": 480,
+     "closeMin": 990
+    },
+    {
+     "openMin": 480,
+     "closeMin": 990
+    },
+    null
+   ],
+   "open24": false,
+   "hoursKnown": true,
+   "services": null,
+   "pets": true,
+   "adaAccessible": true,
+   "seasonStart": "2026-05-01",
+   "seasonEnd": "2026-09-30",
+   "source": "magHRN",
+   "verifiedDate": "2026-09-09"
+  },
+  {
+   "id": "hrn-182",
+   "name": "Apache Junction Corps",
+   "org": "The Salvation Army",
+   "kind": "cooling_center",
+   "lon": -111.539353,
+   "lat": 33.407749,
+   "address": "605 E. Broadway Ave. Apache Junction AZ 85119",
+   "city": "Apache Junction",
+   "phone": "602-267-4193",
+   "hours": "Mo-Fr 9am-3pm",
+   "hoursByDay": [
+    null,
+    {
+     "openMin": 540,
+     "closeMin": 900
+    },
+    {
+     "openMin": 540,
+     "closeMin": 900
+    },
+    {
+     "openMin": 540,
+     "closeMin": 900
+    },
+    {
+     "openMin": 540,
+     "closeMin": 900
+    },
+    {
+     "openMin": 540,
+     "closeMin": 900
+    },
+    null
+   ],
+   "open24": false,
+   "hoursKnown": true,
+   "services": "Hygiene items",
+   "pets": true,
+   "adaAccessible": true,
+   "seasonStart": "2026-05-01",
+   "seasonEnd": "2026-09-30",
+   "source": "magHRN",
+   "verifiedDate": "2026-09-09"
+  },
+  {
+   "id": "hrn-183",
+   "name": "Chandler Corps",
+   "org": "The Salvation Army",
+   "kind": "cooling_center",
+   "lon": -111.83993,
+   "lat": 33.29455,
+   "address": "85 E. Saragosa St. Chandler AZ 85225",
+   "city": "Chandler",
+   "phone": "602-267-4193",
+   "hours": "Mo-Fr 8:30am-4pm (closed 11:30am-1pm)",
+   "hoursByDay": [
+    null,
+    {
+     "openMin": 510,
+     "closeMin": 960
+    },
+    {
+     "openMin": 510,
+     "closeMin": 960
+    },
+    {
+     "openMin": 510,
+     "closeMin": 960
+    },
+    {
+     "openMin": 510,
+     "closeMin": 960
+    },
+    {
+     "openMin": 510,
+     "closeMin": 960
+    },
+    null
+   ],
+   "open24": false,
+   "hoursKnown": true,
+   "services": null,
+   "pets": true,
+   "adaAccessible": true,
+   "seasonStart": "2026-05-01",
+   "seasonEnd": "2026-09-30",
+   "source": "magHRN",
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-184",
@@ -3194,7 +3329,142 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
+  },
+  {
+   "id": "hrn-186",
+   "name": "Phoenix Citadel Corps",
+   "org": "The Salvation Army",
+   "kind": "cooling_center",
+   "lon": -112.07809,
+   "lat": 33.45526,
+   "address": "628 N. 3rd Ave. Phoenix AZ 85003",
+   "city": "Phoenix",
+   "phone": "602-267-4193",
+   "hours": "Mo-Fr 8am-4:30pm",
+   "hoursByDay": [
+    null,
+    {
+     "openMin": 480,
+     "closeMin": 990
+    },
+    {
+     "openMin": 480,
+     "closeMin": 990
+    },
+    {
+     "openMin": 480,
+     "closeMin": 990
+    },
+    {
+     "openMin": 480,
+     "closeMin": 990
+    },
+    {
+     "openMin": 480,
+     "closeMin": 990
+    },
+    null
+   ],
+   "open24": false,
+   "hoursKnown": true,
+   "services": null,
+   "pets": true,
+   "adaAccessible": true,
+   "seasonStart": "2026-05-01",
+   "seasonEnd": "2026-09-30",
+   "source": "magHRN",
+   "verifiedDate": "2026-09-09"
+  },
+  {
+   "id": "hrn-187",
+   "name": "Mesa Corps",
+   "org": "The Salvation Army",
+   "kind": "cooling_center",
+   "lon": -111.82563,
+   "lat": 33.42486,
+   "address": "241 E. 6th St. Mesa AZ 85201",
+   "city": "Mesa",
+   "phone": "602-267-4139",
+   "hours": "Mo-Fr 8am-11:30am",
+   "hoursByDay": [
+    null,
+    {
+     "openMin": 480,
+     "closeMin": 690
+    },
+    {
+     "openMin": 480,
+     "closeMin": 690
+    },
+    {
+     "openMin": 480,
+     "closeMin": 690
+    },
+    {
+     "openMin": 480,
+     "closeMin": 690
+    },
+    {
+     "openMin": 480,
+     "closeMin": 690
+    },
+    null
+   ],
+   "open24": false,
+   "hoursKnown": true,
+   "services": null,
+   "pets": true,
+   "adaAccessible": true,
+   "seasonStart": "2026-05-01",
+   "seasonEnd": "2026-09-30",
+   "source": "magHRN",
+   "verifiedDate": "2026-09-09"
+  },
+  {
+   "id": "hrn-188",
+   "name": "Warren Ledbetter Service Center",
+   "org": "The Salvation Army",
+   "kind": "cooling_center",
+   "lon": -112.023429,
+   "lat": 33.448632,
+   "address": "2702 E. Washington St. Phoenix AZ 85034",
+   "city": "Phoenix",
+   "phone": "602-267-4193",
+   "hours": "Mo-Fr 8am-4pm",
+   "hoursByDay": [
+    null,
+    {
+     "openMin": 480,
+     "closeMin": 960
+    },
+    {
+     "openMin": 480,
+     "closeMin": 960
+    },
+    {
+     "openMin": 480,
+     "closeMin": 960
+    },
+    {
+     "openMin": 480,
+     "closeMin": 960
+    },
+    {
+     "openMin": 480,
+     "closeMin": 960
+    },
+    null
+   ],
+   "open24": false,
+   "hoursKnown": true,
+   "services": "Homeless services, Food, Hygiene items, Utility Assistance",
+   "pets": true,
+   "adaAccessible": true,
+   "seasonStart": "2026-05-01",
+   "seasonEnd": "2026-09-30",
+   "source": "magHRN",
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-189",
@@ -3239,7 +3509,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-190",
@@ -3287,7 +3557,52 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
+  },
+  {
+   "id": "hrn-191",
+   "name": "North West Valley Corps",
+   "org": "The Salvation Army",
+   "kind": "cooling_center",
+   "lon": -112.305794,
+   "lat": 33.642222,
+   "address": "17420 N. Avenue of the Arts Blvd. Surprise AZ 85378",
+   "city": "Surprise",
+   "phone": "602-267-4193",
+   "hours": "Mo-Fr 9am-4pm",
+   "hoursByDay": [
+    null,
+    {
+     "openMin": 540,
+     "closeMin": 960
+    },
+    {
+     "openMin": 540,
+     "closeMin": 960
+    },
+    {
+     "openMin": 540,
+     "closeMin": 960
+    },
+    {
+     "openMin": 540,
+     "closeMin": 960
+    },
+    {
+     "openMin": 540,
+     "closeMin": 960
+    },
+    null
+   ],
+   "open24": false,
+   "hoursKnown": true,
+   "services": null,
+   "pets": true,
+   "adaAccessible": true,
+   "seasonStart": "2026-05-01",
+   "seasonEnd": "2026-09-30",
+   "source": "magHRN",
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-249",
@@ -3335,7 +3650,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-251",
@@ -3386,7 +3701,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-252",
@@ -3431,7 +3746,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-265",
@@ -3479,7 +3794,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-272",
@@ -3524,7 +3839,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-275",
@@ -3560,7 +3875,7 @@
    "seasonStart": "2026-05-02",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-283",
@@ -3605,7 +3920,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-284",
@@ -3650,7 +3965,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-285",
@@ -3695,7 +4010,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-286",
@@ -3740,7 +4055,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-287",
@@ -3785,7 +4100,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-288",
@@ -3830,7 +4145,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-292",
@@ -3881,7 +4196,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-297",
@@ -3929,7 +4244,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-335",
@@ -3974,7 +4289,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-343",
@@ -4019,7 +4334,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-344",
@@ -4064,7 +4379,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-353",
@@ -4109,7 +4424,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-354",
@@ -4154,7 +4469,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-355",
@@ -4199,7 +4514,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-363",
@@ -4241,7 +4556,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-384",
@@ -4286,7 +4601,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-388",
@@ -4331,7 +4646,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-389",
@@ -4376,7 +4691,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-391",
@@ -4427,7 +4742,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-392",
@@ -4472,7 +4787,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-393",
@@ -4511,7 +4826,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-394",
@@ -4553,7 +4868,55 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
+  },
+  {
+   "id": "hrn-396",
+   "name": "AZCEND",
+   "org": "AZCEND",
+   "kind": "respite_center",
+   "lon": -111.84344,
+   "lat": 33.29804,
+   "address": "345 S. California St. Chandler AZ 85225",
+   "city": "Chandler",
+   "phone": "480-963-1423",
+   "hours": "Su-Fr 9am-7pm",
+   "hoursByDay": [
+    {
+     "openMin": 540,
+     "closeMin": 1140
+    },
+    {
+     "openMin": 540,
+     "closeMin": 1140
+    },
+    {
+     "openMin": 540,
+     "closeMin": 1140
+    },
+    {
+     "openMin": 540,
+     "closeMin": 1140
+    },
+    {
+     "openMin": 540,
+     "closeMin": 1140
+    },
+    {
+     "openMin": 540,
+     "closeMin": 1140
+    },
+    null
+   ],
+   "open24": false,
+   "hoursKnown": true,
+   "services": "Homeless services, Food, Clothing, Hygiene items, Showers, Laundry, Utility Assistance",
+   "pets": true,
+   "adaAccessible": true,
+   "seasonStart": "2026-05-01",
+   "seasonEnd": "2026-10-31",
+   "source": "magHRN",
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-397",
@@ -4604,7 +4967,7 @@
    "seasonStart": "2026-08-01",
    "seasonEnd": "2026-09-15",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-398",
@@ -4649,58 +5012,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
-  },
-  {
-   "id": "hrn-399",
-   "name": "AZCEND",
-   "org": "AZCEND",
-   "kind": "respite_center",
-   "lon": -111.84344,
-   "lat": 33.29804,
-   "address": "345 S. California St. Chandler AZ 85225",
-   "city": "Chandler",
-   "phone": "480-963-1423",
-   "hours": "Mo-Su 9am-7pm",
-   "hoursByDay": [
-    {
-     "openMin": 540,
-     "closeMin": 1140
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1140
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1140
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1140
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1140
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1140
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1140
-    }
-   ],
-   "open24": false,
-   "hoursKnown": true,
-   "services": "Homeless services, Food, Clothing, Hygiene items, Showers, Laundry, Utility Assistance",
-   "pets": true,
-   "adaAccessible": true,
-   "seasonStart": "2026-05-01",
-   "seasonEnd": "2026-10-31",
-   "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-400",
@@ -4739,7 +5051,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-429",
@@ -4784,7 +5096,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-430",
@@ -4832,7 +5144,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-431",
@@ -4883,7 +5195,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-432",
@@ -4934,7 +5246,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-435",
@@ -4985,7 +5297,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-436",
@@ -5036,7 +5348,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-437",
@@ -5084,7 +5396,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-438",
@@ -5132,7 +5444,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-439",
@@ -5183,7 +5495,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-440",
@@ -5234,7 +5546,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-441",
@@ -5282,7 +5594,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-442",
@@ -5327,7 +5639,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-444",
@@ -5375,7 +5687,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-445",
@@ -5423,7 +5735,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-446",
@@ -5471,7 +5783,40 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
+  },
+  {
+   "id": "hrn-447",
+   "name": "Scottsdale Congregational United Church of Christ",
+   "org": "Community House",
+   "kind": "respite_center",
+   "lon": -111.900178,
+   "lat": 33.500932,
+   "address": "4425 N. Granite Reef Rd. Scottsdale AZ 85251",
+   "city": "Scottsdale",
+   "phone": "303-887-0574",
+   "hours": "Mo 10am-6pm",
+   "hoursByDay": [
+    null,
+    {
+     "openMin": 600,
+     "closeMin": 1080
+    },
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   "open24": false,
+   "hoursKnown": true,
+   "services": null,
+   "pets": true,
+   "adaAccessible": true,
+   "seasonStart": "2026-05-01",
+   "seasonEnd": "2026-09-30",
+   "source": "magHRN",
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-449",
@@ -5516,7 +5861,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-450",
@@ -5561,40 +5906,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
-  },
-  {
-   "id": "hrn-451",
-   "name": "Scottsdale Congregational United Church of Christ",
-   "org": "Community House",
-   "kind": "respite_center",
-   "lon": -111.900178,
-   "lat": 33.500932,
-   "address": "4425 N. Granite Reef Rd. Scottsdale AZ 85251",
-   "city": "Scottsdale",
-   "phone": "303-887-0574",
-   "hours": "Mo 9am-7pm",
-   "hoursByDay": [
-    null,
-    {
-     "openMin": 540,
-     "closeMin": 1140
-    },
-    null,
-    null,
-    null,
-    null,
-    null
-   ],
-   "open24": false,
-   "hoursKnown": true,
-   "services": null,
-   "pets": true,
-   "adaAccessible": true,
-   "seasonStart": "2026-05-01",
-   "seasonEnd": "2026-09-30",
-   "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-452",
@@ -5636,7 +5948,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-453",
@@ -5687,7 +5999,7 @@
    "seasonStart": "2026-04-20",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-454",
@@ -5738,7 +6050,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-455",
@@ -5789,7 +6101,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-456",
@@ -5840,7 +6152,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-458",
@@ -5873,7 +6185,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-459",
@@ -5918,7 +6230,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-460",
@@ -5954,7 +6266,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-462",
@@ -6005,7 +6317,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-463",
@@ -6053,7 +6365,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-464",
@@ -6101,7 +6413,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-465",
@@ -6149,7 +6461,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-466",
@@ -6200,7 +6512,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-467",
@@ -6245,7 +6557,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-468",
@@ -6290,7 +6602,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-469",
@@ -6338,7 +6650,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-470",
@@ -6383,7 +6695,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-478",
@@ -6431,7 +6743,7 @@
    "seasonStart": "2026-05-04",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-479",
@@ -6482,7 +6794,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-480",
@@ -6530,7 +6842,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-481",
@@ -6575,7 +6887,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-482",
@@ -6623,7 +6935,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-483",
@@ -6671,7 +6983,7 @@
    "seasonStart": "2026-05-15",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-484",
@@ -6722,7 +7034,7 @@
    "seasonStart": "2026-05-04",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-485",
@@ -6773,7 +7085,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-486",
@@ -6824,7 +7136,7 @@
    "seasonStart": "2026-06-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-489",
@@ -6869,7 +7181,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-490",
@@ -6920,7 +7232,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-491",
@@ -6968,7 +7280,7 @@
    "seasonStart": "2026-05-18",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-492",
@@ -7013,7 +7325,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-493",
@@ -7058,7 +7370,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-494",
@@ -7106,7 +7418,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-495",
@@ -7154,7 +7466,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-496",
@@ -7190,7 +7502,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-498",
@@ -7235,7 +7547,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-499",
@@ -7280,7 +7592,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-511",
@@ -7328,7 +7640,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-512",
@@ -7376,7 +7688,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-513",
@@ -7427,7 +7739,7 @@
    "seasonStart": "2026-05-13",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-514",
@@ -7463,7 +7775,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-516",
@@ -7508,7 +7820,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-518",
@@ -7553,7 +7865,7 @@
    "seasonStart": "2026-05-18",
    "seasonEnd": "2026-10-01",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-519",
@@ -7598,7 +7910,7 @@
    "seasonStart": "2026-05-18",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-520",
@@ -7643,7 +7955,7 @@
    "seasonStart": "2026-05-18",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-521",
@@ -7688,7 +8000,7 @@
    "seasonStart": "2026-05-18",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-522",
@@ -7733,7 +8045,7 @@
    "seasonStart": "2026-05-18",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-523",
@@ -7778,7 +8090,7 @@
    "seasonStart": "2026-05-18",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-524",
@@ -7823,7 +8135,7 @@
    "seasonStart": "2026-05-18",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-525",
@@ -7868,7 +8180,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-526",
@@ -7913,7 +8225,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-527",
@@ -7964,7 +8276,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-528",
@@ -8009,7 +8321,7 @@
    "seasonStart": "2026-05-18",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-529",
@@ -8057,7 +8369,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-530",
@@ -8102,7 +8414,7 @@
    "seasonStart": "2026-05-18",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-531",
@@ -8150,7 +8462,7 @@
    "seasonStart": "2026-05-18",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-532",
@@ -8195,7 +8507,7 @@
    "seasonStart": "2026-05-18",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-533",
@@ -8240,7 +8552,7 @@
    "seasonStart": "2026-05-18",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-534",
@@ -8288,7 +8600,7 @@
    "seasonStart": "2026-05-18",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-535",
@@ -8336,7 +8648,7 @@
    "seasonStart": "2026-05-18",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-537",
@@ -8387,7 +8699,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-538",
@@ -8432,7 +8744,7 @@
    "seasonStart": "2026-08-31",
    "seasonEnd": "2026-09-25",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-540",
@@ -8477,7 +8789,7 @@
    "seasonStart": "2026-05-18",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-541",
@@ -8522,7 +8834,7 @@
    "seasonStart": "2026-05-14",
    "seasonEnd": "2026-09-24",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-542",
@@ -8573,7 +8885,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-544",
@@ -8615,7 +8927,7 @@
    "seasonStart": "2026-06-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-545",
@@ -8663,7 +8975,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-546",
@@ -8711,7 +9023,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-547",
@@ -8759,7 +9071,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-549",
@@ -8798,7 +9110,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-550",
@@ -8843,7 +9155,7 @@
    "seasonStart": "2026-06-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-551",
@@ -8888,7 +9200,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-552",
@@ -8936,7 +9248,7 @@
    "seasonStart": "2026-05-15",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-553",
@@ -8975,7 +9287,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-554",
@@ -9026,7 +9338,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-555",
@@ -9071,7 +9383,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-557",
@@ -9119,7 +9431,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-559",
@@ -9170,7 +9482,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-560",
@@ -9215,7 +9527,7 @@
    "seasonStart": "2026-06-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-562",
@@ -9263,7 +9575,7 @@
    "seasonStart": "2026-05-18",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-563",
@@ -9314,7 +9626,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-564",
@@ -9359,7 +9671,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-565",
@@ -9410,7 +9722,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-566",
@@ -9455,7 +9767,7 @@
    "seasonStart": "2026-06-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-567",
@@ -9500,7 +9812,7 @@
    "seasonStart": "2026-06-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-568",
@@ -9545,7 +9857,7 @@
    "seasonStart": "2026-06-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-569",
@@ -9590,7 +9902,7 @@
    "seasonStart": "2026-06-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-570",
@@ -9635,7 +9947,7 @@
    "seasonStart": "2026-06-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-571",
@@ -9680,7 +9992,7 @@
    "seasonStart": "2026-06-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-573",
@@ -9725,7 +10037,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-574",
@@ -9770,7 +10082,7 @@
    "seasonStart": "2026-06-03",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-580",
@@ -9815,7 +10127,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-581",
@@ -9860,7 +10172,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-583",
@@ -9905,7 +10217,7 @@
    "seasonStart": "2026-06-29",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-584",
@@ -9950,7 +10262,7 @@
    "seasonStart": "2026-07-07",
    "seasonEnd": "2027-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-586",
@@ -9998,7 +10310,7 @@
    "seasonStart": "2026-06-25",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-587",
@@ -10043,7 +10355,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-588",
@@ -10082,322 +10394,7 @@
    "seasonStart": "2026-07-02",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
-  },
-  {
-   "id": "hrn-589",
-   "name": "Phoenix Maryvale Corps",
-   "org": "The Salvation Army",
-   "kind": "cooling_center",
-   "lon": -112.15228,
-   "lat": 33.49182,
-   "address": "4318 W. Clarendon Ave. Phoenix AZ 85031",
-   "city": "Phoenix",
-   "phone": "602-267-4193",
-   "hours": "Mo-Fr 8am-5pm",
-   "hoursByDay": [
-    null,
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    null
-   ],
-   "open24": false,
-   "hoursKnown": true,
-   "services": null,
-   "pets": true,
-   "adaAccessible": true,
-   "seasonStart": "2026-05-01",
-   "seasonEnd": "2026-09-30",
-   "source": "magHRN",
-   "verifiedDate": "2026-09-08"
-  },
-  {
-   "id": "hrn-590",
-   "name": "Apache Junction Corps",
-   "org": "The Salvation Army",
-   "kind": "cooling_center",
-   "lon": -111.539353,
-   "lat": 33.407749,
-   "address": "605 E. Broadway Ave. Apache Junction AZ 85119",
-   "city": "Apache Junction",
-   "phone": "602-267-4193",
-   "hours": "Mo-Fr 9am-5pm",
-   "hoursByDay": [
-    null,
-    {
-     "openMin": 540,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1020
-    },
-    null
-   ],
-   "open24": false,
-   "hoursKnown": true,
-   "services": "Hygiene items",
-   "pets": true,
-   "adaAccessible": true,
-   "seasonStart": "2026-05-01",
-   "seasonEnd": "2026-09-30",
-   "source": "magHRN",
-   "verifiedDate": "2026-09-08"
-  },
-  {
-   "id": "hrn-591",
-   "name": "Chandler Corps",
-   "org": "The Salvation Army",
-   "kind": "cooling_center",
-   "lon": -111.83993,
-   "lat": 33.29455,
-   "address": "85 E. Saragosa St. Chandler AZ 85225",
-   "city": "Chandler",
-   "phone": "602-267-4193",
-   "hours": "Mo-Fr 8:30am-5pm",
-   "hoursByDay": [
-    null,
-    {
-     "openMin": 510,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 510,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 510,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 510,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 510,
-     "closeMin": 1020
-    },
-    null
-   ],
-   "open24": false,
-   "hoursKnown": true,
-   "services": null,
-   "pets": true,
-   "adaAccessible": true,
-   "seasonStart": "2026-05-01",
-   "seasonEnd": "2026-09-30",
-   "source": "magHRN",
-   "verifiedDate": "2026-09-08"
-  },
-  {
-   "id": "hrn-592",
-   "name": "Phoenix Citadel Corps",
-   "org": "The Salvation Army",
-   "kind": "cooling_center",
-   "lon": -112.07809,
-   "lat": 33.45526,
-   "address": "628 N. 3rd Ave. Phoenix AZ 85003",
-   "city": "Phoenix",
-   "phone": "602-267-4193",
-   "hours": "Mo-Fr 8am-5pm",
-   "hoursByDay": [
-    null,
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    null
-   ],
-   "open24": false,
-   "hoursKnown": true,
-   "services": null,
-   "pets": true,
-   "adaAccessible": true,
-   "seasonStart": "2026-05-01",
-   "seasonEnd": "2026-09-30",
-   "source": "magHRN",
-   "verifiedDate": "2026-09-08"
-  },
-  {
-   "id": "hrn-593",
-   "name": "Mesa Corps",
-   "org": "The Salvation Army",
-   "kind": "cooling_center",
-   "lon": -111.82563,
-   "lat": 33.42486,
-   "address": "241 E. 6th St. Mesa AZ 85201",
-   "city": "Mesa",
-   "phone": "602-267-4139",
-   "hours": "Mo-Fr 8am-5pm",
-   "hoursByDay": [
-    null,
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    null
-   ],
-   "open24": false,
-   "hoursKnown": true,
-   "services": null,
-   "pets": true,
-   "adaAccessible": true,
-   "seasonStart": "2026-05-01",
-   "seasonEnd": "2026-09-30",
-   "source": "magHRN",
-   "verifiedDate": "2026-09-08"
-  },
-  {
-   "id": "hrn-594",
-   "name": "Warren Ledbetter Service Center",
-   "org": "The Salvation Army",
-   "kind": "cooling_center",
-   "lon": -112.023429,
-   "lat": 33.448632,
-   "address": "2702 E. Washington St. Phoenix AZ 85034",
-   "city": "Phoenix",
-   "phone": "602-267-4193",
-   "hours": "Mo-Fr 8am-5pm",
-   "hoursByDay": [
-    null,
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 480,
-     "closeMin": 1020
-    },
-    null
-   ],
-   "open24": false,
-   "hoursKnown": true,
-   "services": "Homeless services, Food, Hygiene items, Utility Assistance",
-   "pets": true,
-   "adaAccessible": true,
-   "seasonStart": "2026-05-01",
-   "seasonEnd": "2026-09-30",
-   "source": "magHRN",
-   "verifiedDate": "2026-09-08"
-  },
-  {
-   "id": "hrn-595",
-   "name": "North West Valley Corps",
-   "org": "The Salvation Army",
-   "kind": "cooling_center",
-   "lon": -112.305794,
-   "lat": 33.642222,
-   "address": "17420 N. Avenue of the Arts Blvd. Surprise AZ 85378",
-   "city": "Surprise",
-   "phone": "602-267-4193",
-   "hours": "Mo-Fr 9am-5pm",
-   "hoursByDay": [
-    null,
-    {
-     "openMin": 540,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1020
-    },
-    {
-     "openMin": 540,
-     "closeMin": 1020
-    },
-    null
-   ],
-   "open24": false,
-   "hoursKnown": true,
-   "services": null,
-   "pets": true,
-   "adaAccessible": true,
-   "seasonStart": "2026-05-01",
-   "seasonEnd": "2026-09-30",
-   "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-596",
@@ -10445,7 +10442,7 @@
    "seasonStart": "2026-06-23",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-599",
@@ -10481,7 +10478,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-600",
@@ -10514,7 +10511,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-601",
@@ -10544,7 +10541,7 @@
    "seasonStart": "2026-08-05",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-602",
@@ -10574,7 +10571,7 @@
    "seasonStart": "2026-08-05",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-603",
@@ -10622,7 +10619,7 @@
    "seasonStart": "2026-08-05",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-604",
@@ -10670,7 +10667,7 @@
    "seasonStart": "2026-08-05",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-605",
@@ -10718,7 +10715,7 @@
    "seasonStart": "2026-08-05",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-606",
@@ -10766,7 +10763,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-607",
@@ -10814,7 +10811,7 @@
    "seasonStart": "2026-08-03",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-608",
@@ -10862,7 +10859,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-609",
@@ -10910,7 +10907,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-610",
@@ -10958,7 +10955,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-611",
@@ -11006,7 +11003,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-612",
@@ -11054,7 +11051,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-613",
@@ -11102,7 +11099,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-614",
@@ -11150,7 +11147,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   },
   {
    "id": "hrn-615",
@@ -11201,7 +11198,7 @@
    "seasonStart": "2026-05-01",
    "seasonEnd": "2026-09-30",
    "source": "magHRN",
-   "verifiedDate": "2026-09-08"
+   "verifiedDate": "2026-09-09"
   }
  ]
 }
