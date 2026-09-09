@@ -6,11 +6,11 @@
  "note": "Real 24-hour environmental profiles. env_params takes a dry-bulb temperature as input and returns apparent temperature, heat index, wet bulb, humidity, cloud cover and air quality as hourly series. This is the only hour-of-day resolution the API exposes - /v1/heatmap has no hour parameter.",
  "date": "2026-09-08",
  "filterType": 3,
- "fetchedAt": "2026-09-09T01:17:28.678Z",
+ "fetchedAt": "2026-09-09T06:39:28.325Z",
  "failures": [],
  "points": [
   {
-   "activityId": "eb6ee0c2-80f9-452c-9650-87d226773c8c",
+   "activityId": "4e4818fe-940d-45dc-bd75-6981a9208791",
    "lat": 32.224999999999994,
    "lon": -110.96000000000001,
    "elevationM": 732,
@@ -201,7 +201,7 @@
    "label": "Downtown / University"
   },
   {
-   "activityId": "906ce4d5-9659-4c82-9bf2-cc1b066504f2",
+   "activityId": "90588232-8719-44b4-af08-f495d66c58b0",
    "lat": 32.185,
    "lon": -110.965,
    "elevationM": 749,
@@ -392,8 +392,8 @@
    "label": "South Industrial"
   },
   {
-   "activityId": "34193c79-aeaf-44f4-ace0-cf18d8ebf590",
-   "lat": 32.185199,
+   "activityId": "8c53f0e5-d93d-43ca-b192-71f624a22cd6",
+   "lat": 32.1852,
    "lon": -110.974485,
    "elevationM": 741,
    "inputTempC": 27.03,
@@ -583,8 +583,8 @@
    "label": "Demo route - start"
   },
   {
-   "activityId": "af2ab712-c353-463b-83bb-b06275faa48e",
-   "lat": 32.224093,
+   "activityId": "a3ee91af-cea6-4892-87a5-d2ee1462138f",
+   "lat": 32.224092,
    "lon": -110.966327,
    "elevationM": 727,
    "inputTempC": 26.3,

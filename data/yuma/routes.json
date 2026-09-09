@@ -1,7 +1,7 @@
 {
  "schema": "coolroute.routes.v2",
  "regionId": "yuma",
- "generatedAt": "2026-09-09T01:06:52.621Z",
+ "generatedAt": "2026-09-09T06:28:54.351Z",
  "provider": "ors",
  "note": "Routes follow the real road network, resolved once at build time and committed so the demo runs with no network. Depot and work-zone endpoints are real named locations inside the focus tiles; the runs themselves are representative, not an operator manifest.",
  "failures": [],
@@ -987,7 +987,7 @@
    "distanceM": 9366,
    "durationS": 793,
    "provider": "ors",
-   "fetchedAt": "2026-09-09T01:06:29.011Z"
+   "fetchedAt": "2026-09-09T06:28:29.741Z"
   },
   {
    "id": "y2-medical-district",
@@ -1526,7 +1526,7 @@
    "distanceM": 6076,
    "durationS": 541,
    "provider": "ors",
-   "fetchedAt": "2026-09-09T01:06:32.459Z"
+   "fetchedAt": "2026-09-09T06:28:33.279Z"
   },
   {
    "id": "y3-4th-avenue",
@@ -2157,7 +2157,7 @@
    "distanceM": 6709,
    "durationS": 618,
    "provider": "ors",
-   "fetchedAt": "2026-09-09T01:06:35.899Z"
+   "fetchedAt": "2026-09-09T06:28:36.796Z"
   },
   {
    "id": "y4-somerton-fields",
@@ -2664,7 +2664,7 @@
    "distanceM": 12398,
    "durationS": 1492,
    "provider": "osrm",
-   "fetchedAt": "2026-09-09T01:06:41.569Z"
+   "fetchedAt": "2026-09-09T06:28:42.782Z"
   },
   {
    "id": "y5-packing-shed",
@@ -2859,7 +2859,7 @@
    "distanceM": 8973,
    "durationS": 727,
    "provider": "ors",
-   "fetchedAt": "2026-09-09T01:06:45.007Z"
+   "fetchedAt": "2026-09-09T06:28:46.295Z"
   },
   {
    "id": "y6-utility-south",
@@ -3018,7 +3018,7 @@
    "distanceM": 9240,
    "durationS": 726,
    "provider": "ors",
-   "fetchedAt": "2026-09-09T01:06:48.726Z"
+   "fetchedAt": "2026-09-09T06:28:50.200Z"
   },
   {
    "id": "y7-municipal-parks",
@@ -3777,7 +3777,7 @@
    "distanceM": 10098,
    "durationS": 958,
    "provider": "ors",
-   "fetchedAt": "2026-09-09T01:06:52.167Z"
+   "fetchedAt": "2026-09-09T06:28:53.715Z"
   }
  ],
  "workerDemo": {
@@ -4342,7 +4342,7 @@
    "distanceM": 4530,
    "durationS": 414,
    "provider": "osrm",
-   "fetchedAt": "2026-09-09T01:06:52.621Z"
+   "fetchedAt": "2026-09-09T06:28:54.351Z"
   },
   "alternative": null
  }
