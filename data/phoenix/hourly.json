@@ -6,7 +6,7 @@
  "note": "Real 24-hour environmental profiles. env_params takes a dry-bulb temperature as input and returns apparent temperature, heat index, wet bulb, humidity, cloud cover and air quality as hourly series. This is the only hour-of-day resolution the API exposes - /v1/heatmap has no hour parameter.",
  "date": "2026-09-09",
  "filterType": 3,
- "fetchedAt": "2026-09-10T00:29:37.400Z",
+ "fetchedAt": "2026-09-10T05:09:21.701Z",
  "failures": [
   "sky-harbor-corridor: outside the cached field",
   "midtown-camelback: outside the cached field",
@@ -14,7 +14,7 @@
  ],
  "points": [
   {
-   "activityId": "1aae9585-055f-4f29-815b-6be361830f3d",
+   "activityId": "689f613c-75f8-40f6-b137-a303c48d39b6",
    "lat": 33.455,
    "lon": -112.0715,
    "elevationM": 332,
@@ -205,7 +205,7 @@
    "label": "Downtown Core"
   },
   {
-   "activityId": "828c60de-5807-4f80-820b-a27973f3941d",
+   "activityId": "b8094652-ea54-4611-89d1-77f7f8d0265b",
    "lat": 33.443704,
    "lon": -112.0736,
    "elevationM": 330,
