@@ -1,7 +1,7 @@
 {
  "schema": "coolroute.routes.v2",
  "regionId": "phoenix",
- "generatedAt": "2026-09-10T19:29:48.437Z",
+ "generatedAt": "2026-09-10T21:49:39.045Z",
  "provider": "osrm",
  "note": "Routes follow the real road network, resolved once at build time and committed so the demo runs with no network. Depot and work-zone endpoints are real named locations inside the focus tiles; the runs themselves are representative, not an operator manifest.",
  "failures": [],
@@ -1543,7 +1543,7 @@
    "distanceM": 12742,
    "durationS": 1001,
    "provider": "osrm",
-   "fetchedAt": "2026-09-10T19:29:07.953Z"
+   "fetchedAt": "2026-09-10T21:48:58.849Z"
   },
   {
    "id": "r2-warehouse-civic",
@@ -2602,7 +2602,7 @@
    "distanceM": 6337,
    "durationS": 684,
    "provider": "osrm",
-   "fetchedAt": "2026-09-10T19:29:13.689Z"
+   "fetchedAt": "2026-09-10T21:49:04.516Z"
   },
   {
    "id": "r3-buckeye-industrial",
@@ -5133,7 +5133,7 @@
    "distanceM": 16756,
    "durationS": 1579,
    "provider": "osrm",
-   "fetchedAt": "2026-09-10T19:29:19.423Z"
+   "fetchedAt": "2026-09-10T21:49:10.198Z"
   },
   {
    "id": "r4-central-spine",
@@ -6088,7 +6088,7 @@
    "distanceM": 6391,
    "durationS": 555,
    "provider": "osrm",
-   "fetchedAt": "2026-09-10T19:29:25.155Z"
+   "fetchedAt": "2026-09-10T21:49:15.860Z"
   },
   {
    "id": "r5-midtown-grid",
@@ -9119,7 +9119,7 @@
    "distanceM": 12408,
    "durationS": 1506,
    "provider": "osrm",
-   "fetchedAt": "2026-09-10T19:29:30.884Z"
+   "fetchedAt": "2026-09-10T21:49:21.531Z"
   },
   {
    "id": "r6-postal-loop",
@@ -10610,7 +10610,7 @@
    "distanceM": 7710,
    "durationS": 798,
    "provider": "osrm",
-   "fetchedAt": "2026-09-10T19:29:36.643Z"
+   "fetchedAt": "2026-09-10T21:49:27.193Z"
   },
   {
    "id": "r7-sky-harbor-perimeter",
@@ -12377,7 +12377,7 @@
    "distanceM": 10060,
    "durationS": 1059,
    "provider": "osrm",
-   "fetchedAt": "2026-09-10T19:29:42.377Z"
+   "fetchedAt": "2026-09-10T21:49:32.857Z"
   },
   {
    "id": "r8-westside-connector",
@@ -14280,7 +14280,7 @@
    "distanceM": 10537,
    "durationS": 986,
    "provider": "osrm",
-   "fetchedAt": "2026-09-10T19:29:48.113Z"
+   "fetchedAt": "2026-09-10T21:49:38.741Z"
   }
  ],
  "workerDemo": {
@@ -15481,7 +15481,7 @@
    "distanceM": 7960,
    "durationS": 720,
    "provider": "osrm",
-   "fetchedAt": "2026-09-10T19:29:48.437Z"
+   "fetchedAt": "2026-09-10T21:49:39.044Z"
   },
   "alternative": {
    "id": "worker-demo-alt",
@@ -17068,7 +17068,7 @@
    "distanceM": 8786,
    "durationS": 803,
    "provider": "osrm",
-   "fetchedAt": "2026-09-10T19:29:48.437Z",
+   "fetchedAt": "2026-09-10T21:49:39.044Z",
    "alternativeOf": "worker-demo-primary"
   }
  }

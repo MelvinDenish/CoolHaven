@@ -6,11 +6,11 @@
  "note": "Real 24-hour environmental profiles. env_params takes a dry-bulb temperature as input and returns apparent temperature, heat index, wet bulb, humidity, cloud cover and air quality as hourly series. This is the only hour-of-day resolution the API exposes - /v1/heatmap has no hour parameter.",
  "date": "2026-09-10",
  "filterType": 3,
- "fetchedAt": "2026-09-10T19:32:55.155Z",
+ "fetchedAt": "2026-09-10T22:00:18.618Z",
  "failures": [],
  "points": [
   {
-   "activityId": "53be68b3-db29-45f2-a8b6-ccfe0629c2d3",
+   "activityId": "e596411c-39f1-4544-bb2c-4729f675134c",
    "lat": 36.114999999999995,
    "lon": -115.16,
    "elevationM": 638,
@@ -201,7 +201,7 @@
    "label": "Resort Corridor"
   },
   {
-   "activityId": "82b4b606-e863-4771-9e03-5ffec7403792",
+   "activityId": "923298bc-9f6d-4ad7-8786-fcb19d332bcb",
    "lat": 36.1725,
    "lon": -115.13499999999999,
    "elevationM": 607,
@@ -392,7 +392,7 @@
    "label": "Downtown / Fremont"
   },
   {
-   "activityId": "d79dd946-53e9-4ddd-b50a-255d5b50bdc5",
+   "activityId": "0a0c5e9e-1fce-4838-8f5f-9a678200ebbd",
    "lat": 36.170074,
    "lon": -115.144503,
    "elevationM": 630,
@@ -583,7 +583,7 @@
    "label": "Demo route - start"
   },
   {
-   "activityId": "46f2dbda-4ace-4cda-a897-d3b63afa795f",
+   "activityId": "e2278245-281b-4844-a5af-40b65cf54711",
    "lat": 36.185137,
    "lon": -115.129066,
    "elevationM": 577,
