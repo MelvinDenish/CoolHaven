@@ -1,26 +1,19 @@
 {
  "schema": "coolroute.manifest.v2",
  "regionId": "phoenix",
- "snapshotDate": "2026-09-09",
- "generatedAt": "2026-09-10T05:09:11.360Z",
+ "snapshotDate": "2026-09-10",
+ "generatedAt": "2026-09-10T16:59:09.155Z",
  "liveApiUsed": true,
  "fetchedThisRun": 0,
  "unavailable": [
-  "sky-harbor-corridor|2026-09-09",
-  "midtown-camelback|2026-09-09"
+  "downtown-core|2026-09-11",
+  "sky-harbor-corridor|2026-09-11",
+  "midtown-camelback|2026-09-11"
  ],
  "sources": [
   "fortyguard"
  ],
  "grids": [
-  {
-   "file": "downtown-core__ft3__2026-09-09.json",
-   "tileId": "downtown-core",
-   "filterType": 3,
-   "validAt": "2026-09-09T15:00:00-07:00",
-   "source": "fortyguard",
-   "granularityM": 100
-  },
   {
    "file": "downtown-core__ft3__2026-09-10.json",
    "tileId": "downtown-core",
@@ -47,12 +40,12 @@
   }
  ],
  "notes": [
-  "Snapshot date 2026-09-09. 4 of 4 grids are FortyGuard data; none were fetched this run, every grid was already cached.",
+  "Snapshot date 2026-09-10. 3 of 3 grids are FortyGuard data; none were fetched this run, every grid was already cached.",
   "The API does not report credit consumption in its response payload.",
   "Temperatures arrive in Celsius and are converted to Fahrenheit at the client boundary.",
   "API limitation: only filter_type 3 (forecast) succeeds on this key; 1, 2 and 4 return HTTP 500. The historic/forecast separation is still enforced in code.",
   "API limitation: no hour-of-day parameter exists, so slices are forecast DAYS. Intra-day variation comes from the min/average/max each cell carries.",
-  "The API completed but returned no data for: sky-harbor-corridor|2026-09-09, midtown-camelback|2026-09-09. Those days are omitted from the snapshot rather than filled with a modelled stand-in, so the day selector only offers days the service actually served.",
-  "Incomplete or fallback run: older grid files were NOT pruned, so the previous snapshot stays on disk rather than leaving a gap."
+  "The API completed but returned no data for: downtown-core|2026-09-11, sky-harbor-corridor|2026-09-11, midtown-camelback|2026-09-11. Those days are omitted from the snapshot rather than filled with a modelled stand-in, so the day selector only offers days the service actually served.",
+  "Pruned 4 grid file(s) describing dates outside this snapshot. The cache holds only the dates the UI can reach."
  ]
 }
