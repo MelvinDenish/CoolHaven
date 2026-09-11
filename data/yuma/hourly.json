@@ -6,11 +6,11 @@
  "note": "Real 24-hour environmental profiles. env_params takes a dry-bulb temperature as input and returns apparent temperature, heat index, wet bulb, humidity, cloud cover and air quality as hourly series. This is the only hour-of-day resolution the API exposes - /v1/heatmap has no hour parameter.",
  "date": "2026-09-10",
  "filterType": 3,
- "fetchedAt": "2026-09-11T00:08:32.928Z",
+ "fetchedAt": "2026-09-11T03:36:02.293Z",
  "failures": [],
  "points": [
   {
-   "activityId": "a752e5e9-0eaa-4fe7-bb69-4f117c6bdec7",
+   "activityId": "a1a12041-25ec-4e18-9960-719e2fa49764",
    "lat": 32.6905,
    "lon": -114.619,
    "elevationM": 61,
@@ -201,7 +201,7 @@
    "label": "Yuma City Core"
   },
   {
-   "activityId": "6c661945-9aa5-449c-8c00-df319ae79fea",
+   "activityId": "908c2dc7-96b1-450a-ab9d-033fca11e93a",
    "lat": 32.5975,
    "lon": -114.712,
    "elevationM": 33,
@@ -392,7 +392,7 @@
    "label": "Somerton Field Corridor"
   },
   {
-   "activityId": "2ce26bd2-e5ad-4b7a-b7a6-6bbd4f4f60d7",
+   "activityId": "327a724a-cdea-4378-8947-8bda141c04de",
    "lat": 32.659334,
    "lon": -114.609859,
    "elevationM": 57,
@@ -583,7 +583,7 @@
    "label": "Demo route - start"
   },
   {
-   "activityId": "51330da1-c770-4e1c-b052-0ae7c75b8aed",
+   "activityId": "95b7ea50-1b4f-4ade-a584-5671ac6fc045",
    "lat": 32.685772,
    "lon": -114.6297,
    "elevationM": 63,
