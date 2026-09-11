@@ -6,9 +6,9 @@
  "endpoint": "https://overpass-api.de/api/interpreter",
  "where": "",
  "attribution": "Amenity locations (c) OpenStreetMap contributors, ODbL, via Overpass API. Community-mapped amenities, not an agency-published heat-relief network.",
- "fetchedAt": "2026-09-10T21:48:46.524Z",
- "totalCount": 67,
- "focusCount": 31,
+ "fetchedAt": "2026-09-10T23:49:07.762Z",
+ "totalCount": 68,
+ "focusCount": 32,
  "focusBbox": [
   -115.185,
   36.095,
@@ -18,7 +18,7 @@
  "withKnownHours": 3,
  "byKind": {
   "cooling_center": 23,
-  "hydration_station": 31,
+  "hydration_station": 32,
   "respite_center": 13
  },
  "sites": [
@@ -1238,12 +1238,42 @@
    "verifiedDate": "2026-09-10"
   },
   {
+   "id": "osm-node-14170856731",
+   "name": "Drinking water",
+   "org": null,
+   "kind": "hydration_station",
+   "lon": -115.1426944,
+   "lat": 36.1073606,
+   "address": null,
+   "city": null,
+   "phone": null,
+   "hours": null,
+   "hoursByDay": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   "open24": false,
+   "hoursKnown": false,
+   "services": "drinking water",
+   "pets": null,
+   "adaAccessible": null,
+   "seasonStart": null,
+   "seasonEnd": null,
+   "source": "osm",
+   "verifiedDate": "2026-09-10"
+  },
+  {
    "id": "osm-way-27525255",
    "name": "Lied Library",
    "org": "UNLV",
    "kind": "cooling_center",
-   "lon": -115.1423638,
-   "lat": 36.1071336,
+   "lon": -115.142341,
+   "lat": 36.107133,
    "address": null,
    "city": null,
    "phone": null,
